@@ -16,47 +16,92 @@
 import pyrogue as pr
 import collections
 
-class RceVersion(pr.Device):
+class RceDtmTiming(pr.Device):
     def __init__(self, **kwargs):
         super(self.__class__, self).__init__(
             description="RCE Version and BSI register.", **kwargs)
 
-    self.add(pyrogue.variable(name='fpgaVersion', description='Fpga firmware version number',
-                              offset=0x80000000, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+    self.addRemoteVariables(
+            number=8,
+            stride=4,
+            name="FbDela",
+            description='FbDelay Value For Dpm',
+            offset=0x100,
+            bitSize=16,
+            bitOffset=0,
+            base=pr.UInt,
+            disp='range',
+            minimum=0,
+            maximum=32)
 
-    self.add(pyrogue.variable(name='scratchPad', description='Scratchpad Register',
-                              offset=0x80000004, bitsize=32, bitoffset=0, base='hex', mode='RW'))
+    self.addRemoteVariables(
+            number=8,
+            stride=4,
+            name="FbErrors",
+            description='FbErrors Value For Dpm',
+            offset=0x200,
+            bitSize=16,
+            bitOffset=16,
+            base=pr.UInt,
+            mode='RO')
 
-    self.add(pyrogue.variable(name='rceVersion', description='RCE registers version number',
-                              offset=0x80000008, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+    self.addRemoteVariables(
+            number=8,
+            stride=4,
+            name="FbIdle",
+            description='FbIdle Value For Dpm',
+            offset=0x200,
+            bitSize=16,
+            bitOffset=0,
+            base=pr.UInt,
+            mode='RO')
 
-    self.add(pyrogue.variable(name='deviceDna', description='Xilinx Device DNA Value',
-                              offset=0x80000020, bitsize=64, bitoffset=0, base='hex', mode='RO'))
+    self.addRemoteVariables(
+            number=8,
+            stride=4,
+            name="RxCount",
+            description='Rx Data Count For Dpm',
+            offset=0x500,
+            bitSize=16,
+            bitOffset=0,
+            base=pr.UInt,
+            mode='RO')
 
-    self.add(pyrogue.variable(name='eFuseValue', description='Xilinx E-Fuse Value',
-                              offset=0x80000030, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+    self.add(pr.RemoteVariable(
+            name='TxData0', 
+            description='TX Data 0 Counter',
+            offset=0x414, 
+            bitsize=32, 
+            bitoffset=0,
+            mode='RO'))
 
-    self.add(pyrogue.variable(name='ethMode', description='Ethernet Mode',
-                              offset=0x80000034, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+    self.add(pr.RemoteVariable(
+            name='TxData1', 
+            description='TX Data 1 Counter',
+            offset=0x418, 
+            bitsize=32, 
+            bitoffset=0,
+            mode='RO'))
 
-    self.add(pyrogue.variable(name='heartBeat', description='A constantly incrementing value',
-                              offset=0x80000038, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+    self.add(pr.RemoteVariable(
+            name='TxData0',
+            description='Transmit Data On Channel 0.',
+            offset=0x400,
+            bitSize=32))
 
-    dev.add(pyrogue.Variable(name='gitHash', description='GIT SHA-1 Hash',
-                             offset=0x80000040, bitSize=160, bitOffset=0, base='hex', mode='RO'))
+    self.add(pr.RemoteVariable(
+            name='TxData1',
+            description='Transmit Data On Channel 1.',
+            offset=0x410,
+            bitSize=32))
 
-    dev.add(pyrogue.Variable(name='buildStamp', description='Firmware build string',
-                             offset=0x80001000, bitSize=256*8, bitOffset=0, base='string', mode='RO'))
+    @self.command(description='Transmit Data On Channel 0.')
+    def TxData0(value):
+        self.TxData0.set(value)
 
-    dev.add(pyrogue.Variable(name='serialNumber', description='Serial Number',
-                             offset=0x84000140, bitSize=64, bitOffset=0, base='hex', mode='RO'))
+    @self.command(description='Transmit Data On Channel 0.')
+    def TxData1(value):
+        self.TxData1.set(value)    
 
-    dev.add(pyrogue.Variable(name='atcaSlot', description='ATCA Slot',
-                             offset=0x84000148, bitSize=8, bitOffset=16, base='hex', mode='RO'))
 
-    dev.add(pyrogue.Variable(name='cobBay', description='COB Bay',
-                             offset=0x84000148, bitSize=8, bitOffset=8, base='hex', mode='RO'))
-
-    dev.add(pyrogue.Variable(name='cobElement', description='COB Element',
-                             offset=0x84000148, bitSize=8, bitOffset=0, base='hex', mode='RO'))
 
