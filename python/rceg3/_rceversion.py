@@ -22,43 +22,106 @@ class RceVersion(pr.Device):
         super(self.__class__, self).__init__(
             description="RCE Version and BSI register.", **kwargs)
 
-        self.add(pyrogue.Variable(name='fpgaVersion', description='Fpga firmware version number',
-                                  offset=0x80000000, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='FpgaVersion', 
+            description='Fpga firmware version number',
+            offset=0x0, 
+            bitsize=32, 
+            bitoffset=0,
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='scratchPad', description='Scratchpad Register',
-                                  offset=0x80000004, bitsize=32, bitoffset=0, base='hex', mode='RW'))
+        self.add(pr.RemoteVariable(
+            name='ScratchPad', 
+            description='Scratchpad Register',
+            offset=0x04, 
+            bitsize=32, 
+            bitoffset=0, 
+            mode='RW'))
 
-        self.add(pyrogue.Variable(name='rceVersion', description='RCE registers version number',
-                                  offset=0x80000008, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='RceVersion', 
+            description='RCE registers version number',
+            offset=0x08, 
+            bitsize=32, 
+            bitoffset=0, 
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='deviceDna', description='Xilinx Device DNA Value',
-                                  offset=0x80000020, bitsize=64, bitoffset=0, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='DeviceDna', 
+            description='Xilinx Device DNA Value',
+            offset=0x20, 
+            bitsize=64, 
+            bitoffset=0, 
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='eFuseValue', description='Xilinx E-Fuse Value',
-                                  offset=0x80000030, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='EFuseValue', 
+            description='Xilinx E-Fuse Value',
+            offset=0x30, 
+            bitsize=32, 
+            bitoffset=0,
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='ethMode', description='Ethernet Mode',
-                                  offset=0x80000034, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='EthMode', 
+            description='Ethernet Mode',
+            offset=0x34, 
+            bitsize=32, 
+            bitoffset=0,
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='heartBeat', description='A constantly incrementing value',
-                                  offset=0x80000038, bitsize=32, bitoffset=0, 
-                                  pollInterval=1, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='HeartBeat', 
+            description='A constantly incrementing value',
+            offset=0x38, 
+            bitsize=32, 
+            bitoffset=0, 
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='gitHash', description='GIT SHA-1 Hash',
-                                 offset=0x80000040, bitSize=160, bitOffset=0, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='GitHash', 
+            description='GIT SHA-1 Hash',
+            offset=0x40, 
+            bitSize=160, 
+            bitOffset=0,
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='buildStamp', description='Firmware build string',
-                                 offset=0x80001000, bitSize=256*8, bitOffset=0, base='string', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='BuildStamp', 
+            description='Firmware build string',
+            offset=0x1000, 
+            bitSize=256*8, 
+            bitOffset=0, 
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='serialNumber', description='Serial Number',
-                                 offset=0x84000140, bitSize=64, bitOffset=0, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='SerialNumber', 
+            description='Serial Number',
+            offset=0x140, 
+            bitSize=64, 
+            bitOffset=0,
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='atcaSlot', description='ATCA Slot',
-                                  offset=0x84000148, bitSize=8, bitOffset=16, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='AtcaSlot', 
+            description='ATCA Slot',
+            offset=0x148, 
+            bitSize=8, 
+            bitOffset=16, 
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='cobBay', description='COB Bay',
-                                  offset=0x84000148, bitSize=8, bitOffset=8, base='hex', mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='CobBay', 
+            description='COB Bay',
+            offset=0x148, 
+            bitSize=8, 
+            bitOffset=8, 
+            mode='RO'))
 
-        self.add(pyrogue.Variable(name='cobElement', description='COB Element',
-                                  offset=0x84000148, bitSize=8, bitOffset=0, base='hex', mode='RO'))
-
+        self.add(pr.RemoteVariable(
+            name='CobElement', 
+            description='COB Element',
+            offset=0x148, 
+            bitSize=8, 
+            bitOffset=0,
+            mode='RO'))

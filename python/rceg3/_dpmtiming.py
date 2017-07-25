@@ -21,43 +21,43 @@ class RceVersion(pr.Device):
         super(self.__class__, self).__init__(
             description="RCE Version and BSI register.", **kwargs)
 
-    self.add(pyrogue.variable(name='fpgaVersion', description='Fpga firmware version number',
+    self.add(pr.RemoteVariable(name='fpgaVersion', description='Fpga firmware version number',
                               offset=0x80000000, bitsize=32, bitoffset=0, base='hex', mode='RO'))
 
-    self.add(pyrogue.variable(name='scratchPad', description='Scratchpad Register',
+    self.add(pr.RemoteVariable(name='scratchPad', description='Scratchpad Register',
                               offset=0x80000004, bitsize=32, bitoffset=0, base='hex', mode='RW'))
 
-    self.add(pyrogue.variable(name='rceVersion', description='RCE registers version number',
+    self.add(pr.RemoteVariable(name='rceVersion', description='RCE registers version number',
                               offset=0x80000008, bitsize=32, bitoffset=0, base='hex', mode='RO'))
 
-    self.add(pyrogue.variable(name='deviceDna', description='Xilinx Device DNA Value',
+    self.add(pr.RemoteVariable(name='deviceDna', description='Xilinx Device DNA Value',
                               offset=0x80000020, bitsize=64, bitoffset=0, base='hex', mode='RO'))
 
-    self.add(pyrogue.variable(name='eFuseValue', description='Xilinx E-Fuse Value',
+    self.add(pr.RemoteVariable(name='eFuseValue', description='Xilinx E-Fuse Value',
                               offset=0x80000030, bitsize=32, bitoffset=0, base='hex', mode='RO'))
 
-    self.add(pyrogue.variable(name='ethMode', description='Ethernet Mode',
+    self.add(pr.RemoteVariable(name='ethMode', description='Ethernet Mode',
                               offset=0x80000034, bitsize=32, bitoffset=0, base='hex', mode='RO'))
 
-    self.add(pyrogue.variable(name='heartBeat', description='A constantly incrementing value',
+    self.add(pr.RemoteVariable(name='heartBeat', description='A constantly incrementing value',
                               offset=0x80000038, bitsize=32, bitoffset=0, base='hex', mode='RO'))
 
-    dev.add(pyrogue.Variable(name='gitHash', description='GIT SHA-1 Hash',
+    dev.add(pr.RemoteVariable(name='gitHash', description='GIT SHA-1 Hash',
                              offset=0x80000040, bitSize=160, bitOffset=0, base='hex', mode='RO'))
 
-    dev.add(pyrogue.Variable(name='buildStamp', description='Firmware build string',
+    dev.add(pr.RemoteVariable(name='buildStamp', description='Firmware build string',
                              offset=0x80001000, bitSize=256*8, bitOffset=0, base='string', mode='RO'))
 
-    dev.add(pyrogue.Variable(name='serialNumber', description='Serial Number',
+    dev.add(pr.RemoteVariable(name='serialNumber', description='Serial Number',
                              offset=0x84000140, bitSize=64, bitOffset=0, base='hex', mode='RO'))
 
-    dev.add(pyrogue.Variable(name='atcaSlot', description='ATCA Slot',
+    dev.add(pr.RemoteVariable(name='atcaSlot', description='ATCA Slot',
                              offset=0x84000148, bitSize=8, bitOffset=16, base='hex', mode='RO'))
 
-    dev.add(pyrogue.Variable(name='cobBay', description='COB Bay',
+    dev.add(pr.RemoteVariable(name='cobBay', description='COB Bay',
                              offset=0x84000148, bitSize=8, bitOffset=8, base='hex', mode='RO'))
 
-    dev.add(pyrogue.Variable(name='cobElement', description='COB Element',
+    dev.add(pr.RemoteVariable(name='cobElement', description='COB Element',
                              offset=0x84000148, bitSize=8, bitOffset=0, base='hex', mode='RO'))
 
 
@@ -140,5 +140,3 @@ void RceDpmTiming::countReset () {
    REGISTER_UNLOCK
    Device::countReset();
 }
-
-
