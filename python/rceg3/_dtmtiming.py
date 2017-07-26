@@ -71,16 +71,16 @@ class RceDtmTiming(pr.Device):
             name='TxData0', 
             description='TX Data 0 Counter',
             offset=0x414, 
-            bitsize=32, 
-            bitoffset=0,
+            bitSize=32, 
+            bitOffset=0,
             mode='RO'))
 
     self.add(pr.RemoteVariable(
             name='TxData1', 
             description='TX Data 1 Counter',
             offset=0x418, 
-            bitsize=32, 
-            bitoffset=0,
+            bitSize=32, 
+            bitOffset=0,
             mode='RO'))
 
     self.add(pr.RemoteVariable(

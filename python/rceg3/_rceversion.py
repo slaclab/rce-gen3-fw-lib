@@ -26,56 +26,56 @@ class RceVersion(pr.Device):
             name='FpgaVersion', 
             description='Fpga firmware version number',
             offset=0x0, 
-            bitsize=32, 
-            bitoffset=0,
+            bitSize=32, 
+            bitOffset=0,
             mode='RO'))
 
         self.add(pr.RemoteVariable(
             name='ScratchPad', 
             description='Scratchpad Register',
             offset=0x04, 
-            bitsize=32, 
-            bitoffset=0, 
+            bitSize=32, 
+            bitOffset=0, 
             mode='RW'))
 
         self.add(pr.RemoteVariable(
             name='RceVersion', 
             description='RCE registers version number',
             offset=0x08, 
-            bitsize=32, 
-            bitoffset=0, 
+            bitSize=32, 
+            bitOffset=0, 
             mode='RO'))
 
         self.add(pr.RemoteVariable(
             name='DeviceDna', 
             description='Xilinx Device DNA Value',
             offset=0x20, 
-            bitsize=64, 
-            bitoffset=0, 
+            bitSize=64, 
+            bitOffset=0, 
             mode='RO'))
 
         self.add(pr.RemoteVariable(
             name='EFuseValue', 
             description='Xilinx E-Fuse Value',
             offset=0x30, 
-            bitsize=32, 
-            bitoffset=0,
+            bitSize=32, 
+            bitOffset=0,
             mode='RO'))
 
         self.add(pr.RemoteVariable(
             name='EthMode', 
             description='Ethernet Mode',
             offset=0x34, 
-            bitsize=32, 
-            bitoffset=0,
+            bitSize=32, 
+            bitOffset=0,
             mode='RO'))
 
         self.add(pr.RemoteVariable(
             name='HeartBeat', 
             description='A constantly incrementing value',
             offset=0x38, 
-            bitsize=32, 
-            bitoffset=0, 
+            bitSize=32, 
+            bitOffset=0, 
             mode='RO'))
 
         self.add(pr.RemoteVariable(

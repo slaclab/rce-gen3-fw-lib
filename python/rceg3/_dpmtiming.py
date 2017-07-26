@@ -22,25 +22,25 @@ class RceVersion(pr.Device):
             description="RCE Version and BSI register.", **kwargs)
 
     self.add(pr.RemoteVariable(name='fpgaVersion', description='Fpga firmware version number',
-                              offset=0x80000000, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+                              offset=0x80000000, bitSize=32, bitOffset=0, base='hex', mode='RO'))
 
     self.add(pr.RemoteVariable(name='scratchPad', description='Scratchpad Register',
-                              offset=0x80000004, bitsize=32, bitoffset=0, base='hex', mode='RW'))
+                              offset=0x80000004, bitSize=32, bitOffset=0, base='hex', mode='RW'))
 
     self.add(pr.RemoteVariable(name='rceVersion', description='RCE registers version number',
-                              offset=0x80000008, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+                              offset=0x80000008, bitSize=32, bitOffset=0, base='hex', mode='RO'))
 
     self.add(pr.RemoteVariable(name='deviceDna', description='Xilinx Device DNA Value',
-                              offset=0x80000020, bitsize=64, bitoffset=0, base='hex', mode='RO'))
+                              offset=0x80000020, bitSize=64, bitOffset=0, base='hex', mode='RO'))
 
     self.add(pr.RemoteVariable(name='eFuseValue', description='Xilinx E-Fuse Value',
-                              offset=0x80000030, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+                              offset=0x80000030, bitSize=32, bitOffset=0, base='hex', mode='RO'))
 
     self.add(pr.RemoteVariable(name='ethMode', description='Ethernet Mode',
-                              offset=0x80000034, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+                              offset=0x80000034, bitSize=32, bitOffset=0, base='hex', mode='RO'))
 
     self.add(pr.RemoteVariable(name='heartBeat', description='A constantly incrementing value',
-                              offset=0x80000038, bitsize=32, bitoffset=0, base='hex', mode='RO'))
+                              offset=0x80000038, bitSize=32, bitOffset=0, base='hex', mode='RO'))
 
     dev.add(pr.RemoteVariable(name='gitHash', description='GIT SHA-1 Hash',
                              offset=0x80000040, bitSize=160, bitOffset=0, base='hex', mode='RO'))
