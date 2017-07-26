@@ -19,9 +19,9 @@ import collections
 class RceDtmTiming(pr.Device):
     def __init__(self, **kwargs):
         super(self.__class__, self).__init__(
-            description="RCE Version and BSI register.", **kwargs)
+            description="RCE DTM Timing Registers.", **kwargs)
 
-    self.addRemoteVariables(
+        self.addRemoteVariables(
             number=8,
             stride=4,
             name="FbDela",
@@ -34,7 +34,7 @@ class RceDtmTiming(pr.Device):
             minimum=0,
             maximum=32)
 
-    self.addRemoteVariables(
+        self.addRemoteVariables(
             number=8,
             stride=4,
             name="FbErrors",
@@ -45,7 +45,7 @@ class RceDtmTiming(pr.Device):
             base=pr.UInt,
             mode='RO')
 
-    self.addRemoteVariables(
+        self.addRemoteVariables(
             number=8,
             stride=4,
             name="FbIdle",
@@ -56,7 +56,7 @@ class RceDtmTiming(pr.Device):
             base=pr.UInt,
             mode='RO')
 
-    self.addRemoteVariables(
+        self.addRemoteVariables(
             number=8,
             stride=4,
             name="RxCount",
@@ -67,7 +67,7 @@ class RceDtmTiming(pr.Device):
             base=pr.UInt,
             mode='RO')
 
-    self.add(pr.RemoteVariable(
+        self.add(pr.RemoteVariable(
             name='TxData0', 
             description='TX Data 0 Counter',
             offset=0x414, 
@@ -75,7 +75,7 @@ class RceDtmTiming(pr.Device):
             bitOffset=0,
             mode='RO'))
 
-    self.add(pr.RemoteVariable(
+        self.add(pr.RemoteVariable(
             name='TxData1', 
             description='TX Data 1 Counter',
             offset=0x418, 
@@ -83,25 +83,27 @@ class RceDtmTiming(pr.Device):
             bitOffset=0,
             mode='RO'))
 
-    self.add(pr.RemoteVariable(
+        self.add(pr.RemoteCommand(
             name='TxData0',
             description='Transmit Data On Channel 0.',
             offset=0x400,
-            bitSize=32))
+            bitSize=32,
+            function=TxData0))
 
-    self.add(pr.RemoteVariable(
+        self.add(pr.RemoteCommand(
             name='TxData1',
             description='Transmit Data On Channel 1.',
             offset=0x410,
-            bitSize=32))
+            bitSize=32,
+            function=TxData1))
 
-    @self.command(description='Transmit Data On Channel 0.')
-    def TxData0(value):
-        self.TxData0.set(value)
+        # @self.command(description='Transmit Data On Channel 0.')
+        def TxData0(value):
+            self.TxData0.set(value)
 
-    @self.command(description='Transmit Data On Channel 0.')
-    def TxData1(value):
-        self.TxData1.set(value)    
+        # @self.command(description='Transmit Data On Channel 0.')
+        def TxData1(value):
+            self.TxData1.set(value)    
 
 
 

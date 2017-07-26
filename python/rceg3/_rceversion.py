@@ -125,3 +125,24 @@ class RceVersion(pr.Device):
             bitSize=8, 
             bitOffset=0,
             mode='RO'))
+
+    # def getRcePosition(slot,bay,element): 
+    #     MappedMemory *mem = new MappedMemory (1, 0x84000000, 0x00001000);
+    #     mem->open();
+
+    #     uint32_t cluster = mem->read(0x84000148);
+
+    #     *slot = (cluster >> 16) & 0xFF;
+    #     *bay = (cluster >> 8) & 0xFF;
+    #     *element = cluster & 0xFF;
+
+    #      # Slot = 0 is invalid, no BSI, return DTM
+    #     if ( *slot == 0 ) {
+    #         *slot    = 1;
+    #         *bay     = 4;
+    #         *element = 0;
+    #     }
+
+    #     mem->close();
+    #     delete mem;
+    
