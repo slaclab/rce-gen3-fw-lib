@@ -14,7 +14,7 @@
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
 import pyrogue as pr
-import collections
+
 
 class RceDtmTiming(pr.Device):
     def __init__(self, **kwargs):
@@ -67,21 +67,30 @@ class RceDtmTiming(pr.Device):
             base=pr.UInt,
             mode='RO')
 
-        self.add(pr.RemoteVariable(
-            name='TxData0', 
-            description='TX Data 0 Counter',
-            offset=0x414, 
-            bitSize=32, 
-            bitOffset=0,
-            mode='RO'))
+        # self.add(pr.RemoteVariable(
+        #     name='TxData0', 
+        #     description='TX Data 0 Counter',
+        #     offset=0x414, 
+        #     bitSize=32, 
+        #     bitOffset=0,
+        #     mode='RO'))
 
-        self.add(pr.RemoteVariable(
-            name='TxData1', 
-            description='TX Data 1 Counter',
-            offset=0x418, 
-            bitSize=32, 
-            bitOffset=0,
-            mode='RO'))
+        # self.add(pr.RemoteVariable(
+        #     name='TxData1', 
+        #     description='TX Data 1 Counter',
+        #     offset=0x418, 
+        #     bitSize=32, 
+        #     bitOffset=0,
+        #     mode='RO'))
+
+        # @self.command(description='Transmit Data On Channel 0.')
+        def TxData0(value):
+            self.TxData0.set(value)
+
+        # @self.command(description='Transmit Data On Channel 0.')
+        def TxData1(value):
+            self.TxData1.set(value)   
+            
 
         self.add(pr.RemoteCommand(
             name='TxData0',
@@ -97,13 +106,7 @@ class RceDtmTiming(pr.Device):
             bitSize=32,
             function=TxData1))
 
-        # @self.command(description='Transmit Data On Channel 0.')
-        def TxData0(value):
-            self.TxData0.set(value)
-
-        # @self.command(description='Transmit Data On Channel 0.')
-        def TxData1(value):
-            self.TxData1.set(value)    
+         
 
 
 

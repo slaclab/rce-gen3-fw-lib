@@ -14,7 +14,7 @@
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
 import pyrogue as pr
-import collections
+
 
 class RceDpmTiming(pr.Device):
     def __init__(self, **kwargs):

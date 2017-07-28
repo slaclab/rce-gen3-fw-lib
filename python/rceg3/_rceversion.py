@@ -15,7 +15,7 @@
 #-----------------------------------------------------------------------------
 import pyrogue
 import pyrogue as pr
-import collections
+
 
 class RceVersion(pr.Device):
     def __init__(self, **kwargs):
