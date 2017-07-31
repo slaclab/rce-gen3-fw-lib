@@ -67,44 +67,42 @@ class RceDtmTiming(pr.Device):
             base=pr.UInt,
             mode='RO')
 
-        # self.add(pr.RemoteVariable(
-        #     name='TxData0', 
-        #     description='TX Data 0 Counter',
-        #     offset=0x414, 
-        #     bitSize=32, 
-        #     bitOffset=0,
-        #     mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='TxData0', 
+            description='TX Data 0 Counter',
+            offset=0x414, 
+            bitSize=32, 
+            bitOffset=0))
 
-        # self.add(pr.RemoteVariable(
-        #     name='TxData1', 
-        #     description='TX Data 1 Counter',
-        #     offset=0x418, 
-        #     bitSize=32, 
-        #     bitOffset=0,
-        #     mode='RO'))
+        self.add(pr.RemoteVariable(
+            name='TxData1', 
+            description='TX Data 1 Counter',
+            offset=0x418, 
+            bitSize=32, 
+            bitOffset=0))
 
         # @self.command(description='Transmit Data On Channel 0.')
-        def TxData0(value):
-            self.TxData0.set(value)
+        # def TxData0(value):
+        #     self.TxData0.set(value)
 
         # @self.command(description='Transmit Data On Channel 0.')
-        def TxData1(value):
-            self.TxData1.set(value)   
+        # def TxData1(value):
+        #     self.TxData1.set(value)   
             
 
-        self.add(pr.RemoteCommand(
-            name='TxData0',
-            description='Transmit Data On Channel 0.',
-            offset=0x400,
-            bitSize=32,
-            function=TxData0))
+        # self.add(pr.RemoteCommand(
+        #     name='TxData0',
+        #     description='Transmit Data On Channel 0.',
+        #     offset=0x400,
+        #     bitSize=32,
+        #     function=TxData0))
 
-        self.add(pr.RemoteCommand(
-            name='TxData1',
-            description='Transmit Data On Channel 1.',
-            offset=0x410,
-            bitSize=32,
-            function=TxData1))
+        # self.add(pr.RemoteCommand(
+        #     name='TxData1',
+        #     description='Transmit Data On Channel 1.',
+        #     offset=0x410,
+        #     bitSize=32,
+        #     function=TxData1))
 
          
 
