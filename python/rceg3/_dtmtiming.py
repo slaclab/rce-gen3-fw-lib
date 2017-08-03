@@ -81,13 +81,13 @@ class RceDtmTiming(pr.Device):
             bitSize=32, 
             bitOffset=0))
 
-        # @self.command(description='Transmit Data On Channel 0.')
-        # def TxData0(value):
-        #     self.TxData0.set(value)
+        @self.command(description='Transmit Data On Channel 0.')
+        def TxData0(value):
+            self.TxData0.set(value)
 
-        # @self.command(description='Transmit Data On Channel 0.')
-        # def TxData1(value):
-        #     self.TxData1.set(value)   
+        @self.command(description='Transmit Data On Channel 0.')
+        def TxData1(value):
+            self.TxData1.set(value)   
             
 
         # self.add(pr.RemoteCommand(
