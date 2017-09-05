@@ -38,7 +38,6 @@ entity DpmCore is
       BUILD_INFO_G       : BuildInfoType;
       ETH_10G_EN_G       : boolean               := false;
       RCE_DMA_MODE_G     : RceDmaModeType        := RCE_DMA_PPI_C;
-      OLD_BSI_MODE_G     : boolean               := false;
       AXI_ST_COUNT_G     : natural range 3 to 4  := 3;
       UDP_SERVER_EN_G    : boolean               := false;
       UDP_SERVER_SIZE_G  : positive              := 1;
@@ -173,8 +172,7 @@ begin
       generic map (
          TPD_G          => TPD_G,
          BUILD_INFO_G   => BUILD_INFO_G,
-         RCE_DMA_MODE_G => RCE_DMA_MODE_G,
-         OLD_BSI_MODE_G => OLD_BSI_MODE_G) 
+         RCE_DMA_MODE_G => RCE_DMA_MODE_G
       port map (
          i2cSda              => i2cSda,
          i2cScl              => i2cScl,

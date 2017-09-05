@@ -68,10 +68,10 @@ entity RceG3AxiCntl is
       axiClkRst : in sl;
 
       -- BSI AXI Lite
-      bsiAxilReadMaster  : out AxiLiteReadMasterArray(1 downto 0);
-      bsiAxilReadSlave   : in  AxiLiteReadSlaveArray(1 downto 0);
-      bsiAxilWriteMaster : out AxiLiteWriteMasterArray(1 downto 0);
-      bsiAxilWriteSlave  : in  AxiLiteWriteSlaveArray(1 downto 0);
+      bsiAxilReadMaster  : out AxiLiteReadMasterType;
+      bsiAxilReadSlave   : in  AxiLiteReadSlaveType;
+      bsiAxilWriteMaster : out AxiLiteWriteMasterType;
+      bsiAxilWriteSlave  : in  AxiLiteWriteSlaveType;
 
       -- External AXI Lite (top level, outside DpmCore, DtmCore)
       extAxilReadMaster  : out AxiLiteReadMasterType;
@@ -99,7 +99,7 @@ end RceG3AxiCntl;
 architecture structure of RceG3AxiCntl is
 
    constant GP0_MAST_CNT_C : integer := DMA_AXIL_COUNT_C + 1;
-   constant GP1_MAST_CNT_C : integer := 5;
+   constant GP1_MAST_CNT_C : integer := 4;
 
    constant BUILD_INFO_C       : BuildInfoRetType    := toBuildInfo(BUILD_INFO_G);
    constant BUILD_STRING_ROM_C : Slv32Array(0 to 63) := BUILD_INFO_C.buildString;
@@ -284,20 +284,14 @@ begin
                addrBits     => 12,
                connectivity => x"FFFF"),
 
-            -- 0x88000000 - 0x88000FFF : BSI I2C Slave Registers
-            2               => (
-               baseAddr     => x"88000000",
-               addrBits     => 12,
-               connectivity => x"FFFF"),
-
             -- 0xA0000000 - 0xAFFFFFFF : External Register Space
-            3               => (
+            2               => (
                baseAddr     => x"A0000000",
                addrBits     => 28,
                connectivity => x"FFFF"),
 
             -- 0xB0000000 - 0xBFFFFFFF : Core Register Space
-            4               => (
+            3               => (
                baseAddr     => x"B0000000",
                addrBits     => 28,
                connectivity => x"FFFF"))
@@ -319,20 +313,20 @@ begin
    intReadMaster        <= tmpGp1ReadMasters(0);
    tmpGp1ReadSlaves(0)  <= intReadSlave;
 
-   bsiAxilWriteMaster            <= tmpGp1WriteMasters(2 downto 1);
-   tmpGp1WriteSlaves(2 downto 1) <= bsiAxilWriteSlave;
-   bsiAxilReadMaster             <= tmpGp1ReadMasters(2 downto 1);
-   tmpGp1ReadSlaves(2 downto 1)  <= bsiAxilReadSlave;
+   bsiAxilWriteMaster   <= tmpGp1WriteMasters(1);
+   tmpGp1WriteSlaves(1) <= bsiAxilWriteSlave;
+   bsiAxilReadMaster    <= tmpGp1ReadMasters(1);
+   tmpGp1ReadSlaves(1)  <= bsiAxilReadSlave;
 
-   extAxilWriteMaster   <= tmpGp1WriteMasters(3);
-   tmpGp1WriteSlaves(3) <= extAxilWriteSlave;
-   extAxilReadMaster    <= tmpGp1ReadMasters(3);
-   tmpGp1ReadSlaves(3)  <= extAxilReadSlave;
+   extAxilWriteMaster   <= tmpGp1WriteMasters(2);
+   tmpGp1WriteSlaves(2) <= extAxilWriteSlave;
+   extAxilReadMaster    <= tmpGp1ReadMasters(2);
+   tmpGp1ReadSlaves(2)  <= extAxilReadSlave;
 
-   coreAxilWriteMaster  <= tmpGp1WriteMasters(4);
-   tmpGp1WriteSlaves(4) <= coreAxilWriteSlave;
-   coreAxilReadMaster   <= tmpGp1ReadMasters(4);
-   tmpGp1ReadSlaves(4)  <= coreAxilReadSlave;
+   coreAxilWriteMaster  <= tmpGp1WriteMasters(3);
+   tmpGp1WriteSlaves(3) <= coreAxilWriteSlave;
+   coreAxilReadMaster   <= tmpGp1ReadMasters(3);
+   tmpGp1ReadSlaves(3)  <= coreAxilReadSlave;
 
 
    -------------------------------------

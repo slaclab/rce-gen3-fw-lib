@@ -51,7 +51,6 @@ entity RceG3IntCntl is
 
       -- Interrupt Inputs
       dmaInterrupt        : in  slv(DMA_INT_COUNT_C-1 downto 0);
-      bsiInterrupt        : in  sl;
       userInterrupt       : in  slv(USER_INT_COUNT_C-1 downto 0);
 
       -- Interrupt Outputs
@@ -108,11 +107,9 @@ begin
          if axiDmaRst = '1' then
             locSources <= (others=>'0') after TPD_G;
          else
-
             if RCE_DMA_MODE_G = RCE_DMA_PPI_C then
-               locSources(DMA_INT_COUNT_C-1 downto 0)          <= dmaInterrupt  after TPD_G;
+               locSources(DMA_INT_COUNT_C-1 downto 0) <= dmaInterrupt  after TPD_G;
             end if;
-            locSources(DMA_INT_COUNT_C)                        <= bsiInterrupt  after TPD_G;
             locSources(SRC_COUNT_C-1 downto DMA_INT_COUNT_C+1) <= userInterrupt after TPD_G;
          end if;
       end if;

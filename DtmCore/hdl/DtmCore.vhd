@@ -35,9 +35,7 @@ entity DtmCore is
    generic (
       TPD_G          : time           := 1 ns;
       BUILD_INFO_G   : BuildInfoType;
-      RCE_DMA_MODE_G : RceDmaModeType := RCE_DMA_PPI_C;
-      OLD_BSI_MODE_G : boolean        := false
-   );
+      RCE_DMA_MODE_G : RceDmaModeType := RCE_DMA_PPI_C);
    port (
 
       -- I2C
@@ -176,8 +174,7 @@ begin
       generic map (
          TPD_G          => TPD_G,
          BUILD_INFO_G   => BUILD_INFO_G,
-         RCE_DMA_MODE_G => RCE_DMA_MODE_G,
-         OLD_BSI_MODE_G => OLD_BSI_MODE_G
+         RCE_DMA_MODE_G => RCE_DMA_MODE_G
       ) port map (
          i2cSda              => i2cSda,
          i2cScl              => i2cScl,

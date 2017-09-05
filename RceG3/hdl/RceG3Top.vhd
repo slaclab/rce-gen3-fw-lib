@@ -40,7 +40,6 @@ entity RceG3Top is
       DMA_CLKDIV_EN_G       : boolean               := false;
       DMA_CLKDIV_G          : real                  := 5.0;
       RCE_DMA_MODE_G        : RceDmaModeType        := RCE_DMA_PPI_C;
-      OLD_BSI_MODE_G        : boolean               := false;
       SIM_MODEL_G           : boolean               := false
    );
    port (
@@ -129,10 +128,10 @@ architecture structure of RceG3Top is
    signal hpWriteMaster       : AxiWriteMasterArray(3 downto 0);
    signal hpReadSlave         : AxiReadSlaveArray(3 downto 0);
    signal hpReadMaster        : AxiReadMasterArray(3 downto 0);
-   signal bsiAxilReadMaster   : AxiLiteReadMasterArray(1 downto 0);
-   signal bsiAxilReadSlave    : AxiLiteReadSlaveArray(1 downto 0);
-   signal bsiAxilWriteMaster  : AxiLiteWriteMasterArray(1 downto 0);
-   signal bsiAxilWriteSlave   : AxiLiteWriteSlaveArray(1 downto 0);
+   signal bsiAxilReadMaster   : AxiLiteReadMasterType;
+   signal bsiAxilReadSlave    : AxiLiteReadSlaveType;
+   signal bsiAxilWriteMaster  : AxiLiteWriteMasterType;
+   signal bsiAxilWriteSlave   : AxiLiteWriteSlaveType;
    signal dmaAxilReadMaster   : AxiLiteReadMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
    signal dmaAxilReadSlave    : AxiLiteReadSlaveArray(DMA_AXIL_COUNT_C-1 downto 0);
    signal dmaAxilWriteMaster  : AxiLiteWriteMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
@@ -141,10 +140,6 @@ architecture structure of RceG3Top is
    signal icAxilReadSlave     : AxiLiteReadSlaveType;
    signal icAxilWriteMaster   : AxiLiteWriteMasterType;
    signal icAxilWriteSlave    : AxiLiteWriteSlaveType;
-   signal bsiAcpWriteSlave    : AxiWriteSlaveType;
-   signal bsiAcpWriteMaster   : AxiWriteMasterType;
-   signal dmaAcpWriteSlave    : AxiWriteSlaveType;
-   signal dmaAcpWriteMaster   : AxiWriteMasterType;
    signal armInterrupt        : slv(15 downto 0);
    signal dmaInterrupt        : slv(DMA_INT_COUNT_C-1 downto 0);
    signal bsiInterrupt        : sl;
@@ -254,15 +249,6 @@ begin
    end generate;
 
 
-   -- ACP connection MUX
-   acpWriteMaster   <= bsiAcpWriteMaster when OLD_BSI_MODE_G = true  else dmaAcpWriteMaster;
-   bsiAcpWriteSlave <= acpWriteSlave     when OLD_BSI_MODE_G = true  else AXI_WRITE_SLAVE_INIT_C;
-   dmaAcpWriteSlave <= acpWriteSlave     when OLD_BSI_MODE_G = false else AXI_WRITE_SLAVE_INIT_C;
-
-   assert OLD_BSI_MODE_G = false or RCE_DMA_MODE_G = RCE_DMA_AXIS_C 
-      report "OLD_BSI_MODE_G must be false when using PPI DMA" severity failure;
-
-
    --------------------------------------------
    -- Clock Generation
    --------------------------------------------
@@ -351,15 +337,10 @@ begin
       ) port map (
          axiClk           => isysClk125,
          axiClkRst        => isysClk125Rst,
-         axiDmaClk        => axiDmaClk,
-         axiDmaRst        => axiDmaRst,
          axilReadMaster   => bsiAxilReadMaster,
          axilReadSlave    => bsiAxilReadSlave,
          axilWriteMaster  => bsiAxilWriteMaster,
          axilWriteSlave   => bsiAxilWriteSlave,
-         acpWriteMaster   => bsiAcpWriteMaster,
-         acpWriteSlave    => bsiAcpWriteSlave,
-         bsiInterrupt     => bsiInterrupt,
          armEthMode       => armEthMode,
          eFuseValue       => eFuseValue,
          deviceDna        => deviceDna,
@@ -378,8 +359,8 @@ begin
       ) port map (
          axiDmaClk            => axiDmaClk,
          axiDmaRst            => axiDmaRst,
-         acpWriteSlave        => dmaAcpWriteSlave,
-         acpWriteMaster       => dmaAcpWriteMaster,
+         acpWriteSlave        => acpWriteSlave,
+         acpWriteMaster       => acpWriteMaster,
          acpReadSlave         => acpReadSlave,
          acpReadMaster        => acpReadMaster,
          hpWriteSlave         => hpWriteSlave,
@@ -420,7 +401,6 @@ begin
          icAxilWriteMaster    => icAxilWriteMaster,
          icAxilWriteSlave     => icAxilWriteSlave,
          dmaInterrupt         => dmaInterrupt,
-         bsiInterrupt         => bsiInterrupt,
          userInterrupt        => userInterrupt,
          armInterrupt         => armInterrupt
       );

@@ -32,9 +32,7 @@ entity EvalCore is
    generic (
       TPD_G          : time           := 1 ns;
       BUILD_INFO_G   : BuildInfoType;
-      RCE_DMA_MODE_G : RceDmaModeType := RCE_DMA_PPI_C;
-      OLD_BSI_MODE_G : boolean        := false
-   );
+      RCE_DMA_MODE_G : RceDmaModeType := RCE_DMA_PPI_C);
    port (
       i2cSda                  : inout sl;
       i2cScl                  : inout sl;
@@ -96,7 +94,6 @@ begin
          TPD_G           => TPD_G,
          BUILD_INFO_G    => BUILD_INFO_G,
          RCE_DMA_MODE_G  => RCE_DMA_MODE_G,
-         OLD_BSI_MODE_G  => OLD_BSI_MODE_G,
          DMA_CLKDIV_G    => 10.0,
          DMA_CLKDIV_EN_G => true
       ) port map (
