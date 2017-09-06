@@ -30,7 +30,7 @@ class DpmTiming(pr.Device):
             name='RxDelay0', 
             description='Delay Value For Rx Data 0 input',
             offset=0x08, 
-            bitSize=32, 
+            bitSize=5, 
             bitOffset=0, 
             disp='range',
             minimum=0,
@@ -60,7 +60,7 @@ class DpmTiming(pr.Device):
             name='RxDelay1', 
             description='Delay Value For Rx Data 1 input',
             offset=0x18, 
-            bitSize=32, 
+            bitSize=5, 
             bitOffset=0,
             disp='range',
             minimum=0,
@@ -73,7 +73,7 @@ class DpmTiming(pr.Device):
             description='RxErrors Value For Input 1',
             offset=0x1C, 
             bitSize=16, 
-            bitOffset=0,
+            bitOffset=16,
             mode='RO', 
             pollInterval=1))
 
@@ -123,10 +123,10 @@ class DpmTiming(pr.Device):
 
         self.hideVariables(hidden=True, [self.enabled])
         self.enabled.set(True)
+
     def softReset(self):
         self.SoftReset()
         
-
     def hardReset(self):
         self.ClkReset()
 

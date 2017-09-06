@@ -24,15 +24,16 @@ class RceDtmTiming(pr.Device):
         self.addRemoteVariables(
             number=8,
             stride=4,
-            name="FbDela",
+            name="FbDelay",
             description='FbDelay Value For Dpm',
             offset=0x100,
-            bitSize=16,
+            mode='RW',
+            bitSize=5,
             bitOffset=0,
             base=pr.UInt,
             disp='range',
             minimum=0,
-            maximum=32)
+            maximum=31)
 
         self.addRemoteVariables(
             number=8,
@@ -68,43 +69,42 @@ class RceDtmTiming(pr.Device):
             mode='RO')
 
         self.add(pr.RemoteVariable(
-            name='TxData0', 
+            name='TxCount0', 
             description='TX Data 0 Counter',
             offset=0x414, 
             bitSize=32, 
             bitOffset=0))
 
         self.add(pr.RemoteVariable(
-            name='TxData1', 
+            name='TxCount1', 
             description='TX Data 1 Counter',
             offset=0x418, 
             bitSize=32, 
             bitOffset=0))
 
-        @self.command(description='Transmit Data On Channel 0.')
-        def TxData0(value):
-            self.TxData0.set(value)
+        self.add(pr.RemoteCommand(
+            name='TxCmd0',
+            description='Transmit Data On Channel 0',
+            offset=0x400,
+            bitSize=10,
+            function=RemoteCommand.touch))
 
-        @self.command(description='Transmit Data On Channel 0.')
-        def TxData1(value):
-            self.TxData1.set(value)   
+        self.add(pr.RemoteCommand(
+            name='TxCmd1',
+            description='Transmit Data On Channel 1',
+            offset=0x410,
+            bitSize=10,
+            function=RemoteCommand.touch))
+
+        self.add(pr.RemoteCommand(
+            name='CountReset',
+            offset=0x41C,
+            bitSize=1,
+            function=RemoteCommand.touchOne))
+
+    def countReset(self):
+        self.CountReset()
+
             
 
-        # self.add(pr.RemoteCommand(
-        #     name='TxData0',
-        #     description='Transmit Data On Channel 0.',
-        #     offset=0x400,
-        #     bitSize=32,
-        #     function=TxData0))
-
-        # self.add(pr.RemoteCommand(
-        #     name='TxData1',
-        #     description='Transmit Data On Channel 1.',
-        #     offset=0x410,
-        #     bitSize=32,
-        #     function=TxData1))
-
-         
-
-
-
+        
