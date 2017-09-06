@@ -14,69 +14,80 @@
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
 import pyrogue as pr
-import collections
+
 
 class DpmTiming(pr.Device):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(self.__class__, self).__init__(
+            description="RCE DPM Timing Registers.", **kwargs)
 
         self.add(pr.RemoteCommand(
             name='ClkReset',
             offset=0x0,
             function=RemoteCommand.touchOne
         ))
+        self.add(pr.RemoteVariable(
+            name='RxDelay0', 
+            description='Delay Value For Rx Data 0 input',
+            offset=0x08, 
+            bitSize=32, 
+            bitOffset=0, 
+            disp='range',
+            minimum=0,
+            maximum=31))
 
         self.add(pr.RemoteVariable(
-            name='RxDelay0',
-            offset=0x8,
+            name='RxErrors0', 
+            description='RxErrors Value For Input 0',
+            offset=0x0C, 
+            bitSize=16, 
+            bitOffset=16,
+            mode='RO',
+            pollInterval=1
+        ))
+
+        self.add(pr.RemoteVariable(
+            name='RxIdle0', 
+            description='RxIdle Value For Input 0',
+            offset=0x0C, 
+            bitSize=16, 
+            bitOffset=0,
+            mode='RO',
+            pollInterval=1,
+        ))
+
+        self.add(pr.RemoteVariable(
+            name='RxDelay1', 
+            description='Delay Value For Rx Data 1 input',
+            offset=0x18, 
+            bitSize=32, 
+            bitOffset=0,
             disp='range',
             minimum=0,
             maximum=31,
         ))
 
-        self.add(pr.RemoteVariable(
-            name='RxErrors0',
-            offset=0xC,
-            mode='RO',
-            bitOffset=16,
-            bitSize=16,
-            pollInterval=1,
-        ))
 
         self.add(pr.RemoteVariable(
-            name='RxIdle0',
-            offset=0xC,
-            mode='RO',
+            name='RxErrors1', 
+            description='RxErrors Value For Input 1',
+            offset=0x1C, 
+            bitSize=16, 
             bitOffset=0,
-            bitSize=16,
-            pollInterval=1,
-        ))
-                 
-        self.add(pr.RemoteVariable(
-            name='RxDelay1',
-            offset=0x18,
-            disp='range',
-            minimum=0,
-            maximum=31,
-        ))
+            mode='RO', 
+            pollInterval=1))
 
         self.add(pr.RemoteVariable(
-            name='RxErrors1',
-            offset=0x1C,
-            mode='RO',
-            bitOffset=16,
-            bitSize=16,
-            pollInterval=1,
-        ))
-
-        self.add(pr.RemoteVariable(
-            name='RxIdle1',
-            offset=0x1C,
-            mode='RO',
+            name='RxIdle1', 
+            description='RxIdle Value For Input 1',
+            offset=0x1C, 
+            bitSize=16, 
             bitOffset=0,
-            bitSize=16,
+            mode='RO',
             pollInterval=1,
         ))
+
+
 
         self.add(pr.RemoteCommand(
             name='CountReset',
@@ -85,21 +96,26 @@ class DpmTiming(pr.Device):
         ))
 
         self.add(pr.RemoteVariable(
-            name='RxCount0',
-            offset=0x024,
+            name='RxCount0', 
+            description='RxCount Value For Input 0',
+            offset=0x24, 
+            bitSize=32, 
+            bitOffset=0,
             mode='RO',
-            pollInterval=1,
-        ))
+            pollInterval=1))
 
         self.add(pr.RemoteVariable(
-            name='RxCount1',
-            offset=0x28,
+            name='RxCount1', 
+            description='RxCount Value For Input 1',
+            offset=0x28, 
+            bitSize=32, 
+            bitOffset=0,
             mode='RO',
-            pollInterval=1,
-        ))
-        
+            pollInterval=1))
+
         self.add(pr.RemoteVariable(
             name='TxCount',
+            description='TxCount Value',
             offset=0x2C,
             mode='RO',
             pollInterval=1,
@@ -107,10 +123,10 @@ class DpmTiming(pr.Device):
 
         self.hideVariables(hidden=True, [self.enabled])
         self.enabled.set(True)
-
     def softReset(self):
         self.SoftReset()
         
+
     def hardReset(self):
         self.ClkReset()
 
