@@ -15,8 +15,7 @@
 #-----------------------------------------------------------------------------
 import pyrogue as pr
 
-
-class RceDtmTiming(pr.Device):
+class DtmTiming(pr.Device):
     def __init__(self, **kwargs):
         super(self.__class__, self).__init__(
             description="RCE DTM Timing Registers.", **kwargs)
