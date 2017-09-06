@@ -44,14 +44,12 @@ entity RceG3Bsi is
 
       -- AXI Lite Busses
       -- Channel 0 = 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
-      -- Channel 1 = 0x88000000 - 0x88000FFF : DMA Control Registers
-      axilReadMaster  : in  AxiLiteReadMasterArray(1 downto 0);
-      axilReadSlave   : out AxiLiteReadSlaveArray(1 downto 0);
-      axilWriteMaster : in  AxiLiteWriteMasterArray(1 downto 0);
-      axilWriteSlave  : out AxiLiteWriteSlaveArray(1 downto 0);
+      axilReadMaster  : in  AxiLiteReadMasterType;
+      axilReadSlave   : out AxiLiteReadSlaveType;
+      axilWriteMaster : in  AxiLiteWriteMasterType;
+      axilWriteSlave  : out AxiLiteWriteSlaveType;
 
       -- Interrupt
-      bsiInterrupt    : out sl;
       armEthMode      : in  slv(31 downto 0);
       eFuseValue      : in  slv(31 downto 0);
       deviceDna       : in  slv(63 downto 0);
@@ -104,12 +102,6 @@ architecture IMP of RceG3Bsi is
    signal rin : RegType;
 
 begin
-
-   bsiInterrupt <= '0';
-   axilReadSlave(1)  <= b.axilReadSlave;
-   axilWriteSlave(1) <= b.axilWriteSlave;
-
-
 
    -------------------------
    -- I2c Slave
@@ -225,7 +217,7 @@ begin
    end process;
 
    -- Async
-   process (axiClkRst, axilReadMaster(0), axilWriteMaster(0), cpuBramDout, r, bsiFifoValid, bsiFifoDout ) is
+   process (axiClkRst, axilReadMaster, axilWriteMaster, cpuBramDout, r, bsiFifoValid, bsiFifoDout ) is
       variable v         : RegType;
       variable axiStatus : AxiLiteStatusType;
    begin
@@ -235,26 +227,26 @@ begin
       v.cpuBramWr := '0';
       v.readEnDly := (others=>'0');
 
-      axiSlaveWaitTxn(axilWriteMaster(0), axilReadMaster(0), v.axilWriteSlave, v.axilReadSlave, axiStatus);
+      axiSlaveWaitTxn(axilWriteMaster, axilReadMaster, v.axilWriteSlave, v.axilReadSlave, axiStatus);
 
       -- Write
       if (axiStatus.writeEnable = '1') then
 
          -- Write only to block ram
-         if axilWriteMaster(0).awaddr(11) = '0' then
+         if axilWriteMaster.awaddr(11) = '0' then
             v.cpuBramWr   := '1';
-            v.cpuBramAddr := axilWriteMaster(0).awaddr(10 downto 2);
-            v.cpuBramDin  := axilWriteMaster(0).wdata;
+            v.cpuBramAddr := axilWriteMaster.awaddr(10 downto 2);
+            v.cpuBramDin  := axilWriteMaster.wdata;
          end if;
          axiSlaveWriteResponse(v.axilWriteSlave);
       end if;
 
       -- Read
       if (axiStatus.readEnable = '1') then
-         v.cpuBramAddr := axilReadMaster(0).araddr(10 downto 2);
+         v.cpuBramAddr := axilReadMaster.araddr(10 downto 2);
 
          -- Read from to block ram
-         if axilReadMaster(0).araddr(11) = '0' then
+         if axilReadMaster.araddr(11) = '0' then
             v.readEnDly(0) := '1';
             v.readEnDly(1) := r.readEnDly(0);
 
@@ -280,8 +272,8 @@ begin
       rin <= v;
 
       -- Outputs
-      axilReadSlave(0)  <= r.axilReadSlave;
-      axilWriteSlave(0) <= r.axilWriteSlave;
+      axilReadSlave  <= r.axilReadSlave;
+      axilWriteSlave <= r.axilWriteSlave;
       
    end process;
 

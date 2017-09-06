@@ -172,7 +172,7 @@ begin
       generic map (
          TPD_G          => TPD_G,
          BUILD_INFO_G   => BUILD_INFO_G,
-         RCE_DMA_MODE_G => RCE_DMA_MODE_G
+         RCE_DMA_MODE_G => RCE_DMA_MODE_G)
       port map (
          i2cSda              => i2cSda,
          i2cScl              => i2cScl,
