@@ -19,8 +19,7 @@ import collections
 
 class RceVersion(pr.Device):
     def __init__(self, **kwargs):
-        super(self.__class__, self).__init__(
-            description="RCE Version and BSI register.", **kwargs):
+        super().__init__(description="RCE Version and BSI register.", **kwargs)
         
         self.add(pyrogue.RemoteVariable(
             name='FpgaVersion',
