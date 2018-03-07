@@ -242,7 +242,6 @@ begin
          TPD_G             => TPD_G,
          DESC_AWIDTH_G     => 12,
          AXIL_BASE_ADDR_G  => AXIL_BASE_ADDR_G,
-         AXI_ERROR_RESP_G  => AXI_RESP_OK_C,
          AXI_READY_EN_G    => false,
          AXIS_READY_EN_G   => false,
          AXIS_CONFIG_G     => RCEG3_AXIS_DMA_CONFIG_C,
