@@ -82,9 +82,9 @@ architecture STRUCTURE of EvalCore is
    signal idmaIbMaster        : AxiStreamMasterArray(3 downto 0);
    signal idmaIbSlave         : AxiStreamSlaveArray(3 downto 0);
    signal coreAxilReadMaster  : AxiLiteReadMasterType;
-   signal coreAxilReadSlave   : AxiLiteReadSlaveType;
+   signal coreAxilReadSlave   : AxiLiteReadSlaveType := AXI_LITE_READ_SLAVE_EMPTY_DECERR_C;
    signal coreAxilWriteMaster : AxiLiteWriteMasterType;
-   signal coreAxilWriteSlave  : AxiLiteWriteSlaveType;
+   signal coreAxilWriteSlave  : AxiLiteWriteSlaveType := AXI_LITE_WRITE_SLAVE_EMPTY_DECERR_C;
 
 begin
 
@@ -152,19 +152,6 @@ begin
    idmaClkRst(3)   <= isysClk125Rst;
    idmaObSlave(3)  <= AXI_STREAM_SLAVE_INIT_C;
    idmaIbMaster(3) <= AXI_STREAM_MASTER_INIT_C;
-
-   -- Terminate Unused AXI-Lite Interface
-   U_AxiLiteEmpty : entity work.AxiLiteEmpty
-      generic map (
-         TPD_G  => TPD_G
-      ) port map (
-         axiClk          => iaxiClk,
-         axiClkRst       => iaxiClkRst,
-         axiReadMaster   => coreAxilReadMaster,
-         axiReadSlave    => coreAxilReadSlave,
-         axiWriteMaster  => coreAxilWriteMaster,
-         axiWriteSlave   => coreAxilWriteSlave
-      );
 
 end architecture STRUCTURE;
 

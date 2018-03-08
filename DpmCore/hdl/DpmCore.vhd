@@ -5,7 +5,7 @@
 -- Author     : Ryan Herbst <rherbst@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2016-10-21
+-- Last update: 2018-03-08
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -123,9 +123,9 @@ architecture STRUCTURE of DpmCore is
    signal idmaIbMaster        : AxiStreamMasterArray(3 downto 0);
    signal idmaIbSlave         : AxiStreamSlaveArray(3 downto 0);
    signal coreAxilReadMaster  : AxiLiteReadMasterType;
-   signal coreAxilReadSlave   : AxiLiteReadSlaveType;
+   signal coreAxilReadSlave   : AxiLiteReadSlaveType := AXI_LITE_READ_SLAVE_EMPTY_DECERR_C;
    signal coreAxilWriteMaster : AxiLiteWriteMasterType;
-   signal coreAxilWriteSlave  : AxiLiteWriteSlaveType;
+   signal coreAxilWriteSlave  : AxiLiteWriteSlaveType := AXI_LITE_WRITE_SLAVE_EMPTY_DECERR_C;
    signal armEthTx            : ArmEthTxArray(1 downto 0);
    signal armEthRx            : ArmEthRxArray(1 downto 0);
    signal armEthMode          : slv(31 downto 0);
@@ -264,17 +264,7 @@ begin
       armEthRx(1)        <= ARM_ETH_RX_INIT_C;
       armEthMode         <= x"00000001";  -- 1 Gig on lane 0
 
-      U_AxiLiteEmpty : entity work.AxiLiteEmpty
-         generic map (
-            TPD_G => TPD_G) 
-         port map (
-            axiClk         => iaxiClk,
-            axiClkRst      => iaxiClkRst,
-            axiReadMaster  => coreAxilReadMaster,
-            axiReadSlave   => coreAxilReadSlave,
-            axiWriteMaster => coreAxilWriteMaster,
-            axiWriteSlave  => coreAxilWriteSlave);
-   end generate;
+    end generate;
 
    U_Eth10gGen : if ETH_10G_EN_G = true generate
       U_ZynqEthernet10G : entity work.ZynqEthernet10G
