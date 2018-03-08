@@ -60,9 +60,9 @@ entity RceG3DmaAxis is
       userReadMaster  : in  AxiReadMasterType;
       -- Local AXI Lite Bus, 0x600n0000
       axilReadMaster  : in  AxiLiteReadMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
-      axilReadSlave   : out AxiLiteReadSlaveArray(DMA_AXIL_COUNT_C-1 downto 0);
+      axilReadSlave   : out AxiLiteReadSlaveArray(DMA_AXIL_COUNT_C-1 downto 0) := (others => AXI_LITE_READ_SLAVE_EMPTY_DECERR_C);
       axilWriteMaster : in  AxiLiteWriteMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
-      axilWriteSlave  : out AxiLiteWriteSlaveArray(DMA_AXIL_COUNT_C-1 downto 0);
+      axilWriteSlave  : out AxiLiteWriteSlaveArray(DMA_AXIL_COUNT_C-1 downto 0) := (others => AXI_LITE_WRITE_SLAVE_EMTPY_DECERR_C);
       -- Interrupts
       interrupt       : out slv(DMA_INT_COUNT_C-1 downto 0);
       -- External DMA Interfaces
@@ -114,17 +114,8 @@ begin
    -- Unused Interrupts
    interrupt(DMA_INT_COUNT_C-1 downto 4) <= (others => '0');
 
-   -- Terminate Unused AXI-Lite Interfaces
-   U_AxiLiteEmpty : entity work.AxiLiteEmpty
-      generic map (
-         TPD_G => TPD_G)
-      port map (
-         axiClk         => axiDmaClk,
-         axiClkRst      => axiDmaRst,
-         axiReadMaster  => axilReadMaster(8),
-         axiReadSlave   => axilReadSlave(8),
-         axiWriteMaster => axilWriteMaster(8),
-         axiWriteSlave  => axilWriteSlave(8));
+
+
 
    ------------------------------------------
    -- DMA Channels
