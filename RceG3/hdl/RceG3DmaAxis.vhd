@@ -62,7 +62,7 @@ entity RceG3DmaAxis is
       axilReadMaster  : in  AxiLiteReadMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
       axilReadSlave   : out AxiLiteReadSlaveArray(DMA_AXIL_COUNT_C-1 downto 0) := (others => AXI_LITE_READ_SLAVE_EMPTY_DECERR_C);
       axilWriteMaster : in  AxiLiteWriteMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
-      axilWriteSlave  : out AxiLiteWriteSlaveArray(DMA_AXIL_COUNT_C-1 downto 0) := (others => AXI_LITE_WRITE_SLAVE_EMTPY_DECERR_C);
+      axilWriteSlave  : out AxiLiteWriteSlaveArray(DMA_AXIL_COUNT_C-1 downto 0) := (others => AXI_LITE_WRITE_SLAVE_EMPTY_DECERR_C);
       -- Interrupts
       interrupt       : out slv(DMA_INT_COUNT_C-1 downto 0);
       -- External DMA Interfaces
