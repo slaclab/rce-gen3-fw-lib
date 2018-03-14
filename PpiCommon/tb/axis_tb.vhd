@@ -221,7 +221,6 @@ begin
          generic map (
             TPD_G                      => 1 ns,
             STATUS_CNT_WIDTH_G         => 32,
-            AXI_ERROR_RESP_G           => AXI_RESP_SLVERR_C,
             ALTERA_SYN_G               => false,
             ALTERA_RAM_G               => "M9K",
             CASCADE_SIZE_G             => 1,
