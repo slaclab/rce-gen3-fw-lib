@@ -39,6 +39,7 @@ entity RceG3Top is
       BUILD_INFO_G          : BuildInfoType;
       DMA_CLKDIV_EN_G       : boolean               := false;
       DMA_CLKDIV_G          : real                  := 5.0;
+      USE_AXI_IC_G          : boolean               := false;
       RCE_DMA_MODE_G        : RceDmaModeType        := RCE_DMA_PPI_C;
       SIM_MODEL_G           : boolean               := false
    );
@@ -69,6 +70,12 @@ entity RceG3Top is
       coreAxilReadSlave        : in    AxiLiteReadSlaveType;
       coreAxilWriteMaster      : out   AxiLiteWriteMasterType;
       coreAxilWriteSlave       : in    AxiLiteWriteSlaveType;
+
+      -- PCIE AXI Interface
+      pcieReadMaster           : out   AxiReadMasterArray(1 downto 0);
+      pcieReadSlave            : in    AxiReadSlaveArray(1 downto 0) := (others=>AXI_READ_SLAVE_INIT_C);
+      pcieWriteMaster          : out   AxiWriteMasterArray(1 downto 0);
+      pcieWriteSlave           : in    AxiWriteSlaveArray(1 downto 0) := (others=>AXI_WRITE_SLAVE_INIT_C);
 
       -- DMA Interfaces
       dmaClk                   : in    slv(3 downto 0);
@@ -290,6 +297,7 @@ begin
       generic map (
          TPD_G            => TPD_G,
          BUILD_INFO_G     => BUILD_INFO_G,
+         USE_AXI_IC_G     => USE_AXI_IC_G,
          RCE_DMA_MODE_G   => RCE_DMA_MODE_G
       ) port map (
          mGpReadMaster        => mGpReadMaster,
@@ -320,6 +328,10 @@ begin
          coreAxilReadSlave    => coreAxilReadSlave,
          coreAxilWriteMaster  => coreAxilWriteMaster,
          coreAxilWriteSlave   => coreAxilWriteSlave,
+         pcieReadMaster       => pcieReadMaster,
+         pcieReadSlave        => pcieReadSlave,
+         pcieWriteMaster      => pcieWriteMaster,
+         pcieWriteSlave       => pcieWriteSlave,
          clkSelA              => clkSelA,
          clkSelB              => clkSelB,
          armEthMode           => armEthMode,
