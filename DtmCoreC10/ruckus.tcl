@@ -12,9 +12,8 @@ loadRuckusTcl "$::DIR_PATH/../PpiCommon"
 loadRuckusTcl "$::DIR_PATH/../PpiPgp"
 loadRuckusTcl "$::DIR_PATH/../RceG3"
 loadRuckusTcl "$::DIR_PATH/../ZynqEthernet"
-loadRuckusTcl "$::DIR_PATH/../ZynqPcieMaster"
+loadRuckusTcl "$::DIR_PATH/../ZynqPcieRoot"
 
 # Load local Source Code and constraints
 loadSource      -dir "$::DIR_PATH/hdl/"
-loadIpCore      -dir "$::DIR_PATH/coregen/GmiiToRgmiiCore/"
 loadConstraints -dir "$::DIR_PATH/hdl/"

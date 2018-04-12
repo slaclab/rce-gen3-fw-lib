@@ -43,7 +43,6 @@ set_clock_groups -asynchronous \
 
 # Local 1G Ethernet Clocks
 set eth_txoutclk_pin [get_pins U_DtmCore/U_ZynqEthernet/core_wrapper/transceiver_inst/gtwizard_inst/U0/gtwizard_i/gt0_GTWIZARD_i/gtxe2_i/TXOUTCLK]
-#set eth_txoutclk_pin [get_pins U_DtmCore/U_ZynqEthernet/core_wrapper/transceiver_inst/gtwizard_inst/GTWIZARD_i/gt0_GTWIZARD_i/gtxe2_i/TXOUTCLK]
 create_clock -name eth_txoutclk -period 16 ${eth_txoutclk_pin}
 
 create_generated_clock -name intEthClk0 -source ${eth_txoutclk_pin} \
@@ -53,32 +52,31 @@ create_generated_clock -name intEthClk1 -source ${eth_txoutclk_pin} \
     -multiply_by 1 [get_pins U_DtmCore/U_ZynqEthernet/mmcm_adv_inst/CLKOUT1]
 
 # PCI Express Clocks
-create_clock -name pciRefClk -period 10 [get_ports pciRefClkP]
+#create_clock -name pciRefClk -period 10 [get_ports pciRefClkP]
 
-set pci_txoutclk_pin [get_pins {U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK}]
-#set pci_txoutclk_pin [get_pins U_DtmCore/U_ZynqPcieMaster/U_Pcie/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK]
-create_clock -name pci_txoutclk -period 10 ${pci_txoutclk_pin}
+#set pci_txoutclk_pin [get_pins {U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK}]
+#create_clock -name pci_txoutclk -period 10 ${pci_txoutclk_pin}
 
-create_generated_clock -name pcieClk125 -source ${pci_txoutclk_pin} \
-    -multiply_by 5 -divide_by 4 \
-    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT0]
+#create_generated_clock -name pcieClk125 -source ${pci_txoutclk_pin} \
+#    -multiply_by 5 -divide_by 4 \
+#    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT0]
 
-create_generated_clock -name pcieClk250 -source ${pci_txoutclk_pin} \
-    -multiply_by 5 -divide_by 2 \
-    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT1]
-
-create_generated_clock -name pcieUserClk1 -source ${pci_txoutclk_pin} \ 
-    -multiply_by 5 -divide_by 8 \
-    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT2]
-
-create_generated_clock -name pcieUserClk2 -source ${pci_txoutclk_pin} \
-    -multiply_by 5 -divide_by 8 \
-    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT3]
-
-set_clock_groups -asynchronous \
-    -group [get_clocks -include_generated_clocks fclk0] \
-    -group [get_clocks -include_generated_clocks eth_txoutclk] \
-    -group [get_clocks -include_generated_clocks pci_txoutclk]
+#create_generated_clock -name pcieClk250 -source ${pci_txoutclk_pin} \
+#    -multiply_by 5 -divide_by 2 \
+#    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT1]
+#
+#create_generated_clock -name pcieUserClk1 -source ${pci_txoutclk_pin} \ 
+#    -multiply_by 5 -divide_by 8 \
+#    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT2]
+#
+#create_generated_clock -name pcieUserClk2 -source ${pci_txoutclk_pin} \
+#    -multiply_by 5 -divide_by 8 \
+#    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT3]
+#
+#set_clock_groups -asynchronous \
+#    -group [get_clocks -include_generated_clocks fclk0] \
+#    -group [get_clocks -include_generated_clocks eth_txoutclk] \
+#    -group [get_clocks -include_generated_clocks pci_txoutclk]
 
 # DNA Primitive Clock
 create_generated_clock -name dnaClk  [get_pins {U_DtmCore/U_RceG3Top/U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/BUFR_Inst/O}] 
@@ -89,13 +87,13 @@ set_clock_groups -asynchronous \
     -group [get_clocks sysClk125] 
     
 # PCI-Express Timing
-set_false_path -through [get_pins  -hier -filter {name =~ *pcie_block_i/PLPHYLNKUPN*}]
-set_false_path -through [get_pins  -hier -filter {name =~ *pcie_block_i/PLRECEIVEDHOTRST*}]
-set_false_path -through [get_nets  -hier -filter {name =~ *pipe_wrapper_i/user_resetdone*}]
-set_false_path -through [get_nets  -hier -filter {name =~ *pipe_wrapper_i/pipe_lane[0].pipe_rate.pipe_rate_i/*}]
-set_false_path -through [get_cells -hier -filter {name =~ *pipe_wrapper_i/pipe_reset.pipe_reset_i/cpllreset_reg*}]
-set_false_path -to      [get_pins  -hier -filter {name =~ *pipe_wrapper_i/pipe_clock_int.pipe_clock_i/pclk_i1_bufgctrl.pclk_i1/S*}]
-set_false_path -through [get_nets  -hier -filter {name =~ *pipe_wrapper_i/pipe_clock_int.pipe_clock_i/pclk_sel*}]
+#set_false_path -through [get_pins  -hier -filter {name =~ *pcie_block_i/PLPHYLNKUPN*}]
+#set_false_path -through [get_pins  -hier -filter {name =~ *pcie_block_i/PLRECEIVEDHOTRST*}]
+#set_false_path -through [get_nets  -hier -filter {name =~ *pipe_wrapper_i/user_resetdone*}]
+#set_false_path -through [get_nets  -hier -filter {name =~ *pipe_wrapper_i/pipe_lane[0].pipe_rate.pipe_rate_i/*}]
+#set_false_path -through [get_cells -hier -filter {name =~ *pipe_wrapper_i/pipe_reset.pipe_reset_i/cpllreset_reg*}]
+#set_false_path -to      [get_pins  -hier -filter {name =~ *pipe_wrapper_i/pipe_clock_int.pipe_clock_i/pclk_i1_bufgctrl.pclk_i1/S*}]
+#set_false_path -through [get_nets  -hier -filter {name =~ *pipe_wrapper_i/pipe_clock_int.pipe_clock_i/pclk_sel*}]
 
 # # StdLib
 # set_property ASYNC_REG TRUE [get_cells -hierarchical *crossDomainSyncReg_reg*]
