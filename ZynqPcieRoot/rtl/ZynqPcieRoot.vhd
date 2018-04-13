@@ -369,56 +369,99 @@ begin
    --------------------------------
    -- SLAVE Interface FIFOs
    --------------------------------
-   U_SlaveGen: for i in 0 to 1 generate
+   U_Slave0Read: entity work.AxiReadPathFifo
+      generic map (
+         TPD_G                  => TPD_G,
+         ID_FIXED_EN_G          => false,
+         SIZE_FIXED_EN_G        => false,
+         BURST_FIXED_EN_G       => false,
+         LEN_FIXED_EN_G         => false,
+         LOCK_FIXED_EN_G        => false,
+         PROT_FIXED_EN_G        => false,
+         CACHE_FIXED_EN_G       => false,
+         ADDR_FIFO_ADDR_WIDTH_G => 9,
+         DATA_FIFO_ADDR_WIDTH_G => 9,
+         AXI_CONFIG_G           => AXI_MAST_GP_INIT_C
+      ) port map (
+         sAxiClk        => axiClk,
+         sAxiRst        => axiClkRst,
+         sAxiReadMaster => pcieReadMaster(0),
+         sAxiReadSlave  => pcieReadSlave(0),
+         mAxiClk        => intAxiClk,
+         mAxiRst        => intAxiClkRst,
+         mAxiReadMaster => intReadMaster(0),
+         mAxiReadSlave  => intReadSlave(0));
 
-      U_SlaveRead: entity work.AxiReadPathFifo
-         generic map (
-            TPD_G                  => TPD_G,
-            ID_FIXED_EN_G          => false,
-            SIZE_FIXED_EN_G        => false,
-            BURST_FIXED_EN_G       => false,
-            LEN_FIXED_EN_G         => false,
-            LOCK_FIXED_EN_G        => false,
-            PROT_FIXED_EN_G        => false,
-            CACHE_FIXED_EN_G       => false,
-            ADDR_FIFO_ADDR_WIDTH_G => 9,
-            DATA_FIFO_ADDR_WIDTH_G => 9,
-            AXI_CONFIG_G           => AXI_MAST_GP64_INIT_C
-         ) port map (
-            sAxiClk        => axiClk,
-            sAxiRst        => axiClkRst,
-            sAxiReadMaster => pcieReadMaster(i),
-            sAxiReadSlave  => pcieReadSlave(i),
-            mAxiClk        => intAxiClk,
-            mAxiRst        => intAxiClkRst,
-            mAxiReadMaster => intReadMaster(i),
-            mAxiReadSlave  => intReadSlave(i));
+   U_Slave0Write: entity work.AxiWritePathFifo 
+      generic map (
+         TPD_G                  => TPD_G,
+         ID_FIXED_EN_G          => false,
+         SIZE_FIXED_EN_G        => false,
+         BURST_FIXED_EN_G       => false,
+         LEN_FIXED_EN_G         => false,
+         LOCK_FIXED_EN_G        => false,
+         PROT_FIXED_EN_G        => false,
+         CACHE_FIXED_EN_G       => false,
+         ADDR_FIFO_ADDR_WIDTH_G => 9,
+         DATA_FIFO_ADDR_WIDTH_G => 9,
+         RESP_FIFO_ADDR_WIDTH_G => 9,
+         AXI_CONFIG_G           => AXI_MAST_GP_INIT_C
+      ) port map (
+         sAxiClk         => axiClk,
+         sAxiRst         => axiClkRst,
+         sAxiWriteMaster => pcieWriteMaster(0),
+         sAxiWriteSlave  => pcieWriteSlave(0),
+         mAxiClk         => intAxiClk,
+         mAxiRst         => intAxiClkRst,
+         mAxiWriteMaster => intWriteMaster(0),
+         mAxiWriteSlave  => intWriteSlave(0));
 
-      U_SlaveWrite: entity work.AxiWritePathFifo 
-         generic map (
-            TPD_G                  => TPD_G,
-            ID_FIXED_EN_G          => false,
-            SIZE_FIXED_EN_G        => false,
-            BURST_FIXED_EN_G       => false,
-            LEN_FIXED_EN_G         => false,
-            LOCK_FIXED_EN_G        => false,
-            PROT_FIXED_EN_G        => false,
-            CACHE_FIXED_EN_G       => false,
-            ADDR_FIFO_ADDR_WIDTH_G => 9,
-            DATA_FIFO_ADDR_WIDTH_G => 9,
-            RESP_FIFO_ADDR_WIDTH_G => 9,
-            AXI_CONFIG_G           => AXI_MAST_GP64_INIT_C
-         ) port map (
-            sAxiClk         => axiClk,
-            sAxiRst         => axiClkRst,
-            sAxiWriteMaster => pcieWriteMaster(i),
-            sAxiWriteSlave  => pcieWriteSlave(i),
-            mAxiClk         => intAxiClk,
-            mAxiRst         => intAxiClkRst,
-            mAxiWriteMaster => intWriteMaster(i),
-            mAxiWriteSlave  => intWriteSlave(i));
+   U_Slave1Read: entity work.AxiReadPathFifo
+      generic map (
+         TPD_G                  => TPD_G,
+         ID_FIXED_EN_G          => false,
+         SIZE_FIXED_EN_G        => false,
+         BURST_FIXED_EN_G       => false,
+         LEN_FIXED_EN_G         => false,
+         LOCK_FIXED_EN_G        => false,
+         PROT_FIXED_EN_G        => false,
+         CACHE_FIXED_EN_G       => false,
+         ADDR_FIFO_ADDR_WIDTH_G => 9,
+         DATA_FIFO_ADDR_WIDTH_G => 9,
+         AXI_CONFIG_G           => AXI_MAST_GP64_INIT_C
+      ) port map (
+         sAxiClk        => axiClk,
+         sAxiRst        => axiClkRst,
+         sAxiReadMaster => pcieReadMaster(1),
+         sAxiReadSlave  => pcieReadSlave(1),
+         mAxiClk        => intAxiClk,
+         mAxiRst        => intAxiClkRst,
+         mAxiReadMaster => intReadMaster(1),
+         mAxiReadSlave  => intReadSlave(1));
 
-   end generate;
+   U_Slave1Write: entity work.AxiWritePathFifo 
+      generic map (
+         TPD_G                  => TPD_G,
+         ID_FIXED_EN_G          => false,
+         SIZE_FIXED_EN_G        => false,
+         BURST_FIXED_EN_G       => false,
+         LEN_FIXED_EN_G         => false,
+         LOCK_FIXED_EN_G        => false,
+         PROT_FIXED_EN_G        => false,
+         CACHE_FIXED_EN_G       => false,
+         ADDR_FIFO_ADDR_WIDTH_G => 9,
+         DATA_FIFO_ADDR_WIDTH_G => 9,
+         RESP_FIFO_ADDR_WIDTH_G => 9,
+         AXI_CONFIG_G           => AXI_MAST_GP64_INIT_C
+      ) port map (
+         sAxiClk         => axiClk,
+         sAxiRst         => axiClkRst,
+         sAxiWriteMaster => pcieWriteMaster(1),
+         sAxiWriteSlave  => pcieWriteSlave(1),
+         mAxiClk         => intAxiClk,
+         mAxiRst         => intAxiClkRst,
+         mAxiWriteMaster => intWriteMaster(1),
+         mAxiWriteSlave  => intWriteSlave(1));
 
    --------------------------------
    -- Master Interface FIFOs

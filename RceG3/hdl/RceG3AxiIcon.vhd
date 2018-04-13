@@ -136,7 +136,7 @@ architecture mapping of RceG3AxiIcon is
          axi_mast1_awqos : out STD_LOGIC_VECTOR ( 3 downto 0 );
          axi_mast1_awvalid : out STD_LOGIC_VECTOR ( 0 to 0 );
          axi_mast1_awready : in STD_LOGIC_VECTOR ( 0 to 0 );
-         axi_mast1_wdata : out STD_LOGIC_VECTOR ( 63 downto 0 );
+         axi_mast1_wdata : out STD_LOGIC_VECTOR ( 31 downto 0 );
          axi_mast1_wstrb : out STD_LOGIC_VECTOR ( 7 downto 0 );
          axi_mast1_wlast : out STD_LOGIC_VECTOR ( 0 to 0 );
          axi_mast1_wvalid : out STD_LOGIC_VECTOR ( 0 to 0 );
@@ -155,7 +155,7 @@ architecture mapping of RceG3AxiIcon is
          axi_mast1_arqos : out STD_LOGIC_VECTOR ( 3 downto 0 );
          axi_mast1_arvalid : out STD_LOGIC_VECTOR ( 0 to 0 );
          axi_mast1_arready : in STD_LOGIC_VECTOR ( 0 to 0 );
-         axi_mast1_rdata : in STD_LOGIC_VECTOR ( 63 downto 0 );
+         axi_mast1_rdata : in STD_LOGIC_VECTOR ( 31 downto 0 );
          axi_mast1_rresp : in STD_LOGIC_VECTOR ( 1 downto 0 );
          axi_mast1_rlast : in STD_LOGIC_VECTOR ( 0 to 0 );
          axi_mast1_rvalid : in STD_LOGIC_VECTOR ( 0 to 0 );
@@ -228,7 +228,7 @@ begin
 
    -- Unused master write data bits
    locWriteMaster.wdata(1023 downto 32) <= (others=>'0');
-   pcieWriteMaster(0).wdata(1023 downto 64) <= (others=>'0');
+   pcieWriteMaster(0).wdata(1023 downto 32) <= (others=>'0');
    pcieWriteMaster(1).wdata(1023 downto 64) <= (others=>'0');
 
    -- Unused master write data strobe bits
