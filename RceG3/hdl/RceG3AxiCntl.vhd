@@ -193,60 +193,56 @@ architecture structure of RceG3AxiCntl is
       return retConf;
    end function;
 
-   if USE_AXI_IC_G then
+   -- GP0 Address Map Generator
+   function genGp1Config return AxiLiteCrossbarMasterConfigArray is
+      variable retConf : AxiLiteCrossbarMasterConfigArray(3 downto 0);
+   begin
+      if USE_AXI_IC_G then
+          -- 0x80000000 - 0x8000FFFF : Internal registers
+          retConf(0).baseAddr     := x"80000000";
+          retConf(0).addrBits     := 16;
+          retConf(0).connectivity := x"FFFF";
 
-        GP1_CONFIG_C : AxiLiteCrossbarMasterConfigArray :=
-            -- 0x80000000 - 0x8000FFFF : Internal registers
-            0               => (
-               baseAddr     => x"80000000",
-               addrBits     => 16,
-               connectivity => x"FFFF"),
+          -- 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
+          retConf(1).baseAddr     := x"84000000";
+          retConf(1).addrBits     := 12;
+          retConf(1).connectivity := x"FFFF";
 
-            -- 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
-            1               => (
-               baseAddr     => x"84000000",
-               addrBits     => 12,
-               connectivity => x"FFFF"),
+          -- 0x90000000 - 0x97FFFFFF : External Register Space
+          retConf(2).baseAddr     := x"90000000";
+          retConf(2).addrBits     := 27;
+          retConf(2).connectivity := x"FFFF";
 
-            -- 0x90000000 - 0x97FFFFFF : External Register Space
-            2               => (
-               baseAddr     => x"90000000",
-               addrBits     => 27,
-               connectivity => x"FFFF"),
+          -- 0x98000000 - 0x9FFFFFFF : Core Register Space
+          retConf(3).baseAddr     := x"98000000";
+          retConf(3).addrBits     := 27;
+          retConf(3).connectivity := x"FFFF";
 
-            -- 0x98000000 - 0x9FFFFFFF : Core Register Space
-            3               => (
-               baseAddr     => x"98000000",
-               addrBits     => 27,
-               connectivity => x"FFFF"))
-   else
+      else
 
-        GP1_CONFIG_C : AxiLiteCrossbarMasterConfigArray :=
-            -- 0x80000000 - 0x8000FFFF : Internal registers
-            0               => (
-               baseAddr     => x"80000000",
-               addrBits     => 16,
-               connectivity => x"FFFF"),
+          -- 0x80000000 - 0x8000FFFF : Internal registers
+          retConf(0).baseAddr     := x"80000000";
+          retConf(0).addrBits     := 16;
+          retConf(0).connectivity := x"FFFF";
 
-            -- 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
-            1               => (
-               baseAddr     => x"84000000",
-               addrBits     => 12,
-               connectivity => x"FFFF"),
+          -- 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
+          retConf(1).baseAddr     := x"84000000";
+          retConf(1).addrBits     := 12;
+          retConf(1).connectivity := x"FFFF";
 
-            -- 0xA0000000 - 0xAFFFFFFF : External Register Space
-            2               => (
-               baseAddr     => x"A0000000",
-               addrBits     => 28,
-               connectivity => x"FFFF"),
+          -- 0xA0000000 - 0xAFFFFFFF : External Register Space
+          retConf(2).baseAddr     := x"A0000000";
+          retConf(2).addrBits     := 28;
+          retConf(2).connectivity := x"FFFF";
 
-            -- 0xB0000000 - 0xBFFFFFFF : Core Register Space
-            3               => (
-               baseAddr     => x"B0000000",
-               addrBits     => 28,
-               connectivity => x"FFFF"))
+          -- 0xB0000000 - 0xBFFFFFFF : Core Register Space
+          retConf(3).baseAddr     := x"B0000000";
+          retConf(3).addrBits     := 28;
+          retConf(3).connectivity := x"FFFF";
 
       end if;
+      return retConf;
+   end function;
 
 begin
 
@@ -315,15 +311,15 @@ begin
       -- pcie0 = 0xA0000000 - AFFFFFFF
       -- pcie1 = 0xB0000000 - BFFFFFFF
 
-      U_AxiIcon: entity work.AxiIconWrapper
+      U_AxiIcon: entity work.RceG3AxiIcon
          generic map ( TPD_G  => TPD_G )
          port map (
             axiClk          => axiClk,
             axiRst          => axiClkRst,
-            mGpReadMaster   => mGpReadMaster,
-            mGpReadSlave    => mGpReadSlave,
-            mGpWriteMaster  => mGpWriteMaster,
-            mGpWriteSlave   => mGpWriteSlave,
+            mGpReadMaster   => mGpReadMaster(1),
+            mGpReadSlave    => mGpReadSlave(1),
+            mGpWriteMaster  => mGpWriteMaster(1),
+            mGpWriteSlave   => mGpWriteSlave(1),
             locReadMaster   => gp1AxiReadMaster,
             locReadSlave    => gp1AxiReadSlave,
             locWriteMaster  => gp1AxiWriteMaster,
@@ -331,7 +327,7 @@ begin
             pcieReadMaster  => pcieReadMaster,
             pcieReadSlave   => pcieReadSlave,
             pcieWriteMaster => pcieWriteMaster,
-            pcieWriteSlave  => pcieWriteSlave,
+            pcieWriteSlave  => pcieWriteSlave);
 
    end generate;
 
@@ -343,9 +339,9 @@ begin
       --pcieWriteSlave
 
       gp1AxiReadMaster  <= mGpReadMaster(1);
-      mGpReadSlave(1)   <= gp1AxiReadSlave
+      mGpReadSlave(1)   <= gp1AxiReadSlave;
       gp1AxiWriteMaster <= mGpWriteMaster(1);
-      mGpWriteSlave(1)  <= gp1AxiWriteSlave
+      mGpWriteSlave(1)  <= gp1AxiWriteSlave;
 
    end generate;
 
@@ -379,7 +375,7 @@ begin
          NUM_SLAVE_SLOTS_G  => 1,
          NUM_MASTER_SLOTS_G => GP1_MAST_CNT_C,
          DEC_ERROR_RESP_G   => AXI_RESP_OK_C,
-         MASTERS_CONFIG_G   => GP1_CONFIG_C)
+         MASTERS_CONFIG_G   => genGp1Config)
       port map (
             axiClk              => axiClk,
             axiClkRst           => axiClkRst,

@@ -27,6 +27,7 @@ use unisim.vcomponents.all;
 use work.RceG3Pkg.all;
 use work.StdRtlPkg.all;
 use work.AxiLitePkg.all;
+use work.AxiPkg.all;
 
 entity ZynqPcieRoot is
    generic (
@@ -82,6 +83,124 @@ architecture structure of ZynqPcieRoot is
    signal mmcmLock        : sl;
    signal intRefClk       : sl;
 
+   signal intxMsiRequest  : sl;
+   signal intxMsiGrant    : sl;
+   signal msiEnable       : sl;
+   signal msiVectorNum    : slv(4 downto 0);
+   signal msiVectorWidth  : slv(2 downto 0);
+   signal intPclkSelSlave : slv(0 downto 0);
+
+   COMPONENT axi_pcie_0
+     PORT (
+       axi_aresetn : IN STD_LOGIC;
+       axi_aclk_out : OUT STD_LOGIC;
+       axi_ctl_aclk_out : OUT STD_LOGIC;
+       mmcm_lock : OUT STD_LOGIC;
+       interrupt_out : OUT STD_LOGIC;
+       INTX_MSI_Request : IN STD_LOGIC;
+       INTX_MSI_Grant : OUT STD_LOGIC;
+       MSI_enable : OUT STD_LOGIC;
+       MSI_Vector_Num : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+       MSI_Vector_Width : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+       s_axi_awid : IN STD_LOGIC_VECTOR(11 DOWNTO 0);
+       s_axi_awaddr : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+       s_axi_awregion : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+       s_axi_awlen : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+       s_axi_awsize : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+       s_axi_awburst : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+       s_axi_awvalid : IN STD_LOGIC;
+       s_axi_awready : OUT STD_LOGIC;
+       s_axi_wdata : IN STD_LOGIC_VECTOR(63 DOWNTO 0);
+       s_axi_wstrb : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+       s_axi_wlast : IN STD_LOGIC;
+       s_axi_wvalid : IN STD_LOGIC;
+       s_axi_wready : OUT STD_LOGIC;
+       s_axi_bid : OUT STD_LOGIC_VECTOR(11 DOWNTO 0);
+       s_axi_bresp : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+       s_axi_bvalid : OUT STD_LOGIC;
+       s_axi_bready : IN STD_LOGIC;
+       s_axi_arid : IN STD_LOGIC_VECTOR(11 DOWNTO 0);
+       s_axi_araddr : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+       s_axi_arregion : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+       s_axi_arlen : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+       s_axi_arsize : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+       s_axi_arburst : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+       s_axi_arvalid : IN STD_LOGIC;
+       s_axi_arready : OUT STD_LOGIC;
+       s_axi_rid : OUT STD_LOGIC_VECTOR(11 DOWNTO 0);
+       s_axi_rdata : OUT STD_LOGIC_VECTOR(63 DOWNTO 0);
+       s_axi_rresp : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+       s_axi_rlast : OUT STD_LOGIC;
+       s_axi_rvalid : OUT STD_LOGIC;
+       s_axi_rready : IN STD_LOGIC;
+       m_axi_awaddr : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+       m_axi_awlen : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
+       m_axi_awsize : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+       m_axi_awburst : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+       m_axi_awprot : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+       m_axi_awvalid : OUT STD_LOGIC;
+       m_axi_awready : IN STD_LOGIC;
+       m_axi_awlock : OUT STD_LOGIC;
+       m_axi_awcache : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+       m_axi_wdata : OUT STD_LOGIC_VECTOR(63 DOWNTO 0);
+       m_axi_wstrb : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
+       m_axi_wlast : OUT STD_LOGIC;
+       m_axi_wvalid : OUT STD_LOGIC;
+       m_axi_wready : IN STD_LOGIC;
+       m_axi_bresp : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+       m_axi_bvalid : IN STD_LOGIC;
+       m_axi_bready : OUT STD_LOGIC;
+       m_axi_araddr : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+       m_axi_arlen : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
+       m_axi_arsize : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+       m_axi_arburst : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+       m_axi_arprot : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+       m_axi_arvalid : OUT STD_LOGIC;
+       m_axi_arready : IN STD_LOGIC;
+       m_axi_arlock : OUT STD_LOGIC;
+       m_axi_arcache : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+       m_axi_rdata : IN STD_LOGIC_VECTOR(63 DOWNTO 0);
+       m_axi_rresp : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+       m_axi_rlast : IN STD_LOGIC;
+       m_axi_rvalid : IN STD_LOGIC;
+       m_axi_rready : OUT STD_LOGIC;
+       pci_exp_txp : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+       pci_exp_txn : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+       pci_exp_rxp : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+       pci_exp_rxn : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+       REFCLK : IN STD_LOGIC;
+       s_axi_ctl_awaddr : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+       s_axi_ctl_awvalid : IN STD_LOGIC;
+       s_axi_ctl_awready : OUT STD_LOGIC;
+       s_axi_ctl_wdata : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+       s_axi_ctl_wstrb : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+       s_axi_ctl_wvalid : IN STD_LOGIC;
+       s_axi_ctl_wready : OUT STD_LOGIC;
+       s_axi_ctl_bresp : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+       s_axi_ctl_bvalid : OUT STD_LOGIC;
+       s_axi_ctl_bready : IN STD_LOGIC;
+       s_axi_ctl_araddr : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+       s_axi_ctl_arvalid : IN STD_LOGIC;
+       s_axi_ctl_arready : OUT STD_LOGIC;
+       s_axi_ctl_rdata : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+       s_axi_ctl_rresp : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+       s_axi_ctl_rvalid : OUT STD_LOGIC;
+       s_axi_ctl_rready : IN STD_LOGIC;
+       int_pclk_out_slave : OUT STD_LOGIC;
+       int_rxusrclk_out : OUT STD_LOGIC;
+       int_dclk_out : OUT STD_LOGIC;
+       int_userclk1_out : OUT STD_LOGIC;
+       int_userclk2_out : OUT STD_LOGIC;
+       int_oobclk_out : OUT STD_LOGIC;
+       int_mmcm_lock_out : OUT STD_LOGIC;
+       int_qplllock_out : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+       int_qplloutclk_out : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+       int_qplloutrefclk_out : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+       int_rxoutclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+       int_pclk_sel_slave : IN STD_LOGIC_VECTOR(0 DOWNTO 0)
+     );
+   END COMPONENT;
+
 begin
 
    -- Local Ref Clk 
@@ -89,8 +208,8 @@ begin
       port map(
          O       => intRefClk,
          ODIV2   => open,
-         I       => pcieRefClkP,
-         IB      => pcieRefClkM,
+         I       => pciRefClkP,
+         IB      => pciRefClkM,
          CEB     => '0'
       );
 
@@ -113,18 +232,22 @@ begin
          rstOut => intAxiCtlClkRst);
 
 
+   intxMsiRequest   <= '0';
+   msiEnable        <= '0';
+   msiVectorNum     <= "00000";
+
    U_AxiRoot : axi_pcie_0
       PORT MAP (
          axi_aresetn      => sysClk200Rst,
          axi_aclk_out     => intAxiClk,
-         axi_ctl_aclk_out => intAxiCtlClk
+         axi_ctl_aclk_out => intAxiCtlClk,
          mmcm_lock        => mmcmLock,
          interrupt_out    => pcieInt,
-         INTX_MSI_Request => '0',
-         INTX_MSI_Grant   => open
-         MSI_enable       => '0',
-         MSI_Vector_Num   => "00000",
-         MSI_Vector_Width => open,
+         INTX_MSI_Request => intxMsiRequest,
+         INTX_MSI_Grant   => intxMsiGrant,
+         MSI_enable       => msiEnable,
+         MSI_Vector_Num   => msiVectorNum,
+         MSI_Vector_Width => msiVectorWidth,
 
          -- Slave GP0: 0xB0000000 - 0xBFFFFFFF
          s_axi_awaddr   => intWriteMaster(1).awaddr(31 downto 0),
@@ -143,23 +266,23 @@ begin
          s_axi_rdata    => intReadSlave(1).rdata(63 downto 0),
          s_axi_rresp    => intReadSlave(1).rresp,
          s_axi_rvalid   => intReadSlave(1).rvalid,
-         s_axi_rready   => intReadSlave(1).rready,
-         s_axi_awid     => intWriteMaster(1).awid,
+         s_axi_rready   => intReadMaster(1).rready,
+         s_axi_awid     => intWriteMaster(1).awid(11 downto 0),
          s_axi_awregion => intWriteMaster(1).awregion,
          s_axi_awlen    => intWriteMaster(1).awlen,
          s_axi_awsize   => intWriteMaster(1).awsize,
          s_axi_awburst  => intWriteMaster(1).awburst,
          s_axi_wlast    => intWriteMaster(1).wlast,
-         s_axi_bid      => intWriteSlave(1).bid,
-         s_axi_arid     => intReadMaster(1).arid,
-         s_axi_arregion => intReadMaster(1).arregion
+         s_axi_bid      => intWriteSlave(1).bid(11 downto 0),
+         s_axi_arid     => intReadMaster(1).arid(11 downto 0),
+         s_axi_arregion => intReadMaster(1).arregion,
          s_axi_arlen    => intReadMaster(1).arlen,
          s_axi_arsize   => intReadMaster(1).arsize,
          s_axi_arburst  => intReadMaster(1).arburst,
-         s_axi_rid      => intReadSlave(1).rid,
+         s_axi_rid      => intReadSlave(1).rid(11 downto 0),
          s_axi_rlast    => intReadSlave(1).rlast,
 
-         -- Master HP:  0xA0000000 - 0xAFFFFFFF
+         -- Master HP:
          m_axi_awaddr   => intWriteMaster(2).awaddr(31 downto 0),
          m_axi_awvalid  => intWriteMaster(2).awvalid,
          m_axi_awready  => intWriteSlave(2).awready,
@@ -176,7 +299,7 @@ begin
          m_axi_rdata    => intReadSlave(2).rdata(63 downto 0),
          m_axi_rresp    => intReadSlave(2).rresp,
          m_axi_rvalid   => intReadSlave(2).rvalid,
-         m_axi_rready   => intReadSlave(2).rready,
+         m_axi_rready   => intReadMaster(2).rready,
          m_axi_awlen    => intWriteMaster(2).awlen,
          m_axi_awsize   => intWriteMaster(2).awsize,
          m_axi_awburst  => intWriteMaster(2).awburst,
@@ -186,18 +309,18 @@ begin
          m_axi_arburst  => intReadMaster(2).arburst,
          m_axi_rlast    => intReadSlave(2).rlast,
          m_axi_awprot   => intWriteMaster(2).awprot,
-         m_axi_awlock   => intWriteMaster(2).awlock,
+         m_axi_awlock   => intWriteMaster(2).awlock(0),
          m_axi_awcache  => intWriteMaster(2).awcache,
          m_axi_arprot   => intReadMaster(2).arprot,
-         m_axi_arlock   => intReadMaster(2).arlock,
+         m_axi_arlock   => intReadMaster(2).arlock(0),
          m_axi_arcache  => intReadMaster(2).arcache,
 
          -- Cntrl GP0:  0xA0000000 - 0xAFFFFFFF
          s_axi_ctl_awaddr  => intWriteMaster(0).awaddr(31 downto 0),
          s_axi_ctl_awvalid => intWriteMaster(0).awvalid,
          s_axi_ctl_awready => intWriteSlave(0).awready,
-         s_axi_ctl_wdata   => intWriteMaster(0).wdata(63 downto 0),
-         s_axi_ctl_wstrb   => intWriteMaster(0).wstrb(7 downto 0),
+         s_axi_ctl_wdata   => intWriteMaster(0).wdata(31 downto 0),
+         s_axi_ctl_wstrb   => intWriteMaster(0).wstrb(3 downto 0),
          s_axi_ctl_wvalid  => intWriteMaster(0).wvalid,
          s_axi_ctl_wready  => intWriteSlave(0).wready,
          s_axi_ctl_bresp   => intWriteSlave(0).bresp,
@@ -206,16 +329,17 @@ begin
          s_axi_ctl_araddr  => intReadMaster(0).araddr(31 downto 0),
          s_axi_ctl_arvalid => intReadMaster(0).arvalid,
          s_axi_ctl_arready => intReadSlave(0).arready,
-         s_axi_ctl_rdata   => intReadSlave(0).rdata(63 downto 0),
+         s_axi_ctl_rdata   => intReadSlave(0).rdata(31 downto 0),
          s_axi_ctl_rresp   => intReadSlave(0).rresp,
          s_axi_ctl_rvalid  => intReadSlave(0).rvalid,
          s_axi_ctl_rready  => intReadMaster(0).rready,
 
-         pci_exp_txp       => pcieTxP,
-         pci_exp_txn       => pcieTxM,
-         pci_exp_rxp       => pcieRxP,
-         pci_exp_rxn       => pcieRxM,
-         --REFCLK => REFCLK,
+         pci_exp_txp(0)    => pcieTxP,
+         pci_exp_txn(0)    => pcieTxM,
+         pci_exp_rxp(0)    => pcieRxP,
+         pci_exp_rxn(0)    => pcieRxM,
+
+         REFCLK            => intRefClk,
 
          int_pclk_out_slave    => open,
          int_rxusrclk_out      => open,
@@ -228,20 +352,19 @@ begin
          int_qplloutclk_out    => open,
          int_qplloutrefclk_out => open,
          int_rxoutclk_out      => open,
-         int_pclk_sel_slave    => "0"
+         int_pclk_sel_slave    => intPclkSelSlave
       );
 
-   intReadMaster(2).arid      <= (others=>'0');
-   intReadMaster(2).arqos     <= (others=>'0');
-   intReadMaster(2).arregion  <= (others=>'0');
-   intWriteMaster(2).awid     <= (others=>'0');
-   intWriteMaster(2).awqos    <= (others=>'0');
-   intWriteMaster(2).awregion <= (others=>'0');
-   intWriteMaster(2).wid      <= (others=>'0');
-   intReadSlave(1).rlast      <= '1';
-   intReadSlave(1).rid        <= (others=>'0');
-   intWriteSlave(1).bid       <= (others=>'0');
-
+   intReadMaster(2).arid                <= (others=>'0');
+   intReadMaster(2).arqos               <= (others=>'0');
+   intReadMaster(2).arregion            <= (others=>'0');
+   intWriteMaster(2).awid               <= (others=>'0');
+   intWriteMaster(2).awqos              <= (others=>'0');
+   intWriteMaster(2).awregion           <= (others=>'0');
+   intWriteMaster(2).wid                <= (others=>'0');
+   intReadSlave(1).rid(31 downto 12)    <= (others=>'0');
+   intReadSlave(0).rdata(127 downto 32) <= (others=>'0');
+   intReadSlave(0).rlast                <= '1';
 
    --------------------------------
    -- SLAVE Interface FIFOs
@@ -262,14 +385,14 @@ begin
             DATA_FIFO_ADDR_WIDTH_G => 9,
             AXI_CONFIG_G           => AXI_MAST_GP64_INIT_C
          ) port map (
-            sAxiClk        => intAxiClk,
-            sAxiRst        => intAxiClkRst,
-            sAxiReadMaster => intReadMaster(i),
-            sAxiReadSlave  => intReadSlave(i),
-            mAxiClk        => axiClk,
-            mAxiRst        => axiClkRst,
-            mAxiReadMaster => pcieReadMaster(i),
-            mAxiReadSlave  => pcieReadSlave(i));
+            sAxiClk        => axiClk,
+            sAxiRst        => axiClkRst,
+            sAxiReadMaster => pcieReadMaster(i),
+            sAxiReadSlave  => pcieReadSlave(i),
+            mAxiClk        => intAxiClk,
+            mAxiRst        => intAxiClkRst,
+            mAxiReadMaster => intReadMaster(i),
+            mAxiReadSlave  => intReadSlave(i));
 
       U_SlaveWrite: entity work.AxiWritePathFifo 
          generic map (
@@ -286,14 +409,14 @@ begin
             RESP_FIFO_ADDR_WIDTH_G => 9,
             AXI_CONFIG_G           => AXI_MAST_GP64_INIT_C
          ) port map (
-            sAxiClk         => intAxiClk,
-            sAxiRst         => intAxiClkRst,
-            sAxiWriteMaster => intWriteMaster(i),
-            sAxiWriteSlave  => intWriteSlave(i),
-            mAxiClk         => axiClk,
-            mAxiRst         => axiClkRst,
-            mAxiWriteMaster => pcieWriteMaster(i),
-            mAxiWriteSlave  => pcieWriteSlave(i));
+            sAxiClk         => axiClk,
+            sAxiRst         => axiClkRst,
+            sAxiWriteMaster => pcieWriteMaster(i),
+            sAxiWriteSlave  => pcieWriteSlave(i),
+            mAxiClk         => intAxiClk,
+            mAxiRst         => intAxiClkRst,
+            mAxiWriteMaster => intWriteMaster(i),
+            mAxiWriteSlave  => intWriteSlave(i));
 
    end generate;
 

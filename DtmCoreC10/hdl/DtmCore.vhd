@@ -26,15 +26,16 @@ use work.RceG3Pkg.all;
 use work.StdRtlPkg.all;
 use work.AxiLitePkg.all;
 use work.AxiStreamPkg.all;
+use work.AxiPkg.all;
 
 library unisim;
 use unisim.vcomponents.all;
 
-entity DtmCoreC10 is
+entity DtmCore is
    generic (
       TPD_G          : time           := 1 ns;
       BUILD_INFO_G   : BuildInfoType
-   port (
+   ); port (
 
       -- I2C
       i2cSda                  : inout sl;
@@ -107,10 +108,9 @@ entity DtmCoreC10 is
       userInterrupt            : in    slv(USER_INT_COUNT_C-1 downto 0)
 
    );
-end DtmCoreC10;
+end DtmCore;
 
 architecture STRUCTURE of DtmCore is
-
    signal iaxiClk             : sl;
    signal iaxiClkRst          : sl;
    signal isysClk125          : sl;
@@ -139,15 +139,8 @@ architecture STRUCTURE of DtmCore is
    signal userWriteMaster     : AxiWriteMasterType;
    signal userReadSlave       : AxiReadSlaveType;
    signal userReadMaster      : AxiReadMasterType;
-   signal intInterrupt        : slv(USER_INT_COUNT_C-1 downto 0)
+   signal intInterrupt        : slv(USER_INT_COUNT_C-1 downto 0);
 
-   attribute KEEP_HIERARCHY : string;
-   attribute KEEP_HIERARCHY of
-      U_RceG3Top,
-      U_AxiCrossbar,
-      U_ZynqPcieRoot,
-      U_ZynqEthernet : label is "TRUE";   
-   
 begin
 
    --------------------------------------------------
@@ -178,7 +171,7 @@ begin
          TPD_G          => TPD_G,
          BUILD_INFO_G   => BUILD_INFO_G,
          USE_AXI_IC_G   => true,
-         RCE_DMA_MODE_G => DMA_AXIL_COUNT_C
+         RCE_DMA_MODE_G => RCE_DMA_AXIS_C
       ) port map (
          i2cSda              => i2cSda,
          i2cScl              => i2cScl,
@@ -207,7 +200,7 @@ begin
          dmaObSlave          => idmaObSlave,
          dmaIbMaster         => idmaIbMaster,
          dmaIbSlave          => idmaIbSlave,
-         userInterrupt       => userInterrupt,
+         userInterrupt       => intInterrupt,
          userWriteSlave      => userWriteSlave,
          userWriteMaster     => userWriteMaster,
          userReadSlave       => userReadSlave,
@@ -223,12 +216,20 @@ begin
    clkSelA <= '1';
    clkSelB <= '1';
 
-   sAxiWriteMasters(0) => coreAxilWriteMaster,
-   sAxiWriteSlaves(0)  => coreAxilWriteSlave,
-   sAxiReadMasters(0)  => coreAxilReadMaster,
-   sAxiReadSlaves(0)   => coreAxilReadSlave,
-
    intInterrupt(USER_INT_COUNT_C-2 downto 0) <= userInterrupt(USER_INT_COUNT_C-2 downto 0);
+
+   U_AxiVersion: entity work.AxiVersion
+      generic map (
+         TPD_G              => TPD_G,
+         BUILD_INFO_G       => BUILD_INFO_G)
+      port map (
+         axiClk          => iaxiClk,
+         axiRst          => iaxiClkRst,
+         axiReadMaster   => coreAxilReadMaster,
+         axiReadSlave    => coreAxilReadSlave,
+         axiWriteMaster  => coreAxilWriteMaster,
+         axiWriteSlave   => coreAxilWriteSlave);
+
 
    --------------------------------------------------
    -- PCI Express
@@ -236,14 +237,14 @@ begin
    U_PcieRoot: entity work.ZynqPcieRoot
       generic map ( TPD_G => TPD_G )
       port map (
-         axiClk          => axiClk,
-         axiClkRst       => axiClkRst,
+         axiClk          => iaxiClk,
+         axiClkRst       => iaxiClkRst,
          pcieReadMaster  => pcieReadMaster,
          pcieReadSlave   => pcieReadSlave,
          pcieWriteMaster => pcieWriteMaster,
          pcieWriteSlave  => pcieWriteSlave,
-         sysClk200       => sysClk200,
-         sysClk200Rst    => sysClk200Rst,
+         sysClk200       => isysClk200,
+         sysClk200Rst    => isysClk200Rst,
          userWriteSlave  => userWriteSlave,
          userWriteMaster => userWriteMaster,
          userReadSlave   => userReadSlave,
