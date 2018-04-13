@@ -137,7 +137,7 @@ architecture mapping of RceG3AxiIcon is
          axi_mast1_awvalid : out STD_LOGIC_VECTOR ( 0 to 0 );
          axi_mast1_awready : in STD_LOGIC_VECTOR ( 0 to 0 );
          axi_mast1_wdata : out STD_LOGIC_VECTOR ( 31 downto 0 );
-         axi_mast1_wstrb : out STD_LOGIC_VECTOR ( 7 downto 0 );
+         axi_mast1_wstrb : out STD_LOGIC_VECTOR ( 3 downto 0 );
          axi_mast1_wlast : out STD_LOGIC_VECTOR ( 0 to 0 );
          axi_mast1_wvalid : out STD_LOGIC_VECTOR ( 0 to 0 );
          axi_mast1_wready : in STD_LOGIC_VECTOR ( 0 to 0 );
@@ -232,8 +232,8 @@ begin
    pcieWriteMaster(1).wdata(1023 downto 64) <= (others=>'0');
 
    -- Unused master write data strobe bits
-   locWriteMaster.wstrb(127 downto 8) <= (others=>'0');
-   pcieWriteMaster(0).wstrb(127 downto 8) <= (others=>'0');
+   locWriteMaster.wstrb(127 downto 4) <= (others=>'0');
+   pcieWriteMaster(0).wstrb(127 downto 4) <= (others=>'0');
    pcieWriteMaster(1).wstrb(127 downto 8) <= (others=>'0');
 
    -- Unused IDs
@@ -335,8 +335,8 @@ begin
          axi_mast1_awqos      => pcieWriteMaster(0).awqos,
          axi_mast1_awvalid(0) => pcieWriteMaster(0).awvalid,
          axi_mast1_awready(0) => pcieWriteSlave(0).awready,
-         axi_mast1_wdata      => pcieWriteMaster(0).wdata(63 downto 0),
-         axi_mast1_wstrb      => pcieWriteMaster(0).wstrb(7 downto 0),
+         axi_mast1_wdata      => pcieWriteMaster(0).wdata(31 downto 0),
+         axi_mast1_wstrb      => pcieWriteMaster(0).wstrb(3 downto 0),
          axi_mast1_wlast(0)   => pcieWriteMaster(0).wlast,
          axi_mast1_wvalid(0)  => pcieWriteMaster(0).wvalid,
          axi_mast1_wready(0)  => pcieWriteSlave(0).wready,
@@ -354,7 +354,7 @@ begin
          axi_mast1_arqos      => pcieReadMaster(0).arqos,
          axi_mast1_arvalid(0) => pcieReadMaster(0).arvalid,
          axi_mast1_arready(0) => pcieReadSlave(0).arready,
-         axi_mast1_rdata      => pcieReadSlave(0).rdata(63 downto 0),
+         axi_mast1_rdata      => pcieReadSlave(0).rdata(31 downto 0),
          axi_mast1_rresp      => pcieReadSlave(0).rresp,
          axi_mast1_rlast(0)   => pcieReadSlave(0).rlast,
          axi_mast1_rvalid(0)  => pcieReadSlave(0).rvalid,
