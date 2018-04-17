@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<bd:repository xmlns:bd="http://www.xilinx.com/bd" bd:BoundaryCRC="0xEC0E3891F25B4D0" bd:device="xc7z030fbg484-2" bd:synthFlowMode="Hierarchical" bd:tool_version="2017.4" bd:top="axi_icon" bd:version="1.00.a">
+<bd:repository xmlns:bd="http://www.xilinx.com/bd" bd:BoundaryCRC="0xF23214B26A7D5173" bd:device="xc7z045ffg900-2" bd:synthFlowMode="Hierarchical" bd:tool_version="2017.4" bd:top="axi_icon" bd:version="1.00.a">
 
   <spirit:component xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009">
     <spirit:vendor>xilinx.com</spirit:vendor>
@@ -276,13 +276,13 @@
           <spirit:segment>
             <spirit:name>SEG_axi_mast1_Reg</spirit:name>
             <spirit:displayName>/axi_mast1/Reg</spirit:displayName>
-            <spirit:addressOffset>0xB0000000</spirit:addressOffset>
+            <spirit:addressOffset>0xA0000000</spirit:addressOffset>
             <spirit:range>256M</spirit:range>
           </spirit:segment>
           <spirit:segment>
             <spirit:name>SEG_axi_mast2_Reg</spirit:name>
             <spirit:displayName>/axi_mast2/Reg</spirit:displayName>
-            <spirit:addressOffset>0xA0000000</spirit:addressOffset>
+            <spirit:addressOffset>0xB0000000</spirit:addressOffset>
             <spirit:range>256M</spirit:range>
           </spirit:segment>
         </spirit:segments>
@@ -1120,11 +1120,36 @@
     <spirit:library>BlockDiagram/axi_icon_imp/axi_interconnect_0_imp</spirit:library>
     <spirit:name>m01_couplers_imp</spirit:name>
     <spirit:version>1.00.a</spirit:version>
+    <spirit:componentInstances>
+      <spirit:componentInstance>
+        <spirit:instanceName>auto_ds</spirit:instanceName>
+        <spirit:componentRef spirit:library="ip" spirit:name="axi_dwidth_converter" spirit:vendor="xilinx.com" spirit:version="2.1"/>
+        <spirit:configurableElementValues>
+          <spirit:configurableElementValue spirit:referenceId="bd:xciName">axi_icon_auto_ds_1</spirit:configurableElementValue>
+          <spirit:configurableElementValue spirit:referenceId="SI_DATA_WIDTH">64</spirit:configurableElementValue>
+          <spirit:configurableElementValue spirit:referenceId="MI_DATA_WIDTH">32</spirit:configurableElementValue>
+        </spirit:configurableElementValues>
+      </spirit:componentInstance>
+    </spirit:componentInstances>
     <spirit:interconnections/>
-    <spirit:adHocConnections/>
+    <spirit:adHocConnections>
+      <spirit:adHocConnection>
+        <spirit:name>S_ACLK_1</spirit:name>
+        <spirit:externalPortReference spirit:portRef="S_ACLK"/>
+        <spirit:internalPortReference spirit:componentRef="auto_ds" spirit:portRef="s_axi_aclk"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>S_ARESETN_1</spirit:name>
+        <spirit:externalPortReference spirit:portRef="S_ARESETN"/>
+        <spirit:internalPortReference spirit:componentRef="auto_ds" spirit:portRef="s_axi_aresetn"/>
+      </spirit:adHocConnection>
+    </spirit:adHocConnections>
     <spirit:hierConnections>
-      <spirit:hierConnection spirit:interfaceRef="M_AXI/m01_couplers_to_m01_couplers">
-        <spirit:activeInterface spirit:busRef="S_AXI" spirit:componentRef="./m01_couplers_to_m01_couplers"/>
+      <spirit:hierConnection spirit:interfaceRef="M_AXI/auto_ds_to_m01_couplers">
+        <spirit:activeInterface spirit:busRef="M_AXI" spirit:componentRef="auto_ds"/>
+      </spirit:hierConnection>
+      <spirit:hierConnection spirit:interfaceRef="S_AXI/m01_couplers_to_auto_ds">
+        <spirit:activeInterface spirit:busRef="S_AXI" spirit:componentRef="auto_ds"/>
       </spirit:hierConnection>
     </spirit:hierConnections>
   </spirit:design>

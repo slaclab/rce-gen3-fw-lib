@@ -55,9 +55,6 @@ entity ZynqPcieRoot is
       pciRefClkP : in sl;
       pciRefClkM : in sl;
 
-      -- Reset output
-      pcieResetL : out sl;
-
       -- Interrupt output
       pcieInt    : out sl;
 
@@ -89,6 +86,7 @@ architecture structure of ZynqPcieRoot is
    signal msiVectorNum    : slv(4 downto 0);
    signal msiVectorWidth  : slv(2 downto 0);
    signal intPclkSelSlave : slv(0 downto 0);
+   signal resetInL        : sl;
 
    COMPONENT axi_pcie_0
      PORT (
@@ -201,6 +199,12 @@ architecture structure of ZynqPcieRoot is
      );
    END COMPONENT;
 
+   attribute DONT_TOUCH : string;
+   attribute DONT_TOUCH of intReadMaster       : signal is "true";
+   attribute DONT_TOUCH of intReadSlave        : signal is "true";
+   attribute DONT_TOUCH of intWriteMaster      : signal is "true";
+   attribute DONT_TOUCH of intWriteSlave       : signal is "true";
+
 begin
 
    -- Local Ref Clk 
@@ -235,10 +239,11 @@ begin
    intxMsiRequest   <= '0';
    msiEnable        <= '0';
    msiVectorNum     <= "00000";
+   resetInL         <= not intAxiCtlClkRst;
 
    U_AxiRoot : axi_pcie_0
       PORT MAP (
-         axi_aresetn      => sysClk200Rst,
+         axi_aresetn      => resetInL,
          axi_aclk_out     => intAxiClk,
          axi_ctl_aclk_out => intAxiCtlClk,
          mmcm_lock        => mmcmLock,
@@ -355,16 +360,26 @@ begin
          int_pclk_sel_slave    => intPclkSelSlave
       );
 
-   intReadMaster(2).arid                <= (others=>'0');
-   intReadMaster(2).arqos               <= (others=>'0');
-   intReadMaster(2).arregion            <= (others=>'0');
-   intWriteMaster(2).awid               <= (others=>'0');
-   intWriteMaster(2).awqos              <= (others=>'0');
-   intWriteMaster(2).awregion           <= (others=>'0');
-   intWriteMaster(2).wid                <= (others=>'0');
    intReadSlave(1).rid(31 downto 12)    <= (others=>'0');
+   intReadSlave(1).rdata(127 downto 64) <= (others=>'0');
+   intWriteSlave(1).bid(31 downto 12)   <= (others=>'0');
+
    intReadSlave(0).rdata(127 downto 32) <= (others=>'0');
    intReadSlave(0).rlast                <= '1';
+   intReadSlave(0).rid                  <= (others=>'0');
+   intWriteSlave(0).bid                 <= (others=>'0');
+
+   intReadMaster(2).arid                   <= (others=>'0');
+   intReadMaster(2).arqos                  <= (others=>'0');
+   intReadMaster(2).arregion               <= (others=>'0');
+   intReadMaster(2).araddr(63 downto 32)   <= (others=>'0');
+   intWriteMaster(2).awid                  <= (others=>'0');
+   intWriteMaster(2).awqos                 <= (others=>'0');
+   intWriteMaster(2).awregion              <= (others=>'0');
+   intWriteMaster(2).wid                   <= (others=>'0');
+   intWriteMaster(2).awaddr(63 downto 32)  <= (others=>'0');
+   intWriteMaster(2).wdata(1023 downto 64) <= (others=>'0');
+   intWriteMaster(2).wstrb(127  downto  8) <= (others=>'0');
 
    --------------------------------
    -- SLAVE Interface FIFOs
@@ -387,8 +402,8 @@ begin
          sAxiRst        => axiClkRst,
          sAxiReadMaster => pcieReadMaster(0),
          sAxiReadSlave  => pcieReadSlave(0),
-         mAxiClk        => intAxiClk,
-         mAxiRst        => intAxiClkRst,
+         mAxiClk        => intAxiCtlClk,
+         mAxiRst        => intAxiCtlClkRst,
          mAxiReadMaster => intReadMaster(0),
          mAxiReadSlave  => intReadSlave(0));
 
@@ -411,8 +426,8 @@ begin
          sAxiRst         => axiClkRst,
          sAxiWriteMaster => pcieWriteMaster(0),
          sAxiWriteSlave  => pcieWriteSlave(0),
-         mAxiClk         => intAxiClk,
-         mAxiRst         => intAxiClkRst,
+         mAxiClk         => intAxiCtlClk,
+         mAxiRst         => intAxiCtlClkRst,
          mAxiWriteMaster => intWriteMaster(0),
          mAxiWriteSlave  => intWriteSlave(0));
 
@@ -480,8 +495,8 @@ begin
          DATA_FIFO_ADDR_WIDTH_G => 9,
          AXI_CONFIG_G           => AXI_HP_INIT_C
       ) port map (
-         sAxiClk         => intAxiCtlClk,
-         sAxiRst         => intAxiCtlClkRst,
+         sAxiClk         => intAxiClk,
+         sAxiRst         => intAxiClkRst,
          sAxiReadMaster  => intReadMaster(2),
          sAxiReadSlave   => intReadSlave(2),
          mAxiClk         => sysCLk200,
@@ -504,8 +519,8 @@ begin
          RESP_FIFO_ADDR_WIDTH_G => 9,
          AXI_CONFIG_G           => AXI_HP_INIT_C
       ) port map (
-         sAxiClk         => intAxiCtlClk,
-         sAxiRst         => intAxiCtlClkRst,
+         sAxiClk         => intAxiClk,
+         sAxiRst         => intAxiClkRst,
          sAxiWriteMaster => intWriteMaster(2),
          sAxiWriteSlave  => intWriteSlave(2),
          mAxiClk         => sysCLk200,

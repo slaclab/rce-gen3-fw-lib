@@ -129,7 +129,7 @@ begin
    end process;
 
    -- Async
-   process (axiDmaRst, dmaInterrupt, icAxilReadMaster, icAxilWriteMaster, locSources, r) is
+   process (axiDmaRst, dmaInterrupt, icAxilReadMaster, icAxilWriteMaster, locSources, userInterrupt, r) is
       variable v         : RegType;
       variable axiStatus : AxiLiteStatusType;
    begin
@@ -234,7 +234,8 @@ begin
       armInterrupt(GROUP_COUNT_C-1 downto 0) <= r.intOutput;
 
       if RCE_DMA_MODE_G /= RCE_DMA_PPI_C then
-         armInterrupt(15 downto 12) <= dmaInterrupt(3 downto 0) after TPD_G;
+         armInterrupt(15 downto 12)                <= dmaInterrupt(3 downto 0) after TPD_G;
+         armInterrupt(USER_INT_COUNT_C-1 downto 0) <= userInterrupt after TPD_G;
       end if;
       
    end process;
