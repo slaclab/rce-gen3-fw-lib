@@ -87,7 +87,7 @@ entity DtmCore is
       sysClk200               : out   sl;
       sysClk200Rst            : out   sl;
 
-      -- External Axi Bus, 0xA0000000 - 0xAFFFFFFF
+      -- External Axi Bus, 0x90000000 - 0x97FFFFFF
       axiClk                  : out   sl;
       axiClkRst               : out   sl;
       extAxilReadMaster       : out   AxiLiteReadMasterType;
@@ -218,18 +218,8 @@ begin
 
    intInterrupt(USER_INT_COUNT_C-2 downto 0) <= userInterrupt(USER_INT_COUNT_C-2 downto 0);
 
-   U_AxiVersion: entity work.AxiVersion
-      generic map (
-         TPD_G              => TPD_G,
-         BUILD_INFO_G       => BUILD_INFO_G)
-      port map (
-         axiClk          => iaxiClk,
-         axiRst          => iaxiClkRst,
-         axiReadMaster   => coreAxilReadMaster,
-         axiReadSlave    => coreAxilReadSlave,
-         axiWriteMaster  => coreAxilWriteMaster,
-         axiWriteSlave   => coreAxilWriteSlave);
-
+   coreAxilReadSlave  <= AXI_LITE_READ_SLAVE_EMPTY_OK_C;
+   coreAxilWriteSlave <= AXI_LITE_WRITE_SLAVE_EMPTY_OK_C;
 
    --------------------------------------------------
    -- PCI Express
