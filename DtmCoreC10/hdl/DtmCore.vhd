@@ -241,7 +241,7 @@ begin
          userReadMaster  => userReadMaster,
          pciRefClkP      => pciRefClkP,
          pciRefClkM      => pciRefClkM,
-         pcieResetL      => pciResetL,
+         pciResetL       => pciResetL,
          pcieInt         => intInterrupt(USER_INT_COUNT_C-1),
          pcieRxP         => pciRxP,
          pcieRxM         => pciRxM,
