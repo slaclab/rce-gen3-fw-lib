@@ -52,8 +52,9 @@ entity ZynqPcieRoot is
       userReadMaster  : out   AxiReadMasterType;
 
       -- Master clock and reset
-      pciRefClkP : in sl;
-      pciRefClkM : in sl;
+      pciRefClkP : in  sl;
+      pciRefClkM : in  sl;
+      pciResetL  : out sl;
 
       -- Interrupt output
       pcieInt    : out sl;
@@ -240,6 +241,7 @@ begin
    msiEnable        <= '0';
    msiVectorNum     <= "00000";
    resetInL         <= not intAxiCtlClkRst;
+   pciResetL        <= resetInL;
 
    U_AxiRoot : axi_pcie_0
       PORT MAP (
