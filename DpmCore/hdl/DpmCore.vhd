@@ -83,16 +83,10 @@ entity DpmCore is
       dmaIbMaster          : in    AxiStreamMasterArray(AXI_ST_COUNT_G-1 downto 0);
       dmaIbSlave           : out   AxiStreamSlaveArray(AXI_ST_COUNT_G-1 downto 0);
       -- User memory access (sysclk200 domain)
-      userClk              : in    sl                                           := '0';
       userWriteSlave       : out   AxiWriteSlaveType;
       userWriteMaster      : in    AxiWriteMasterType                           := AXI_WRITE_MASTER_INIT_C;
       userReadSlave        : out   AxiReadSlaveType;
       userReadMaster       : in    AxiReadMasterType                            := AXI_READ_MASTER_INIT_C;
-      -- PCIE AXI Interface (axiClk domain)
-      pcieReadMaster       : out   AxiReadMasterArray(1 downto 0);
-      pcieReadSlave        : in    AxiReadSlaveArray(1 downto 0)                := (others=>AXI_READ_SLAVE_INIT_C);
-      pcieWriteMaster      : out   AxiWriteMasterArray(1 downto 0);
-      pcieWriteSlave       : in    AxiWriteSlaveArray(1 downto 0)               := (others=>AXI_WRITE_SLAVE_INIT_C);
       -- User ETH interface (userEthClk domain)
       userEthClk           : out   sl;
       userEthClkRst        : out   sl;
@@ -210,10 +204,6 @@ begin
          userWriteMaster     => userWriteMaster,
          userReadSlave       => userReadSlave,
          userReadMaster      => userReadMaster,
-         pcieReadMaster      => pcieReadMaster,
-         pcieReadSlave       => pcieReadSlave,
-         pcieWriteMaster     => pcieWriteMaster,
-         pcieWriteSlave      => pcieWriteSlave,
          armEthTx            => armEthTx,
          armEthRx            => armEthRx,
          armEthMode          => armEthMode,

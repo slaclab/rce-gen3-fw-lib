@@ -31,7 +31,7 @@ package RceG3Pkg is
    constant DMA_AXIL_COUNT_C : integer := 9;
    constant DMA_INT_COUNT_C  : integer := 56;
 
-   constant USER_INT_COUNT_C : integer := 8;
+   constant USER_INT_COUNT_C : integer := 7;
 
    --------------------------------------------------------
    -- DMA Engine Types
@@ -58,12 +58,6 @@ package RceG3Pkg is
    constant AXI_MAST_GP_INIT_C : AxiConfigType := (
       ADDR_WIDTH_C => 32,
       DATA_BYTES_C => 4,
-      ID_BITS_C    => 12,
-      LEN_BITS_C   => 4);
-
-   constant AXI_MAST_GP64_INIT_C : AxiConfigType := (
-      ADDR_WIDTH_C => 32,
-      DATA_BYTES_C => 8,
       ID_BITS_C    => 12,
       LEN_BITS_C   => 4);
 

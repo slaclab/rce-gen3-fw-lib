@@ -131,18 +131,6 @@ architecture STRUCTURE of DtmCore is
    signal armEthTx            : ArmEthTxArray(1 downto 0);
    signal armEthRx            : ArmEthRxArray(1 downto 0);
    signal armEthMode          : slv(31 downto 0);
-   signal pcieClk             : slv(1 downto 0);
-   signal pcieClkRst          : slv(1 downto 0);
-   signal pcieReadMaster      : AxiReadMasterArray(1 downto 0);
-   signal pcieReadSlave       : AxiReadSlaveArray(1 downto 0);
-   signal pcieWriteMaster     : AxiWriteMasterArray(1 downto 0);
-   signal pcieWriteSlave      : AxiWriteSlaveArray(1 downto 0);
-   signal userClk             : sl;
-   signal userWriteSlave      : AxiWriteSlaveType;
-   signal userWriteMaster     : AxiWriteMasterType;
-   signal userReadSlave       : AxiReadSlaveType;
-   signal userReadMaster      : AxiReadMasterType;
-   signal intInterrupt        : slv(USER_INT_COUNT_C-1 downto 0);
 
 begin
 
@@ -192,12 +180,13 @@ begin
          coreAxilReadSlave   => coreAxilReadSlave,
          coreAxilWriteMaster => coreAxilWriteMaster,
          coreAxilWriteSlave  => coreAxilWriteSlave,
-         pcieClk             => pcieClk,
-         pcieClkRst          => pcieClkRst,
-         pcieReadMaster      => pcieReadMaster,
-         pcieReadSlave       => pcieReadSlave,
-         pcieWriteMaster     => pcieWriteMaster,
-         pcieWriteSlave      => pcieWriteSlave,
+         pciRefClkP          => pciRefClkP,
+         pciRefClkM          => pciRefClkM,
+         pciResetL           => pciResetL,
+         pcieRxP             => pciRxP,
+         pcieRxM             => pciRxM,
+         pcieTxP             => pciTxP,
+         pcieTxM             => pciTxM
          dmaClk              => idmaClk,
          dmaClkRst           => idmaClkRst,
          dmaState            => idmaState,
@@ -205,12 +194,7 @@ begin
          dmaObSlave          => idmaObSlave,
          dmaIbMaster         => idmaIbMaster,
          dmaIbSlave          => idmaIbSlave,
-         userInterrupt       => intInterrupt,
-         userClk             => userClk,
-         userWriteSlave      => userWriteSlave,
-         userWriteMaster     => userWriteMaster,
-         userReadSlave       => userReadSlave,
-         userReadMaster      => userReadMaster,
+         userInterrupt       => userInterrupt,
          armEthTx            => armEthTx,
          armEthRx            => armEthRx,
          armEthMode          => armEthMode,
@@ -222,40 +206,8 @@ begin
    clkSelA <= '1';
    clkSelB <= '1';
 
-   intInterrupt(USER_INT_COUNT_C-2 downto 0) <= userInterrupt(USER_INT_COUNT_C-2 downto 0);
-
    coreAxilReadSlave  <= AXI_LITE_READ_SLAVE_EMPTY_OK_C;
    coreAxilWriteSlave <= AXI_LITE_WRITE_SLAVE_EMPTY_OK_C;
-
-   --------------------------------------------------
-   -- PCI Express
-   --------------------------------------------------
-   U_PcieRoot: entity work.ZynqPcieRoot
-      generic map ( TPD_G => TPD_G )
-      port map (
-         pcieClk         => pcieClk,
-         pcieClkRst      => pcieClkRst,
-         pcieReadMaster  => pcieReadMaster,
-         pcieReadSlave   => pcieReadSlave,
-         pcieWriteMaster => pcieWriteMaster,
-         pcieWriteSlave  => pcieWriteSlave,
-         sysClk200       => isysClk200,
-         sysClk200Rst    => isysClk200Rst,
-         userClk         => userClk,
-         userWriteSlave  => userWriteSlave,
-         userWriteMaster => userWriteMaster,
-         userReadSlave   => userReadSlave,
-         userReadMaster  => userReadMaster,
-         pciRefClkP      => pciRefClkP,
-         pciRefClkM      => pciRefClkM,
-         pciResetL       => pciResetL,
-         pcieInt         => intInterrupt(USER_INT_COUNT_C-1),
-         pcieRxP         => pciRxP,
-         pcieRxM         => pciRxM,
-         pcieTxP         => pciTxP,
-         pcieTxM         => pciTxM
-      );
-
 
    --------------------------------------------------
    -- Ethernet

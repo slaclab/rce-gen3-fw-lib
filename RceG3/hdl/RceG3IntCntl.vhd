@@ -51,6 +51,7 @@ entity RceG3IntCntl is
 
       -- Interrupt Inputs
       dmaInterrupt        : in  slv(DMA_INT_COUNT_C-1 downto 0);
+      pcieInterrupt       : in  sl;
       userInterrupt       : in  slv(USER_INT_COUNT_C-1 downto 0);
 
       -- Interrupt Outputs
@@ -235,6 +236,7 @@ begin
 
       if RCE_DMA_MODE_G /= RCE_DMA_PPI_C then
          armInterrupt(15 downto 12)                <= dmaInterrupt(3 downto 0) after TPD_G;
+         armInterrupt(8)                           <= pcieInterrupt after TPD_G;
          armInterrupt(USER_INT_COUNT_C-1 downto 0) <= userInterrupt after TPD_G;
       end if;
       

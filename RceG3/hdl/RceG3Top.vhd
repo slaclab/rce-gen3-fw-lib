@@ -71,13 +71,14 @@ entity RceG3Top is
       coreAxilWriteMaster      : out   AxiLiteWriteMasterType;
       coreAxilWriteSlave       : in    AxiLiteWriteSlaveType;
 
-      -- PCIE AXI Interface
-      pcieClk                  : in    slv(1 downto 0) := (others=>'0');
-      pcieClkRst               : in    slv(1 downto 0) := (others=>'0');
-      pcieReadMaster           : out   AxiReadMasterArray(1 downto 0);
-      pcieReadSlave            : in    AxiReadSlaveArray(1 downto 0) := (others=>AXI_READ_SLAVE_INIT_C);
-      pcieWriteMaster          : out   AxiWriteMasterArray(1 downto 0);
-      pcieWriteSlave           : in    AxiWriteSlaveArray(1 downto 0) := (others=>AXI_WRITE_SLAVE_INIT_C);
+      -- PCIE
+      pciRefClkP               : in    sl := '0';
+      pciRefClkM               : in    sl := '0';
+      pciResetL                : out   sl;
+      pcieRxP                  : in    sl := '0';
+      pcieRxM                  : in    sl := '0';
+      pcieTxP                  : out   sl;
+      pcieTxM                  : out   sl
 
       -- DMA Interfaces
       dmaClk                   : in    slv(3 downto 0);
@@ -92,7 +93,6 @@ entity RceG3Top is
       userInterrupt            : in    slv(USER_INT_COUNT_C-1 downto 0);
 
       -- User memory access (sysclk200)
-      userClk                  : in    sl;
       userWriteSlave           : out   AxiWriteSlaveType;
       userWriteMaster          : in    AxiWriteMasterType := AXI_WRITE_MASTER_INIT_C;
       userReadSlave            : out   AxiReadSlaveType;
@@ -134,7 +134,6 @@ architecture structure of RceG3Top is
    signal acpWriteMaster      : AxiWriteMasterType;
    signal acpReadSlave        : AxiReadSlaveType;
    signal acpReadMaster       : AxiReadMasterType;
-   signal hpAxiClk            : slv(3 downto 0);
    signal hpWriteSlave        : AxiWriteSlaveArray(3 downto 0);
    signal hpWriteMaster       : AxiWriteMasterArray(3 downto 0);
    signal hpReadSlave         : AxiReadSlaveArray(3 downto 0);
@@ -156,6 +155,11 @@ architecture structure of RceG3Top is
    signal bsiInterrupt        : sl;
    signal eFuseValue          : slv(31 downto 0);
    signal deviceDna           : slv(63 downto 0);
+   signal auxReadMaster       : AxiReadMasterType;
+   signal auxReadSlave        : AxiReadSlaveType;
+   signal auxWriteMaster      : AxiWriteMasterType;
+   signal auxWriteSlave       : AxiWriteSlaveType;
+   signal pcieInterrupt       : sl;
 
    attribute KEEP_HIERARCHY : string;
    attribute KEEP_HIERARCHY of
@@ -202,7 +206,10 @@ begin
             acpWriteMaster       => acpWriteMaster,
             acpReadSlave         => acpReadSlave,
             acpReadMaster        => acpReadMaster,
-            hpAxiClk             => hpAxiClk,
+            hpAxiClk(0)          => axiDmaClk,
+            hpAxiClk(1)          => axiDmaClk,
+            hpAxiClk(2)          => axiDmaClk,
+            hpAxiClk(3)          => axiDmaClk,
             hpWriteSlave         => hpWriteSlave,
             hpWriteMaster        => hpWriteMaster,
             hpReadSlave          => hpReadSlave,
@@ -243,7 +250,10 @@ begin
             acpWriteMaster       => acpWriteMaster,
             acpReadSlave         => acpReadSlave,
             acpReadMaster        => acpReadMaster,
-            hpAxiClk             => hpAxiClk,
+            hpAxiClk(0)          => axiDmaClk,
+            hpAxiClk(1)          => axiDmaClk,
+            hpAxiClk(2)          => axiDmaClk,
+            hpAxiClk(3)          => axiDmaClk,
             hpWriteSlave         => hpWriteSlave,
             hpWriteMaster        => hpWriteMaster,
             hpReadSlave          => hpReadSlave,
@@ -326,12 +336,22 @@ begin
          coreAxilReadSlave    => coreAxilReadSlave,
          coreAxilWriteMaster  => coreAxilWriteMaster,
          coreAxilWriteSlave   => coreAxilWriteSlave,
-         pcieClk              => pcieClk,
-         pcieClkRst           => pcieClkRst,
-         pcieReadMaster       => pcieReadMaster,
-         pcieReadSlave        => pcieReadSlave,
-         pcieWriteMaster      => pcieWriteMaster,
-         pcieWriteSlave       => pcieWriteSlave,
+         userReadMaster       => userReadMaster,
+         userReadSlave        => userReadSlave,
+         userWriteMaster      => userWriteMaster,
+         userWriteSlave       => userWriteSlave,
+         auxReadMaster        => auxReadMaster,
+         auxReadSlave         => auxReadSlave,
+         auxWriteMaster       => auxWriteMaster,
+         auxWriteSlave        => auxWriteSlave,
+         pciRefClkP           => pciRefClkP,
+         pciRefClkM           => pciRefClkM,
+         pciResetL            => pciResetL,
+         pcieInt              => pcieInterrupt,
+         pcieRxP              => pcieRxP,
+         pcieRxM              => pcieRxM,
+         pcieTxP              => pcieTxP,
+         pcieTxM              => pcieTxM,
          clkSelA              => clkSelA,
          clkSelB              => clkSelB,
          armEthMode           => armEthMode,
@@ -375,16 +395,14 @@ begin
          acpWriteMaster       => acpWriteMaster,
          acpReadSlave         => acpReadSlave,
          acpReadMaster        => acpReadMaster,
-         hpAxiClk             => hpAxiClk,
          hpWriteSlave         => hpWriteSlave,
          hpWriteMaster        => hpWriteMaster,
          hpReadSlave          => hpReadSlave,
          hpReadMaster         => hpReadMaster,
-         userClk              => userClk,
-         userWriteSlave       => userWriteSlave,
-         userWriteMaster      => userWriteMaster,
-         userReadSlave        => userReadSlave,
-         userReadMaster       => userReadMaster,
+         auxWriteSlave        => auxWriteSlave,
+         auxWriteMaster       => auxWriteMaster,
+         auxReadSlave         => auxReadSlave,
+         auxReadMaster        => auxReadMaster,
          dmaAxilReadMaster    => dmaAxilReadMaster,
          dmaAxilReadSlave     => dmaAxilReadSlave,
          dmaAxilWriteMaster   => dmaAxilWriteMaster,
@@ -415,6 +433,7 @@ begin
          icAxilWriteMaster    => icAxilWriteMaster,
          icAxilWriteSlave     => icAxilWriteSlave,
          dmaInterrupt         => dmaInterrupt,
+         pcieInterrupt        => pcieInterrupt,
          userInterrupt        => userInterrupt,
          armInterrupt         => armInterrupt
       );

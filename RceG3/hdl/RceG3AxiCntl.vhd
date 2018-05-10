@@ -37,7 +37,7 @@ entity RceG3AxiCntl is
    generic (
       TPD_G          : time           := 1 ns;
       BUILD_INFO_G   : BuildInfoType;
-      USE_AXI_IC_G   : boolean        := false;
+      PCIE_EN_G      : boolean        := false;
       RCE_DMA_MODE_G : RceDmaModeType := RCE_DMA_PPI_C
       );
    port (
@@ -86,13 +86,27 @@ entity RceG3AxiCntl is
       coreAxilWriteMaster : out AxiLiteWriteMasterType;
       coreAxilWriteSlave  : in  AxiLiteWriteSlaveType;
 
+      -- User AXI Interface
+      userReadMaster      : in  AxiReadMasterType;
+      userReadSlave       : out AxiReadSlaveType;
+      userWriteMaster     : in  AxiWriteMasterType;
+      userWriteSlave      : out AxiWriteSlaveType;
+
+      -- AUX AXI Interface
+      auxReadMaster       : out AxiReadMasterType;
+      auxReadSlave        : in  AxiReadSlaveType;
+      auxWriteMaster      : out AxiWriteMasterType;
+      auxWriteSlave       : in  AxiWriteSlaveType;
+
       -- PCIE AXI Interface
-      pcieClk         : in  slv(1 downto 0);
-      pcieClkRst      : in  slv(1 downto 0);
-      pcieReadMaster  : out AxiReadMasterArray(1 downto 0);
-      pcieReadSlave   : in  AxiReadSlaveArray(1 downto 0);
-      pcieWriteMaster : out AxiWriteMasterArray(1 downto 0);
-      pcieWriteSlave  : in  AxiWriteSlaveArray(1 downto 0);
+      pciRefClkP      : in  sl;
+      pciRefClkM      : in  sl;
+      pciResetL       : out sl;
+      pcieInt         : out sl;
+      pcieRxP         : in  sl;
+      pcieRxM         : in  sl;
+      pcieTxP         : out sl;
+      pcieTxM         : out sl
 
       -- Ethernet Mode
       armEthMode : in  slv(31 downto 0);
@@ -199,7 +213,7 @@ architecture structure of RceG3AxiCntl is
    function genGp1Config return AxiLiteCrossbarMasterConfigArray is
       variable retConf : AxiLiteCrossbarMasterConfigArray(3 downto 0);
    begin
-      if USE_AXI_IC_G then
+      if PCIE_EN_G then
           -- 0x80000000 - 0x8000FFFF : Internal registers
           retConf(0).baseAddr     := x"80000000";
           retConf(0).addrBits     := 16;
@@ -307,40 +321,56 @@ begin
    -- GP1 AXI-4 Interconnect
    -- 0x80000000 - 0xBFFFFFFF, axiClk
    -------------------------------------
-   U_ICEN: if USE_AXI_IC_G generate
+   U_ICEN: if PCIE_EN_G generate
 
-      -- Local = 0x80000000 - 9FFFFFFF
-      -- pcie0 = 0xA0000000 - AFFFFFFF
-      -- pcie1 = 0xB0000000 - BFFFFFFF
-
-      U_AxiIcon: entity work.RceG3AxiIcon
+      -- Local    = 0x80000000 - 9FFFFFFF
+      -- pcie cfg = 0xA0000000 - AFFFFFFF
+      -- pcie bar = 0xB0000000 - BFFFFFFF
+      U_RceG3PcieRoot: entity work.RceG3PcieRoot
          generic map ( TPD_G  => TPD_G )
          port map (
-            axiClk          => axiClk,
-            axiRst          => axiClkRst,
-            mGpReadMaster   => mGpReadMaster(1),
-            mGpReadSlave    => mGpReadSlave(1),
-            mGpWriteMaster  => mGpWriteMaster(1),
-            mGpWriteSlave   => mGpWriteSlave(1),
-            locReadMaster   => gp1AxiReadMaster,
-            locReadSlave    => gp1AxiReadSlave,
-            locWriteMaster  => gp1AxiWriteMaster,
-            locWriteSlave   => gp1AxiWriteSlave,
-            pcieClk         => pcieClk,
-            pcieClkRst      => pcieClkRst,
-            pcieReadMaster  => pcieReadMaster,
-            pcieReadSlave   => pcieReadSlave,
-            pcieWriteMaster => pcieWriteMaster,
-            pcieWriteSlave  => pcieWriteSlave);
+            axiClk           => axiClk,
+            axiRst           => axiRst,
+            axiDmaClk        => axiDmaClk 
+            axiDmaRst        => axiDmaRst,
+            mGpReadMaster    => mGpReadMaster(1),
+            mGpReadSlave     => mGpReadSlave(1),
+            mGpWriteMaster   => mGpWriteMaster(1),
+            mGpWriteSlave    => mGpWriteSlave(1),
+            locReadMaster    => gp1AxiReadMaster,
+            locReadSlave     => gp1AxiReadSlave,
+            locWriteMaster   => gp1AxiWriteMaster,
+            locWriteSlave    => gp1AxiWriteSlave,
+            pcieReadMaster   => auxReadMaster,
+            pcieReadSlave    => auxReadSlave,
+            pcieWriteMaster  => auxWriteMaster,
+            pcieWriteSlave   => auxWriteSlave,
+            pciRefClkP       => pciRefClkP,
+            pciRefClkM       => pciRefClkM,
+            pciResetL        => pciResetL,
+            pcieInt          => pcieInt,
+            pcieRxP          => pcieRxP,
+            pcieRxM          => pcieRxM,
+            pcieTxP          => pcieTxP,
+            pcieTxM          => pcieTxM
+         );
+
+      userReadSlave  <= AXI_READ_SLAVE_INIT;
+      userWriteSlave <= AXI_WRITE_SLAVE_INIT;
 
    end generate;
 
-   U_ICDIS: if not USE_AXI_IC_G generate
+   U_ICDIS: if not PCIE_EN_G generate
 
-      pcieReadMaster  <= (others=>AXI_READ_MASTER_INIT_C);
-      --pcieReadSlave  
-      pcieWriteMaster <= (others=>AXI_WRITE_MASTER_INIT_C);
-      --pcieWriteSlave
+      auxReadMaster  <= userReadMaster;
+      userReadSlave  <= auxReadMaster;
+      auxWriteMaster <= userWriteMaster;
+      userWriteSlave <= auxWriteMaster;
+
+      pciResetL  <= '0';
+      pcieInt    <= '0';
+      pcieTxP    <= '0';
+      pcieTxM    <= '0';
 
       gp1AxiReadMaster  <= mGpReadMaster(1);
       mGpReadSlave(1)   <= gp1AxiReadSlave;
