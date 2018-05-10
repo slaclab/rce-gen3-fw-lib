@@ -46,6 +46,8 @@ entity RceG3AxiIcon is
       locWriteSlave   : in  AxiWriteSlaveType;
 
       -- PCIE Masters
+      pcieClk         : in  sl;
+      pcieClkRst      : in  sl;
       pcieReadMaster  : out AxiReadMasterArray(1 downto 0);
       pcieReadSlave   : in  AxiReadSlaveArray(1 downto 0);
       pcieWriteMaster : out AxiWriteMasterArray(1 downto 0);

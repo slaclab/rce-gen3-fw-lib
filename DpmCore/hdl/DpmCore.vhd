@@ -83,6 +83,7 @@ entity DpmCore is
       dmaIbMaster          : in    AxiStreamMasterArray(AXI_ST_COUNT_G-1 downto 0);
       dmaIbSlave           : out   AxiStreamSlaveArray(AXI_ST_COUNT_G-1 downto 0);
       -- User memory access (sysclk200 domain)
+      userClk              : in    sl                                           := '0';
       userWriteSlave       : out   AxiWriteSlaveType;
       userWriteMaster      : in    AxiWriteMasterType                           := AXI_WRITE_MASTER_INIT_C;
       userReadSlave        : out   AxiReadSlaveType;

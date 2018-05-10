@@ -51,12 +51,14 @@ entity RceG3Dma is
       acpReadMaster       : out AxiReadMasterType;
 
       -- AXI HP Slave
+      hpAxiClk            : out slv(3 downto 0);
       hpWriteSlave        : in  AxiWriteSlaveArray(3 downto 0);
       hpWriteMaster       : out AxiWriteMasterArray(3 downto 0);
       hpReadSlave         : in  AxiReadSlaveArray(3 downto 0);
       hpReadMaster        : out AxiReadMasterArray(3 downto 0);
 
       -- User memory access
+      userClk             : in  sl;
       userWriteSlave      : out AxiWriteSlaveType;
       userWriteMaster     : in  AxiWriteMasterType;
       userReadSlave       : out AxiReadSlaveType;
@@ -86,6 +88,8 @@ architecture structure of RceG3Dma is
 
 begin
 
+   hpAxiClk(
+
 
    ------------------------------------
    -- PPI DMA Controllers
@@ -102,6 +106,7 @@ begin
             acpWriteMaster   => acpWriteMaster,
             acpReadSlave     => acpReadSlave,
             acpReadMaster    => acpReadMaster,
+            hpAxiClk         => hpAxiClk,
             hpWriteSlave     => hpWriteSlave,
             hpWriteMaster    => hpWriteMaster,
             hpReadSlave      => hpReadSlave,
@@ -141,10 +146,12 @@ begin
             acpWriteMaster   => acpWriteMaster,
             acpReadSlave     => acpReadSlave,
             acpReadMaster    => acpReadMaster,
+            hpAxiClk         => hpAxiClk,
             hpWriteSlave     => hpWriteSlave,
             hpWriteMaster    => hpWriteMaster,
             hpReadSlave      => hpReadSlave,
             hpReadMaster     => hpReadMaster,
+            userClk          => userClk,
             userWriteSlave   => userWriteSlave,  
             userWriteMaster  => userWriteMaster, 
             userReadSlave    => userReadSlave,   
@@ -176,6 +183,7 @@ begin
             acpWriteMaster   => acpWriteMaster,
             acpReadSlave     => acpReadSlave,
             acpReadMaster    => acpReadMaster,
+            hpAxiClk         => hpAxiClk,
             hpWriteSlave     => hpWriteSlave,
             hpWriteMaster    => hpWriteMaster,
             hpReadSlave      => hpReadSlave,
@@ -218,6 +226,7 @@ begin
             acpWriteMaster   => acpWriteMaster,
             acpReadSlave     => acpReadSlave,
             acpReadMaster    => acpReadMaster,
+            hpAxiClk         => hpAxiClk,
             hpWriteSlave     => hpWriteSlave,
             hpWriteMaster    => hpWriteMaster,
             hpReadSlave      => hpReadSlave,
@@ -235,6 +244,10 @@ begin
             dmaIbMaster      => dmaIbMaster,
             dmaIbSlave       => dmaIbSlave
          );
+
+         userWriteSlave <= AXI_WRITE_SLAVE_INIT_C;
+         userReadSlave  <= AXI_READ_SLAVE_INIT_C;
+
    end generate;
 
 end architecture structure;

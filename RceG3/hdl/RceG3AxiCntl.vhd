@@ -87,6 +87,8 @@ entity RceG3AxiCntl is
       coreAxilWriteSlave  : in  AxiLiteWriteSlaveType;
 
       -- PCIE AXI Interface
+      pcieClk         : in  slv(1 downto 0);
+      pcieClkRst      : in  slv(1 downto 0);
       pcieReadMaster  : out AxiReadMasterArray(1 downto 0);
       pcieReadSlave   : in  AxiReadSlaveArray(1 downto 0);
       pcieWriteMaster : out AxiWriteMasterArray(1 downto 0);
@@ -324,6 +326,8 @@ begin
             locReadSlave    => gp1AxiReadSlave,
             locWriteMaster  => gp1AxiWriteMaster,
             locWriteSlave   => gp1AxiWriteSlave,
+            pcieClk         => pcieClk,
+            pcieClkRst      => pcieClkRst,
             pcieReadMaster  => pcieReadMaster,
             pcieReadSlave   => pcieReadSlave,
             pcieWriteMaster => pcieWriteMaster,

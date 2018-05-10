@@ -47,11 +47,13 @@ entity RceG3DmaAxisV2 is
       acpReadSlave    : in  AxiReadSlaveType;
       acpReadMaster   : out AxiReadMasterType;
       -- AXI HP Slave
+      hpClk           : out slv(3 downto 0);
       hpWriteSlave    : in  AxiWriteSlaveArray(3 downto 0);
       hpWriteMaster   : out AxiWriteMasterArray(3 downto 0);
       hpReadSlave     : in  AxiReadSlaveArray(3 downto 0);
       hpReadMaster    : out AxiReadMasterArray(3 downto 0);
       -- User memory access
+      userClk         : in  sl;
       userWriteSlave  : out AxiWriteSlaveType;
       userWriteMaster : in  AxiWriteMasterType;
       userReadSlave   : out AxiReadSlaveType;
@@ -89,6 +91,7 @@ begin
    hpWriteMaster(1 downto 0) <= intWriteMaster(1 downto 0);
    intReadSlave(1 downto 0)  <= hpReadSlave(1 downto 0);
    hpReadMaster(1 downto 0)  <= intReadMaster(1 downto 0);
+   hpAxiClk(1 downto 0)      <= (others=>axiDmaClk);
 
    -- ACP for channel 2
    intWriteSlave(2) <= acpWriteSlave;
@@ -101,12 +104,14 @@ begin
    hpWriteMaster(2) <= userWriteMaster;
    userReadSlave    <= hpReadSlave(2);
    hpReadMaster(2)  <= userReadMaster;
+   hpAxiClk(2)      <= userClk;
 
    -- HP for channel 3
    intWriteSlave(3) <= hpWriteSlave(3);
    hpWriteMaster(3) <= intWriteMaster(3);
    intReadSlave(3)  <= hpReadSlave(3);
    hpReadMaster(3)  <= intReadMaster(3);
+   hpAxiClk(3)      <= axiDmaClk;
 
    -- Unused Interrupts
    interrupt(DMA_INT_COUNT_C-1 downto 4) <= (others => '0');

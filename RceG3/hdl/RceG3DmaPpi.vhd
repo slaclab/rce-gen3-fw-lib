@@ -54,6 +54,7 @@ entity RceG3DmaPpi is
       acpReadMaster       : out AxiReadMasterType;
 
       -- AXI HP Slave
+      hpClk               : out slv(3 downto 0);
       hpWriteSlave        : in  AxiWriteSlaveArray(3 downto 0);
       hpWriteMaster       : out AxiWriteMasterArray(3 downto 0);
       hpReadSlave         : in  AxiReadSlaveArray(3 downto 0);
@@ -124,6 +125,7 @@ begin
       interrupt(DMA_INT_COUNT_C-1 downto PPI_COMP_CNT_C+24) <= (others=>'0');
    end generate;
 
+   hpClk <= (others=>axiDmaClk);
 
    -- Sockets
    U_PpiGen : for i in 0 to 3 generate

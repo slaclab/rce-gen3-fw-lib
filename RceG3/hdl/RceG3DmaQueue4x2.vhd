@@ -57,6 +57,7 @@ entity RceG3DmaQueue4x2 is
       acpReadMaster  : out AxiReadMasterType;
 
       -- AXI HP Slave
+      hpClk         : out slv(3 downto 0);
       hpWriteSlave  : in  AxiWriteSlaveArray(3 downto 0);
       hpWriteMaster : out AxiWriteMasterArray(3 downto 0);
       hpReadSlave   : in  AxiReadSlaveArray(3 downto 0);
@@ -143,6 +144,8 @@ architecture structure of RceG3DmaQueue4x2 is
    signal state, nextState : StateTypeArray(1 downto 0);
 
 begin
+
+   hpClk <= (others=>axiDmaClk);
 
    -- check generic settings
    assert DMA_BUF_START_ADDR_G+(2**DMA_BUF_SIZE_BITS_G)*4 <= DMA_BUFF_MAX_ADDR_C

@@ -131,10 +131,13 @@ architecture STRUCTURE of DtmCore is
    signal armEthTx            : ArmEthTxArray(1 downto 0);
    signal armEthRx            : ArmEthRxArray(1 downto 0);
    signal armEthMode          : slv(31 downto 0);
+   signal pcieClk             : slv(1 downto 0);
+   signal pcieClkRst          : slv(1 downto 0);
    signal pcieReadMaster      : AxiReadMasterArray(1 downto 0);
    signal pcieReadSlave       : AxiReadSlaveArray(1 downto 0);
    signal pcieWriteMaster     : AxiWriteMasterArray(1 downto 0);
    signal pcieWriteSlave      : AxiWriteSlaveArray(1 downto 0);
+   signal userClk             : sl;
    signal userWriteSlave      : AxiWriteSlaveType;
    signal userWriteMaster     : AxiWriteMasterType;
    signal userReadSlave       : AxiReadSlaveType;
@@ -189,6 +192,8 @@ begin
          coreAxilReadSlave   => coreAxilReadSlave,
          coreAxilWriteMaster => coreAxilWriteMaster,
          coreAxilWriteSlave  => coreAxilWriteSlave,
+         pcieClk             => pcieClk,
+         pcieClkRst          => pcieClkRst,
          pcieReadMaster      => pcieReadMaster,
          pcieReadSlave       => pcieReadSlave,
          pcieWriteMaster     => pcieWriteMaster,
@@ -201,6 +206,7 @@ begin
          dmaIbMaster         => idmaIbMaster,
          dmaIbSlave          => idmaIbSlave,
          userInterrupt       => intInterrupt,
+         userClk             => userClk,
          userWriteSlave      => userWriteSlave,
          userWriteMaster     => userWriteMaster,
          userReadSlave       => userReadSlave,
@@ -227,14 +233,15 @@ begin
    U_PcieRoot: entity work.ZynqPcieRoot
       generic map ( TPD_G => TPD_G )
       port map (
-         axiClk          => iaxiClk,
-         axiClkRst       => iaxiClkRst,
+         pcieClk         => pcieClk,
+         pcieClkRst      => pcieClkRst,
          pcieReadMaster  => pcieReadMaster,
          pcieReadSlave   => pcieReadSlave,
          pcieWriteMaster => pcieWriteMaster,
          pcieWriteSlave  => pcieWriteSlave,
          sysClk200       => isysClk200,
          sysClk200Rst    => isysClk200Rst,
+         userClk         => userClk,
          userWriteSlave  => userWriteSlave,
          userWriteMaster => userWriteMaster,
          userReadSlave   => userReadSlave,
@@ -248,6 +255,7 @@ begin
          pcieTxP         => pciTxP,
          pcieTxM         => pciTxM
       );
+
 
    --------------------------------------------------
    -- Ethernet
