@@ -56,7 +56,7 @@ class RceVersion(pr.Device):
             name        = 'DeviceDna', 
             description = 'Xilinx Device DNA Value',
             offset      = 0x80000020, 
-            bitsize     = 64, 
+            bitSize     = 64, 
             mode        = 'RO',
         ))
 
