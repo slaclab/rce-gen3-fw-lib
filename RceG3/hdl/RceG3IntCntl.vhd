@@ -130,7 +130,7 @@ begin
    end process;
 
    -- Async
-   process (axiDmaRst, dmaInterrupt, icAxilReadMaster, icAxilWriteMaster, locSources, userInterrupt, r) is
+   process (axiDmaRst, dmaInterrupt, icAxilReadMaster, icAxilWriteMaster, locSources, userInterrupt, pcieInterrupt, r) is
       variable v         : RegType;
       variable axiStatus : AxiLiteStatusType;
    begin

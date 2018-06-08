@@ -21,6 +21,9 @@ use ieee.std_logic_1164.all;
 use work.StdRtlPkg.all;
 use work.AxiPkg.all;
 
+library unisim;
+use unisim.vcomponents.all;
+
 entity RceG3PcieRoot is
    generic (
       TPD_G  : time := 1 ns);
@@ -241,7 +244,7 @@ begin
       );
 
    -- Invert resets
-   axiClkRstN    <= not axiClkRst;
+   axiClkRstN    <= not axiRst;
    axiDmaRstN    <= not axiDmaRst;
 
 
@@ -258,7 +261,7 @@ begin
          pcie_axi_rstn    => axiDmaRstN,
          pcie_int         => pcieInt,
          pcie_refclk      => intRefClk,
-         pcie_resetn      => pcieResetL,
+         pcie_resetn      => pciResetL,
 
          intx_msi_req     => '0',     -- in STD_LOGIC;
          msi_vector_num   => "00000", -- in STD_LOGIC_VECTOR ( 4 downto 0 );

@@ -39,7 +39,7 @@ entity RceG3Top is
       BUILD_INFO_G          : BuildInfoType;
       DMA_CLKDIV_EN_G       : boolean               := false;
       DMA_CLKDIV_G          : real                  := 5.0;
-      USE_AXI_IC_G          : boolean               := false;
+      PCIE_EN_G             : boolean               := false;
       RCE_DMA_MODE_G        : RceDmaModeType        := RCE_DMA_PPI_C;
       SIM_MODEL_G           : boolean               := false
    );
@@ -78,7 +78,7 @@ entity RceG3Top is
       pcieRxP                  : in    sl := '0';
       pcieRxM                  : in    sl := '0';
       pcieTxP                  : out   sl;
-      pcieTxM                  : out   sl
+      pcieTxM                  : out   sl;
 
       -- DMA Interfaces
       dmaClk                   : in    slv(3 downto 0);
@@ -305,7 +305,7 @@ begin
       generic map (
          TPD_G            => TPD_G,
          BUILD_INFO_G     => BUILD_INFO_G,
-         USE_AXI_IC_G     => USE_AXI_IC_G,
+         PCIE_EN_G        => PCIE_EN_G,
          RCE_DMA_MODE_G   => RCE_DMA_MODE_G
       ) port map (
          mGpReadMaster        => mGpReadMaster,

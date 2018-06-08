@@ -161,7 +161,7 @@ begin
       generic map (
          TPD_G          => TPD_G,
          BUILD_INFO_G   => BUILD_INFO_G,
-         USE_AXI_IC_G   => true,
+         PCIE_EN_G      => true,
          RCE_DMA_MODE_G => RCE_DMA_AXIS_C
       ) port map (
          i2cSda              => i2cSda,
@@ -186,7 +186,7 @@ begin
          pcieRxP             => pciRxP,
          pcieRxM             => pciRxM,
          pcieTxP             => pciTxP,
-         pcieTxM             => pciTxM
+         pcieTxM             => pciTxM,
          dmaClk              => idmaClk,
          dmaClkRst           => idmaClkRst,
          dmaState            => idmaState,

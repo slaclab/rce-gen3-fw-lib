@@ -187,7 +187,7 @@ begin
          extAxilReadMaster   => extAxilReadMaster,
          extAxilReadSlave    => extAxilReadSlave ,
          extAxilWriteMaster  => extAxilWriteMaster,
-         extAxilWriteSlave   => extAxilWriteSlave ,
+         extAxilWriteSlave   => extAxilWriteSlave,
          coreAxilReadMaster  => coreAxilReadMaster,
          coreAxilReadSlave   => coreAxilReadSlave,
          coreAxilWriteMaster => coreAxilWriteMaster,

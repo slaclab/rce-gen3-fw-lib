@@ -106,7 +106,7 @@ entity RceG3AxiCntl is
       pcieRxP         : in  sl;
       pcieRxM         : in  sl;
       pcieTxP         : out sl;
-      pcieTxM         : out sl
+      pcieTxM         : out sl;
 
       -- Ethernet Mode
       armEthMode : in  slv(31 downto 0);
@@ -330,8 +330,8 @@ begin
          generic map ( TPD_G  => TPD_G )
          port map (
             axiClk           => axiClk,
-            axiRst           => axiRst,
-            axiDmaClk        => axiDmaClk 
+            axiRst           => axiClkRst,
+            axiDmaClk        => axiDmaClk,
             axiDmaRst        => axiDmaRst,
             mGpReadMaster    => mGpReadMaster(1),
             mGpReadSlave     => mGpReadSlave(1),
@@ -355,17 +355,17 @@ begin
             pcieTxM          => pcieTxM
          );
 
-      userReadSlave  <= AXI_READ_SLAVE_INIT;
-      userWriteSlave <= AXI_WRITE_SLAVE_INIT;
+      userReadSlave  <= AXI_READ_SLAVE_INIT_C;
+      userWriteSlave <= AXI_WRITE_SLAVE_INIT_C;
 
    end generate;
 
    U_ICDIS: if not PCIE_EN_G generate
 
       auxReadMaster  <= userReadMaster;
-      userReadSlave  <= auxReadMaster;
+      userReadSlave  <= auxReadSlave;
       auxWriteMaster <= userWriteMaster;
-      userWriteSlave <= auxWriteMaster;
+      userWriteSlave <= auxWriteSlave;
 
       pciResetL  <= '0';
       pcieInt    <= '0';
