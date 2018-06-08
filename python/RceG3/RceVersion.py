@@ -13,9 +13,10 @@
 # copied, modified, propagated, or distributed except according to the terms 
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
-import pyrogue
+
+import datetime
+import parse
 import pyrogue as pr
-import collections
 
 class RceVersion(pr.Device):
     def __init__(
