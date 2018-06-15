@@ -8,6 +8,10 @@
 ## the terms contained in the LICENSE.txt file.
 #-------------------------------------------------------------------------------
 
+################
+## IO Placements
+################
+
 set_property -dict { PACKAGE_PIN B13 IOSTANDARD LVCMOS33 } [get_ports { i2cSda }]
 set_property -dict { PACKAGE_PIN C13 IOSTANDARD LVCMOS33 } [get_ports { i2cScl }]
 
@@ -85,7 +89,6 @@ set_property -dict { PACKAGE_PIN P1 } [get_ports { ethRxN[1] }]
 
 set_property -dict { PACKAGE_PIN J8 } [get_ports { ethRefClkP }]
 set_property -dict { PACKAGE_PIN J7 } [get_ports { ethRefClkN }]
-create_clock -period 6.400 -name ethRefClkP  [get_ports {ethRefClkP}]
 
 set_property -dict { PACKAGE_PIN E8 } [get_ports { spareClkInP[0] }]
 set_property -dict { PACKAGE_PIN E7 } [get_ports { spareClkInN[0] }]
@@ -230,3 +233,27 @@ set_property -dict { PACKAGE_PIN M5 } [get_ports { dpmToRtmHsN[21] }]
 
 set_property -dict { PACKAGE_PIN L4 } [get_ports { rtmToDpmHsP[21] }]
 set_property -dict { PACKAGE_PIN L3 } [get_ports { rtmToDpmHsN[21] }]
+
+####################
+# Timing Constraints
+####################
+
+create_clock -name ethRefClkP -period 6.400 [get_ports {ethRefClkP}]
+create_clock -name fclk0      -period 10.00 [get_pins {U_Core/U_RceG3Top/U_SimModeDis.U_RceG3Cpu/U_CPU/U0/buffer_pl_clk_0.PL_CLK_0_BUFG/O}]
+set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethRefClkP}] -group [get_clocks -include_generated_clocks {fclk0}] 
+
+create_generated_clock -name axiDmaClk [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0}]
+create_generated_clock -name sysClk200 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT1}]
+create_generated_clock -name sysClk125 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT2}]
+create_generated_clock -name dnaClk    [get_pins {U_Core/U_RceG3Top/U_RceG3AxiCntl/U_DeviceDna/GEN_ULTRA_SCALE.DeviceDnaUltraScale_Inst/BUFGCE_DIV_Inst/O}]
+set_clock_groups -asynchronous \
+    -group [get_clocks {dnaClk}] \
+    -group [get_clocks {axiDmaClk}] \
+    -group [get_clocks {sysClk200}] \
+    -group [get_clocks {sysClk125}] 
+
+create_clock -name eth1GbETxClk -period 16.00 [get_pins {U_Core/U_Eth1gGen.U_ZynqEthernet/core_wrapper/transceiver_inst/zynq_gige_gt_i/inst/gen_gtwizard_gthe4_top.zynq_gige_gt_gtwizard_gthe4_inst/gen_gtwizard_gthe4.gen_channel_container[1].gen_enabled_channel.gthe4_channel_wrapper_inst/channel_inst/gthe4_channel_gen.gen_gthe4_channel_inst[0].GTHE4_CHANNEL_PRIM_INST/TXOUTCLK}]
+create_generated_clock -name eth1GbERxClk     [get_pins {U_Core/U_Eth1gGen.U_ZynqEthernet/core_wrapper/transceiver_inst/zynq_gige_gt_i/inst/gen_gtwizard_gthe4_top.zynq_gige_gt_gtwizard_gthe4_inst/gen_gtwizard_gthe4.gen_channel_container[1].gen_enabled_channel.gthe4_channel_wrapper_inst/channel_inst/gthe4_channel_gen.gen_gthe4_channel_inst[0].GTHE4_CHANNEL_PRIM_INST/RXOUTCLKPCS}]
+create_generated_clock -name eth125Clk        [get_pins {U_Core/U_Eth1gGen.U_ZynqEthernet/U_MMCM/PllGen.U_Pll/CLKOUT0}]
+create_generated_clock -name eth62Clk         [get_pins {U_Core/U_Eth1gGen.U_ZynqEthernet/U_MMCM/PllGen.U_Pll/CLKOUT1}]
+set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {eth1GbETxClk}] -group [get_clocks {eth1GbERxClk}] -group [get_clocks -include_generated_clocks {fclk0}] 

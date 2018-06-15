@@ -151,11 +151,13 @@ set_property -dict { PACKAGE_PIN AD1  IOSTANDARD SSTL12_DCI       } [get_ports {
 set_property -dict { PACKAGE_PIN AE2  IOSTANDARD SSTL12_DCI       } [get_ports { ddrOut[ba][1]  }]
 set_property -dict { PACKAGE_PIN AE1  IOSTANDARD SSTL12_DCI       } [get_ports { ddrOut[ba][0]  }]
 
-##########
-# Clocks #
-##########
+####################
+# Timing Constraints
+####################
 
 create_clock -period 5.000 -name ddrClkP  [get_ports {ddrClkP}]
-create_generated_clock -name ddrIntClk00  [get_pins {U_Core/U_Mig/U_MIG/inst/u_ddr4_infrastructure/gen_mmcme3.u_mmcme_adv_inst/CLKOUT0}]
-create_generated_clock -name ddrIntClk10  [get_pins {U_Core/U_Mig/U_MIG/inst/u_ddr4_infrastructure/gen_mmcme3.u_mmcme_adv_inst/CLKOUT6}]
-set_property HIGH_PRIORITY true [get_nets {U_Core/U_Mig/U_MIG/inst/u_ddr4_infrastructure/div_clk}]
+create_generated_clock -name ddrIntClk00  [get_pins {U_Core/U_Mig/U_MIG/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0}]
+create_generated_clock -name ddrIntClk10  [get_pins {U_Core/U_Mig/U_MIG/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT6}]
+
+set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ddrClkP}] -group [get_clocks -include_generated_clocks {fclk0}] 
+set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ddrClkP}] -group [get_clocks -include_generated_clocks {ethRefClkP}] 
