@@ -317,8 +317,6 @@ begin
          BRAM_EN_G       => true,
          FWFT_EN_G       => true,
          USE_DSP48_G     => "no",
-         USE_BUILT_IN_G  => true,
-         XIL_DEVICE_G    => "7SERIES",
          SYNC_STAGES_G   => 3,
          DATA_WIDTH_G    => 48,
          ADDR_WIDTH_G    => 9,
