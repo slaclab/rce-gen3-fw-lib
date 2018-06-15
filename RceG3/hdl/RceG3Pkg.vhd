@@ -91,6 +91,7 @@ package RceG3Pkg is
       TKEEP_MODE_C  => TKEEP_COMP_C,
       TUSER_BITS_C  => 4,
       TUSER_MODE_C  => TUSER_FIRST_LAST_C);
+   constant RCEG3_AXIS_DMA_ACP_CONFIG_C : AxiStreamConfigType := RCEG3_AXIS_DMA_CONFIG_C;
 
    --------------------------------------------------------
    -- Ethernet Types

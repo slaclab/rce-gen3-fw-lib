@@ -36,9 +36,10 @@ use work.AxiDmaPkg.all;
 
 entity RceG3DmaAxisV2Chan is
    generic (
-      TPD_G            : time             := 1 ns;
-      AXIL_BASE_ADDR_G : slv(31 downto 0) := x"00000000";
-      AXI_CONFIG_G     : AxiConfigType    := AXI_CONFIG_INIT_C);
+      TPD_G             : time                := 1 ns;
+      AXIL_BASE_ADDR_G  : slv(31 downto 0)    := x"00000000";
+      AXIS_DMA_CONFIG_G : AxiStreamConfigType := RCEG3_AXIS_DMA_CONFIG_C;
+      AXI_CONFIG_G      : AxiConfigType       := AXI_CONFIG_INIT_C);
    port (
       -- Clock/Reset
       axiDmaClk       : in  sl;
@@ -102,8 +103,8 @@ begin
          FIFO_ADDR_WIDTH_G   => 9,
          FIFO_FIXED_THRESH_G => true,
          FIFO_PAUSE_THRESH_G => 500,  -- Unused
-         SLAVE_AXI_CONFIG_G  => RCEG3_AXIS_DMA_CONFIG_C,
-         MASTER_AXI_CONFIG_G => RCEG3_AXIS_DMA_CONFIG_C) 
+         SLAVE_AXI_CONFIG_G  => AXIS_DMA_CONFIG_G,
+         MASTER_AXI_CONFIG_G => AXIS_DMA_CONFIG_G) 
       port map (
          sAxisClk        => dmaClk,
          sAxisRst        => dmaClkRst,
@@ -132,8 +133,8 @@ begin
          FIFO_ADDR_WIDTH_G   => 9,
          FIFO_FIXED_THRESH_G => true,
          FIFO_PAUSE_THRESH_G => 300,  -- 1800 byte buffer before pause and 1696 byte of buffer before FIFO FULL
-         SLAVE_AXI_CONFIG_G  => RCEG3_AXIS_DMA_CONFIG_C,
-         MASTER_AXI_CONFIG_G => RCEG3_AXIS_DMA_CONFIG_C) 
+         SLAVE_AXI_CONFIG_G  => AXIS_DMA_CONFIG_G,
+         MASTER_AXI_CONFIG_G => AXIS_DMA_CONFIG_G) 
       port map (
          sAxisClk        => axiDmaClk,
          sAxisRst        => axiDmaRst,
@@ -244,7 +245,7 @@ begin
          AXIL_BASE_ADDR_G  => AXIL_BASE_ADDR_G,
          AXI_READY_EN_G    => false,
          AXIS_READY_EN_G   => false,
-         AXIS_CONFIG_G     => RCEG3_AXIS_DMA_CONFIG_C,
+         AXIS_CONFIG_G     => AXIS_DMA_CONFIG_G,
          AXI_DESC_CONFIG_G => AXI_CONFIG_G,
          AXI_DMA_CONFIG_G  => AXI_CONFIG_G,
          CHAN_COUNT_G      => 1,

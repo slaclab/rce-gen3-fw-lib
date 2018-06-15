@@ -37,6 +37,7 @@ entity RceG3Top is
    generic (
       TPD_G                 : time                  := 1 ns;
       BUILD_INFO_G          : BuildInfoType;
+      XIL_DEVICE_G          : string                := "7SERIES";  -- Either "7SERIES" or "ULTRASCALE"
       DMA_CLKDIV_EN_G       : boolean               := false;
       DMA_CLKDIV_G          : real                  := 5.0;
       RCE_DMA_MODE_G        : RceDmaModeType        := RCE_DMA_PPI_C;
@@ -204,49 +205,49 @@ begin
          );
    end generate;
 
-   U_SimModeEn : if SIM_MODEL_G = true generate
-      U_RceG3Cpu : entity work.RceG3CpuSim
-         generic map (
-            TPD_G => TPD_G
-         ) port map (
-            fclkClk3             => fclkClk3,
-            fclkClk2             => fclkClk2,
-            fclkClk1             => fclkClk1,
-            fclkClk0             => fclkClk0,
-            fclkRst3             => fclkRst3,
-            fclkRst2             => fclkRst2,
-            fclkRst1             => fclkRst1,
-            fclkRst0             => fclkRst0,
-            armInterrupt         => armInterrupt,
-            mGpAxiClk(0)         => axiDmaClk,
-            mGpAxiClk(1)         => isysClk125,
-            mGpWriteMaster       => mGpWriteMaster,
-            mGpWriteSlave        => mGpWriteSlave,
-            mGpReadMaster        => mGpReadMaster,
-            mGpReadSlave         => mGpReadSlave,
-            sGpAxiClk(0)         => axiDmaClk,
-            sGpAxiClk(1)         => axiDmaClk,
-            sGpWriteSlave        => open,
-            sGpWriteMaster       => (others=>AXI_WRITE_MASTER_INIT_C),
-            sGpReadSlave         => open,
-            sGpReadMaster        => (others=>AXI_READ_MASTER_INIT_C),
-            acpAxiClk            => axiDmaClk,
-            acpWriteSlave        => acpWriteSlave,
-            acpWriteMaster       => acpWriteMaster,
-            acpReadSlave         => acpReadSlave,
-            acpReadMaster        => acpReadMaster,
-            hpAxiClk(0)          => axiDmaClk,
-            hpAxiClk(1)          => axiDmaClk,
-            hpAxiClk(2)          => axiDmaClk,
-            hpAxiClk(3)          => axiDmaClk,
-            hpWriteSlave         => hpWriteSlave,
-            hpWriteMaster        => hpWriteMaster,
-            hpReadSlave          => hpReadSlave,
-            hpReadMaster         => hpReadMaster,
-            armEthTx             => armEthTx,
-            armEthRx             => armEthRx
-         );
-   end generate;
+   -- U_SimModeEn : if SIM_MODEL_G = true generate
+      -- U_RceG3Cpu : entity work.RceG3CpuSim
+         -- generic map (
+            -- TPD_G => TPD_G
+         -- ) port map (
+            -- fclkClk3             => fclkClk3,
+            -- fclkClk2             => fclkClk2,
+            -- fclkClk1             => fclkClk1,
+            -- fclkClk0             => fclkClk0,
+            -- fclkRst3             => fclkRst3,
+            -- fclkRst2             => fclkRst2,
+            -- fclkRst1             => fclkRst1,
+            -- fclkRst0             => fclkRst0,
+            -- armInterrupt         => armInterrupt,
+            -- mGpAxiClk(0)         => axiDmaClk,
+            -- mGpAxiClk(1)         => isysClk125,
+            -- mGpWriteMaster       => mGpWriteMaster,
+            -- mGpWriteSlave        => mGpWriteSlave,
+            -- mGpReadMaster        => mGpReadMaster,
+            -- mGpReadSlave         => mGpReadSlave,
+            -- sGpAxiClk(0)         => axiDmaClk,
+            -- sGpAxiClk(1)         => axiDmaClk,
+            -- sGpWriteSlave        => open,
+            -- sGpWriteMaster       => (others=>AXI_WRITE_MASTER_INIT_C),
+            -- sGpReadSlave         => open,
+            -- sGpReadMaster        => (others=>AXI_READ_MASTER_INIT_C),
+            -- acpAxiClk            => axiDmaClk,
+            -- acpWriteSlave        => acpWriteSlave,
+            -- acpWriteMaster       => acpWriteMaster,
+            -- acpReadSlave         => acpReadSlave,
+            -- acpReadMaster        => acpReadMaster,
+            -- hpAxiClk(0)          => axiDmaClk,
+            -- hpAxiClk(1)          => axiDmaClk,
+            -- hpAxiClk(2)          => axiDmaClk,
+            -- hpAxiClk(3)          => axiDmaClk,
+            -- hpWriteSlave         => hpWriteSlave,
+            -- hpWriteMaster        => hpWriteMaster,
+            -- hpReadSlave          => hpReadSlave,
+            -- hpReadMaster         => hpReadMaster,
+            -- armEthTx             => armEthTx,
+            -- armEthRx             => armEthRx
+         -- );
+   -- end generate;
 
 
    --------------------------------------------
@@ -290,6 +291,7 @@ begin
       generic map (
          TPD_G            => TPD_G,
          BUILD_INFO_G     => BUILD_INFO_G,
+         XIL_DEVICE_G     => XIL_DEVICE_G,
          RCE_DMA_MODE_G   => RCE_DMA_MODE_G
       ) port map (
          mGpReadMaster        => mGpReadMaster,
