@@ -2,7 +2,7 @@
 -- File       : DuneDpmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-06-14
+-- Last update: 2018-06-15
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DUNE DPM
 -------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ entity DuneDpmCore is
       userInterrupt        : in    slv(USER_INT_COUNT_C-1 downto 0)             := (others => '0'));
 end DuneDpmCore;
 
-architecture STRUCTURE of DuneDpmCore is
+architecture mapping of DuneDpmCore is
 
    signal iaxiClk             : sl;
    signal iaxiClkRst          : sl;
@@ -138,6 +138,9 @@ architecture STRUCTURE of DuneDpmCore is
    signal armEthTx            : ArmEthTxArray(1 downto 0);
    signal armEthRx            : ArmEthRxArray(1 downto 0);
    signal armEthMode          : slv(31 downto 0);
+
+   signal sgmiiRx : slv(3 downto 0);
+   signal sgmiiTx : slv(3 downto 0);
 
 begin
 
@@ -361,4 +364,21 @@ begin
          gtTxP(0) => ethTxP(1),
          gtTxN(0) => ethTxN(1));
 
-end architecture STRUCTURE;
+   GEN_VEC : for i in 3 to 0 generate
+      U_sgmiiRx : IBUFDS
+         generic map (
+            DIFF_TERM => true)
+         port map(
+            I  => sgmiiRxP(i),
+            IB => sgmiiRxN(i),
+            O  => sgmiiRx(i));
+      U_sgmiiTx : OBUFDS
+         port map(
+            I  => sgmiiTx(i),
+            O  => sgmiiTxP(i),
+            OB => sgmiiTxN(i));
+      -- Prevent optimizing out the IBUFDS/OBUFDS
+      sgmiiTx(i) <= sgmiiRx(i) and iaxiClkRst;
+   end generate;
+
+end mapping;

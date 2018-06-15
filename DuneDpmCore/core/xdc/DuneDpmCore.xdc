@@ -12,17 +12,11 @@
 ## IO Placements
 ################
 
-set_property -dict { PACKAGE_PIN B13 IOSTANDARD LVCMOS33 } [get_ports { i2cSda }]
-set_property -dict { PACKAGE_PIN C13 IOSTANDARD LVCMOS33 } [get_ports { i2cScl }]
+set_property -dict { PACKAGE_PIN B13 IOSTANDARD LVCMOS33 PULLTYPE PULLUP } [get_ports { i2cSda }]
+set_property -dict { PACKAGE_PIN C13 IOSTANDARD LVCMOS33 PULLTYPE PULLUP } [get_ports { i2cScl }]
 
-set_property -dict { PACKAGE_PIN E15 IOSTANDARD LVCMOS33 } [get_ports { uartRx }]
-set_property -dict { PACKAGE_PIN D15 IOSTANDARD LVCMOS33 } [get_ports { uartTx }]
-
-set_property -dict { PACKAGE_PIN H11 IOSTANDARD LVCMOS25 } [get_ports { dtmFbP[0] }]
-set_property -dict { PACKAGE_PIN G11 IOSTANDARD LVCMOS25 } [get_ports { dtmFbN[0] }]
-
-set_property -dict { PACKAGE_PIN J12 IOSTANDARD LVCMOS25 } [get_ports { dtmFbP[1] }]
-set_property -dict { PACKAGE_PIN H12 IOSTANDARD LVCMOS25 } [get_ports { dtmFbN[1] }]
+set_property -dict { PACKAGE_PIN E15 IOSTANDARD LVCMOS33 PULLTYPE PULLUP } [get_ports { uartRx }]
+set_property -dict { PACKAGE_PIN D15 IOSTANDARD LVCMOS33 PULLTYPE PULLUP } [get_ports { uartTx }]
 
 set_property -dict { PACKAGE_PIN J16 IOSTANDARD LVCMOS25 } [get_ports { led[0] }]
 set_property -dict { PACKAGE_PIN J15 IOSTANDARD LVCMOS25 } [get_ports { led[1] }]
@@ -30,17 +24,23 @@ set_property -dict { PACKAGE_PIN J15 IOSTANDARD LVCMOS25 } [get_ports { led[1] }
 set_property -dict { PACKAGE_PIN J11 IOSTANDARD LVCMOS25 } [get_ports { memPg[0] }]
 set_property -dict { PACKAGE_PIN J10 IOSTANDARD LVCMOS25 } [get_ports { memPg[1] }]
 
-set_property -dict { PACKAGE_PIN R10 IOSTANDARD LVDS } [get_ports { dtmClkP[0] }]
-set_property -dict { PACKAGE_PIN R9  IOSTANDARD LVDS } [get_ports { dtmClkN[0] }]
+set_property -dict { PACKAGE_PIN M15 IOSTANDARD LVDS } [get_ports { dtmFbP[0] }]
+set_property -dict { PACKAGE_PIN M14 IOSTANDARD LVDS } [get_ports { dtmFbN[0] }]
 
-set_property -dict { PACKAGE_PIN T8  IOSTANDARD LVDS } [get_ports { dtmClkP[1] }]
-set_property -dict { PACKAGE_PIN R8  IOSTANDARD LVDS } [get_ports { dtmClkN[1] }]
+set_property -dict { PACKAGE_PIN L13 IOSTANDARD LVDS } [get_ports { dtmFbP[1] }]
+set_property -dict { PACKAGE_PIN K13 IOSTANDARD LVDS } [get_ports { dtmFbN[1] }]
 
-set_property -dict { PACKAGE_PIN P11 IOSTANDARD LVDS } [get_ports { dtmClkP[2] }]
-set_property -dict { PACKAGE_PIN N11 IOSTANDARD LVDS } [get_ports { dtmClkN[2] }]
+set_property -dict { PACKAGE_PIN R10 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { dtmClkP[0] }]
+set_property -dict { PACKAGE_PIN R9  IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { dtmClkN[0] }]
 
-set_property -dict { PACKAGE_PIN P10 IOSTANDARD LVDS } [get_ports { dtmClkP[3] }]
-set_property -dict { PACKAGE_PIN P9  IOSTANDARD LVDS } [get_ports { dtmClkN[3] }]
+set_property -dict { PACKAGE_PIN T8  IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { dtmClkP[1] }]
+set_property -dict { PACKAGE_PIN R8  IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { dtmClkN[1] }]
+
+set_property -dict { PACKAGE_PIN P11 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { dtmClkP[2] }]
+set_property -dict { PACKAGE_PIN N11 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { dtmClkN[2] }]
+
+set_property -dict { PACKAGE_PIN P10 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { dtmClkP[3] }]
+set_property -dict { PACKAGE_PIN P9  IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { dtmClkN[3] }]
 
 set_property -dict { PACKAGE_PIN T13 IOSTANDARD LVDS } [get_ports { spareClkOutP[0] }]
 set_property -dict { PACKAGE_PIN R13 IOSTANDARD LVDS } [get_ports { spareClkOutN[0] }]
@@ -54,26 +54,26 @@ set_property -dict { PACKAGE_PIN U6  IOSTANDARD LVDS } [get_ports { spareClkOutN
 set_property -dict { PACKAGE_PIN W12 IOSTANDARD LVDS } [get_ports { sgmiiTxP[0] }]
 set_property -dict { PACKAGE_PIN W11 IOSTANDARD LVDS } [get_ports { sgmiiTxN[0] }]
 
-set_property -dict { PACKAGE_PIN T12 IOSTANDARD LVDS } [get_ports { sgmiiRxP[0] }]
-set_property -dict { PACKAGE_PIN R12 IOSTANDARD LVDS } [get_ports { sgmiiRxN[0] }]
+set_property -dict { PACKAGE_PIN T12 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { sgmiiRxP[0] }]
+set_property -dict { PACKAGE_PIN R12 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { sgmiiRxN[0] }]
 
 set_property -dict { PACKAGE_PIN V8  IOSTANDARD LVDS } [get_ports { sgmiiTxP[1] }]
 set_property -dict { PACKAGE_PIN V7  IOSTANDARD LVDS } [get_ports { sgmiiTxN[1] }]
 
-set_property -dict { PACKAGE_PIN T7  IOSTANDARD LVDS } [get_ports { sgmiiRxP[1] }]
-set_property -dict { PACKAGE_PIN T6  IOSTANDARD LVDS } [get_ports { sgmiiRxN[1] }]
+set_property -dict { PACKAGE_PIN T7  IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { sgmiiRxP[1] }]
+set_property -dict { PACKAGE_PIN T6  IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { sgmiiRxN[1] }]
 
 set_property -dict { PACKAGE_PIN M10 IOSTANDARD LVDS } [get_ports { sgmiiTxP[2] }]
 set_property -dict { PACKAGE_PIN L10 IOSTANDARD LVDS } [get_ports { sgmiiTxN[2] }]
 
-set_property -dict { PACKAGE_PIN L12 IOSTANDARD LVDS } [get_ports { sgmiiRxP[2] }]
-set_property -dict { PACKAGE_PIN K12 IOSTANDARD LVDS } [get_ports { sgmiiRxN[2] }]
+set_property -dict { PACKAGE_PIN L12 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { sgmiiRxP[2] }]
+set_property -dict { PACKAGE_PIN K12 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { sgmiiRxN[2] }]
 
 set_property -dict { PACKAGE_PIN P12 IOSTANDARD LVDS } [get_ports { sgmiiTxP[3] }]
 set_property -dict { PACKAGE_PIN N12 IOSTANDARD LVDS } [get_ports { sgmiiTxN[3] }]
 
-set_property -dict { PACKAGE_PIN L15 IOSTANDARD LVDS } [get_ports { sgmiiRxP[3] }]
-set_property -dict { PACKAGE_PIN K15 IOSTANDARD LVDS } [get_ports { sgmiiRxN[3] }]
+set_property -dict { PACKAGE_PIN L15 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { sgmiiRxP[3] }]
+set_property -dict { PACKAGE_PIN K15 IOSTANDARD LVDS DIFF_TERM_ADV TERM_100 } [get_ports { sgmiiRxN[3] }]
 
 set_property -dict { PACKAGE_PIN R4 } [get_ports { ethTxP[0] }]
 set_property -dict { PACKAGE_PIN R3 } [get_ports { ethTxN[0] }]
@@ -90,11 +90,11 @@ set_property -dict { PACKAGE_PIN P1 } [get_ports { ethRxN[1] }]
 set_property -dict { PACKAGE_PIN J8 } [get_ports { ethRefClkP }]
 set_property -dict { PACKAGE_PIN J7 } [get_ports { ethRefClkN }]
 
-set_property -dict { PACKAGE_PIN E8 } [get_ports { spareClkInP[0] }]
-set_property -dict { PACKAGE_PIN E7 } [get_ports { spareClkInN[0] }]
+set_property -dict { PACKAGE_PIN E8 } [get_ports { spareGtClkInP[0] }]
+set_property -dict { PACKAGE_PIN E7 } [get_ports { spareGtClkInN[0] }]
 
-set_property -dict { PACKAGE_PIN J27 } [get_ports { spareClkInP[1] }]
-set_property -dict { PACKAGE_PIN J28 } [get_ports { spareClkInN[1] }]
+set_property -dict { PACKAGE_PIN J27 } [get_ports { spareGtClkInP[1] }]
+set_property -dict { PACKAGE_PIN J28 } [get_ports { spareGtClkInN[1] }]
 
 set_property -dict { PACKAGE_PIN G8 } [get_ports { dtmGtRefClkP[0] }]
 set_property -dict { PACKAGE_PIN G7 } [get_ports { dtmGtRefClkN[0] }]
