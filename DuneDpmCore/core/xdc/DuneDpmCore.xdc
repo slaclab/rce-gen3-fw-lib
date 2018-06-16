@@ -243,17 +243,22 @@ create_clock -name fclk0      -period 10.00 [get_pins {U_Core/U_RceG3Top/U_SimMo
 set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethRefClkP}] -group [get_clocks -include_generated_clocks {fclk0}] 
 
 create_generated_clock -name axiDmaClk [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0}]
-create_generated_clock -name sysClk200 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT1}]
-create_generated_clock -name sysClk125 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT2}]
+create_generated_clock -name fClk200 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT1}]
+create_generated_clock -name fClk125 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT2}]
 create_generated_clock -name dnaClk    [get_pins {U_Core/U_RceG3Top/U_RceG3AxiCntl/U_DeviceDna/GEN_ULTRA_SCALE.DeviceDnaUltraScale_Inst/BUFGCE_DIV_Inst/O}]
+
+create_generated_clock -name clk200 [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0}]
+create_generated_clock -name clk625 [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT1}]
+create_generated_clock -name clk312 [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT2}]
+create_generated_clock -name clk156 [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT3}]
+create_generated_clock -name clk125 [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT4}]
+create_generated_clock -name clk62  [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT5}]
+
 set_clock_groups -asynchronous \
     -group [get_clocks {dnaClk}] \
     -group [get_clocks {axiDmaClk}] \
-    -group [get_clocks {sysClk200}] \
-    -group [get_clocks {sysClk125}] 
+    -group [get_clocks {fClk200}] \
+    -group [get_clocks {fClk125}] 
 
-create_clock -name eth1GbETxClk -period 16.00 [get_pins {U_Core/U_Eth1gGen.U_ZynqEthernet/core_wrapper/transceiver_inst/zynq_gige_gt_i/inst/gen_gtwizard_gthe4_top.zynq_gige_gt_gtwizard_gthe4_inst/gen_gtwizard_gthe4.gen_channel_container[1].gen_enabled_channel.gthe4_channel_wrapper_inst/channel_inst/gthe4_channel_gen.gen_gthe4_channel_inst[0].GTHE4_CHANNEL_PRIM_INST/TXOUTCLK}]
-create_generated_clock -name eth1GbERxClk     [get_pins {U_Core/U_Eth1gGen.U_ZynqEthernet/core_wrapper/transceiver_inst/zynq_gige_gt_i/inst/gen_gtwizard_gthe4_top.zynq_gige_gt_gtwizard_gthe4_inst/gen_gtwizard_gthe4.gen_channel_container[1].gen_enabled_channel.gthe4_channel_wrapper_inst/channel_inst/gthe4_channel_gen.gen_gthe4_channel_inst[0].GTHE4_CHANNEL_PRIM_INST/RXOUTCLKPCS}]
-create_generated_clock -name eth125Clk        [get_pins {U_Core/U_Eth1gGen.U_ZynqEthernet/U_MMCM/PllGen.U_Pll/CLKOUT0}]
-create_generated_clock -name eth62Clk         [get_pins {U_Core/U_Eth1gGen.U_ZynqEthernet/U_MMCM/PllGen.U_Pll/CLKOUT1}]
-set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {eth1GbETxClk}] -group [get_clocks {eth1GbERxClk}] -group [get_clocks -include_generated_clocks {fclk0}] 
+set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethRefClkP}] -group [get_clocks -of_objects [get_pins {U_Core/U_Lane0/core_wrapper/transceiver_inst/zynq_gige_gt_i/inst/gen_gtwizard_gthe4_top.zynq_gige_gt_gtwizard_gthe4_inst/gen_gtwizard_gthe4.gen_channel_container[1].gen_enabled_channel.gthe4_channel_wrapper_inst/channel_inst/gthe4_channel_gen.gen_gthe4_channel_inst[0].GTHE4_CHANNEL_PRIM_INST/TXOUTCLK}]]
+set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethRefClkP}] -group [get_clocks -of_objects [get_pins {U_Core/U_Lane2/core_wrapper/transceiver_inst/zynq_gige_gt_i/inst/gen_gtwizard_gthe4_top.zynq_gige_gt_gtwizard_gthe4_inst/gen_gtwizard_gthe4.gen_channel_container[1].gen_enabled_channel.gthe4_channel_wrapper_inst/channel_inst/gthe4_channel_gen.gen_gthe4_channel_inst[0].GTHE4_CHANNEL_PRIM_INST/TXOUTCLK}]]    

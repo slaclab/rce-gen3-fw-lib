@@ -81,7 +81,7 @@ entity RceG3Top is
       dmaIbSlave               : out   AxiStreamSlaveArray(3 downto 0);
 
       -- User Interrupts
-      userInterrupt            : in    slv(USER_INT_COUNT_C-1 downto 0);
+      userInterrupt            : in    slv(USER_INT_COUNT_C-1 downto 0) := (others => '0');
 
       -- User memory access (sysclk200)
       userWriteSlave           : out   AxiWriteSlaveType;
