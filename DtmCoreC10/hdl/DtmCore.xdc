@@ -42,7 +42,6 @@ create_generated_clock -name intEthClk1 -source [get_pins U_DtmCore/U_ZynqEthern
 set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks sysClk200] -group [get_clocks -include_generated_clocks intEthClk0] -group [get_clocks -include_generated_clocks intEthClk1]
 
 # PCI Express Clocks
-create_generate_clock -name userclk1 [get_pins {U_DtmCore/U_PcieRoot/U_AxiRoot/inst/comp_axi_enhanced_pcie/comp_enhanced_core_top_wrap/axi_pcie_enhanced_core_top_i/pcie_7x_v2_0_2_inst/pcie_top_with_gt_top.gt_ges.gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/clk_txoutclk}]
 
 set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks userclk1] -group [get_clocks -include_generated_clocks sysClk125] -group [get_clocks -include_generated_clocks sysClk200]
 
@@ -63,7 +62,7 @@ set_property PACKAGE_PIN AA10 [get_ports i2cSda]
 
 set_property PACKAGE_PIN U6 [get_ports pciRefClkP]
 set_property PACKAGE_PIN U5 [get_ports pciRefClkM]
-set_property LOC GTXE2_CHANNEL_X0Y3 [get_cells {U_DtmCore/U_RceG3Top/U_RceG3AxiCntl/U_ICEN.U_RceG3PcieRoot/U_PcieRoot/axi_pcie_0/U0/comp_axi_enhanced_pcie/comp_enhanced_core_top_wrap/axi_pcie_enhanced_core_top_i/pcie_7x_v2_0_2_inst/pcie_top_with_gt_top.gt_ges.gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i}]
+set_property LOC GTXE2_CHANNEL_X0Y3 [get_cells {U_DtmCore/U_RceG3Top/U_RceG3AxiCntl/U_ICEN.U_RceG3PcieRoot/U_PcieRoot/axi_pcie_0/inst/comp_axi_enhanced_pcie/comp_enhanced_core_top_wrap/axi_pcie_enhanced_core_top_i/pcie_7x_v2_0_2_inst/pcie_top_with_gt_top.gt_ges.gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i}]
 set_property PACKAGE_PIN T3 [get_ports pciRxM]
 set_property PACKAGE_PIN T4 [get_ports pciRxP]
 set_property PACKAGE_PIN U1 [get_ports pciTxM]
@@ -75,27 +74,11 @@ set_property PACKAGE_PIN AA6 [get_ports ethRxP]
 set_property PACKAGE_PIN AB3 [get_ports ethTxM]
 set_property PACKAGE_PIN AB4 [get_ports ethTxP]
 
-set_property PACKAGE_PIN W2  [get_ports dtmToRtmHsP]
-set_property PACKAGE_PIN W1  [get_ports dtmToRtmHsM]
-set_property PACKAGE_PIN V4  [get_ports rtmToDtmHsP]
-set_property PACKAGE_PIN V3  [get_ports rtmToDtmHsM]
 
 set_property PACKAGE_PIN W6 [get_ports locRefClkP]
 set_property PACKAGE_PIN W5 [get_ports locRefClkM]
 
 
-set_property PACKAGE_PIN V8  [get_ports dtmToRtmLsP[5]]
-set_property PACKAGE_PIN W8  [get_ports dtmToRtmLsM[5]]
-set_property PACKAGE_PIN U10 [get_ports dtmToRtmLsP[4]]
-set_property PACKAGE_PIN V10 [get_ports dtmToRtmLsM[4]]
-set_property PACKAGE_PIN T20 [get_ports dtmToRtmLsP[3]]
-set_property PACKAGE_PIN U20 [get_ports dtmToRtmLsM[3]]
-set_property PACKAGE_PIN R17 [get_ports dtmToRtmLsP[2]]
-set_property PACKAGE_PIN R18 [get_ports dtmToRtmLsM[2]]
-set_property PACKAGE_PIN R19 [get_ports dtmToRtmLsP[1]]
-set_property PACKAGE_PIN T19 [get_ports dtmToRtmLsM[1]]
-set_property PACKAGE_PIN T17 [get_ports dtmToRtmLsP[0]]
-set_property PACKAGE_PIN U17 [get_ports dtmToRtmLsM[0]]
 
 set_property PACKAGE_PIN R22 [get_ports {dpmFbP[7]}]
 set_property PACKAGE_PIN T22 [get_ports {dpmFbM[7]}]
@@ -117,16 +100,6 @@ set_property PACKAGE_PIN AB22 [get_ports {dpmFbM[0]}]
 set_property PACKAGE_PIN W18 [get_ports clkSelA]
 set_property PACKAGE_PIN V17 [get_ports clkSelB]
 
-set_property PACKAGE_PIN N17  [get_ports plSpareP[4]]
-set_property PACKAGE_PIN N18  [get_ports plSpareM[4]]
-set_property PACKAGE_PIN N20  [get_ports plSpareP[3]]
-set_property PACKAGE_PIN P20  [get_ports plSpareM[3]]
-set_property PACKAGE_PIN AA17 [get_ports plSpareP[2]]
-set_property PACKAGE_PIN AB17 [get_ports plSpareM[2]]
-set_property PACKAGE_PIN AA15 [get_ports plSpareP[1]]
-set_property PACKAGE_PIN AB15 [get_ports plSpareM[1]]
-set_property PACKAGE_PIN V15  [get_ports plSpareP[0]]
-set_property PACKAGE_PIN W15  [get_ports plSpareM[0]]
 
 set_property PACKAGE_PIN AA12 [get_ports {bpClkIn[5]}]
 set_property PACKAGE_PIN Y16 [get_ports {bpClkIn[4]}]
@@ -281,5 +254,6 @@ set_property IOSTANDARD LVCMOS25 [get_ports {led[0]}]
 
 #set_property IOSTANDARD LVDS_25 [get_ports plSpareP]
 #set_property IOSTANDARD LVDS_25 [get_ports plSpareM]
+
 
 

@@ -32,8 +32,6 @@ entity RceG3PcieRoot is
       -- Clock and reset
       axiClk          : in  sl;
       axiRst          : in  sl;
-      axiDmaClk       : in  sl;
-      axiDmaRst       : in  sl;
 
       -- GP Master, axi clock
       mGpReadMaster   : in  AxiReadMasterType;
@@ -47,11 +45,12 @@ entity RceG3PcieRoot is
       locWriteMaster  : out AxiWriteMasterType;
       locWriteSlave   : in  AxiWriteSlaveType;
 
-      -- DMA Master, axiDmaClk
+      -- DMA Master, pcieAxiClk
       pcieReadMaster  : out AxiReadMasterType;
       pcieReadSlave   : in  AxiReadSlaveType;
       pcieWriteMaster : out AxiWriteMasterType;
       pcieWriteSlave  : in  AxiWriteSlaveType;
+      pcieAxiClk      : out sl;
 
       -- PCIE
       pciRefClkP      : in  sl;
@@ -75,8 +74,6 @@ architecture mapping of RceG3PcieRoot is
          pcie_mgt_txp : out STD_LOGIC_VECTOR ( 0 to 0 );
          axi_clk : in STD_LOGIC;
          axi_rstn : in STD_LOGIC;
-         pcie_axi_clk : in STD_LOGIC;
-         pcie_axi_rstn : in STD_LOGIC;
          pcie_int : out STD_LOGIC;
          pcie_refclk : in STD_LOGIC;
          intx_msi_req : in STD_LOGIC;
@@ -86,14 +83,12 @@ architecture mapping of RceG3PcieRoot is
          msi_vector_width : out STD_LOGIC_VECTOR ( 2 downto 0 );
          pcie_resetn : out STD_LOGIC;
          pcie_mast_awaddr : out STD_LOGIC_VECTOR ( 31 downto 0 );
-         pcie_mast_awlen : out STD_LOGIC_VECTOR ( 7 downto 0 );
+         pcie_mast_awlen : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_awsize : out STD_LOGIC_VECTOR ( 2 downto 0 );
          pcie_mast_awburst : out STD_LOGIC_VECTOR ( 1 downto 0 );
-         pcie_mast_awlock : out STD_LOGIC_VECTOR ( 0 to 0 );
+         pcie_mast_awlock : out STD_LOGIC_VECTOR ( 1 to 0 );
          pcie_mast_awcache : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_awprot : out STD_LOGIC_VECTOR ( 2 downto 0 );
-         pcie_mast_awregion : out STD_LOGIC_VECTOR ( 3 downto 0 );
-         pcie_mast_awqos : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_awvalid : out STD_LOGIC;
          pcie_mast_awready : in STD_LOGIC;
          pcie_mast_wdata : out STD_LOGIC_VECTOR ( 63 downto 0 );
@@ -105,14 +100,12 @@ architecture mapping of RceG3PcieRoot is
          pcie_mast_bvalid : in STD_LOGIC;
          pcie_mast_bready : out STD_LOGIC;
          pcie_mast_araddr : out STD_LOGIC_VECTOR ( 31 downto 0 );
-         pcie_mast_arlen : out STD_LOGIC_VECTOR ( 7 downto 0 );
+         pcie_mast_arlen : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_arsize : out STD_LOGIC_VECTOR ( 2 downto 0 );
          pcie_mast_arburst : out STD_LOGIC_VECTOR ( 1 downto 0 );
-         pcie_mast_arlock : out STD_LOGIC_VECTOR ( 0 to 0 );
+         pcie_mast_arlock : out STD_LOGIC_VECTOR ( 1 to 0 );
          pcie_mast_arcache : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_arprot : out STD_LOGIC_VECTOR ( 2 downto 0 );
-         pcie_mast_arregion : out STD_LOGIC_VECTOR ( 3 downto 0 );
-         pcie_mast_arqos : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_arvalid : out STD_LOGIC;
          pcie_mast_arready : in STD_LOGIC;
          pcie_mast_rdata : in STD_LOGIC_VECTOR ( 63 downto 0 );
@@ -199,38 +192,50 @@ architecture mapping of RceG3PcieRoot is
 
    signal intRefClk     : sl;
    signal axiClkRstN    : sl;
-   signal axiDmaRstN    : sl;
+
+   signal intReadMaster  : AxiReadMasterType;
+   signal intReadSlave   : AxiReadSlaveType;
+   signal intWriteMaster : AxiWriteMasterType;
+   signal intWriteSlave  : AxiWriteSlaveType;
 
 begin
+
+   --- Unused regions
+   intWriteMaster.awregion(3 downto 0) <= (others=>'0');
+   intWriteMaster.awqos(3 downto 0)    <= (others=>'0');
+   intReadMaster.arregion(3 downto 0)  <= (others=>'0');
+   intReadMaster.arqos(3 downto 0)     <= (others=>'0');
 
    -- Unused master read data 
    mGpReadSlave.rdata(1023 downto 32) <= (others=>'0');
 
    -- Unused master write address bits
    locWriteMaster.awaddr(63 downto 32)  <= (others=>'0');
-   pcieWriteMaster.awaddr(63 downto 32) <= (others=>'0');
+   intWriteMaster.awaddr(63 downto 32) <= (others=>'0');
 
    -- Unused master read address bits
    locReadMaster.araddr(63 downto 32)  <= (others=>'0');
-   pcieReadMaster.araddr(63 downto 32) <= (others=>'0');
+   intReadMaster.araddr(63 downto 32) <= (others=>'0');
 
    -- Unused master write data bits
    locWriteMaster.wdata(1023 downto 32)  <= (others=>'0');
-   pcieWriteMaster.wdata(1023 downto 64) <= (others=>'0');
+   intWriteMaster.wdata(1023 downto 64) <= (others=>'0');
 
    -- Unused master write data strobe bits
    locWriteMaster.wstrb(127 downto 4)  <= (others=>'0');
-   pcieWriteMaster.wstrb(127 downto 8) <= (others=>'0');
+   intWriteMaster.wstrb(127 downto 8) <= (others=>'0');
 
    -- Unused IDs
    locReadMaster.arid   <= (others=>'0');
-   pcieReadMaster.arid  <= (others=>'0');
+   intReadMaster.arid  <= (others=>'0');
    locWriteMaster.awid  <= (others=>'0');
-   pcieWriteMaster.awid <= (others=>'0');
+   intWriteMaster.awid <= (others=>'0');
    locWriteMaster.wid   <= (others=>'0');
-   pcieWriteMaster.wid  <= (others=>'0');
+   intWriteMaster.wid  <= (others=>'0');
    mGpWriteSlave.bid(31 downto 12) <= (others=>'0');
    mGpReadSlave.rid(31 downto 12)  <= (others=>'0');
+
+   pcieAxiClk <= axiClk;
 
 
    -- Local Ref Clk 
@@ -245,7 +250,6 @@ begin
 
    -- Invert resets
    axiClkRstN    <= not axiRst;
-   axiDmaRstN    <= not axiDmaRst;
 
 
    -- PCIE Core
@@ -257,8 +261,6 @@ begin
          pcie_mgt_txp(0)  => pcieTxP,
          axi_clk          => axiClk,
          axi_rstn         => axiClkRstN,
-         pcie_axi_clk     => axiDmaClk,
-         pcie_axi_rstn    => axiDmaRstN,
          pcie_int         => pcieInt,
          pcie_refclk      => intRefClk,
          pcie_resetn      => pciResetL,
@@ -269,41 +271,37 @@ begin
          msi_enable       => open,    -- out STD_LOGIC;
          msi_vector_width => open,    -- out STD_LOGIC_VECTOR ( 2 downto 0 );
 
-         pcie_mast_awaddr     => pcieWriteMaster.awaddr(31 downto 0),
-         pcie_mast_awlen      => pcieWriteMaster.awlen(7 downto 0),
-         pcie_mast_awsize     => pcieWriteMaster.awsize(2 downto 0),
-         pcie_mast_awburst    => pcieWriteMaster.awburst(1 downto 0),
-         pcie_mast_awlock     => pcieWriteMaster.awlock(0 downto 0),
-         pcie_mast_awcache    => pcieWriteMaster.awcache(3 downto 0),
-         pcie_mast_awprot     => pcieWriteMaster.awprot(2 downto 0),
-         pcie_mast_awregion   => pcieWriteMaster.awregion(3 downto 0),
-         pcie_mast_awqos      => pcieWriteMaster.awqos(3 downto 0),
-         pcie_mast_awvalid    => pcieWriteMaster.awvalid,
-         pcie_mast_awready    => pcieWriteSlave.awready,
-         pcie_mast_wdata      => pcieWriteMaster.wdata(63 downto 0),
-         pcie_mast_wstrb      => pcieWriteMaster.wstrb(7 downto 0),
-         pcie_mast_wlast      => pcieWriteMaster.wlast,
-         pcie_mast_wvalid     => pcieWriteMaster.wvalid,
-         pcie_mast_wready     => pcieWriteSlave.wready,
-         pcie_mast_bresp      => pcieWriteSlave.bresp(1 downto 0),
-         pcie_mast_bvalid     => pcieWriteSlave.bvalid,
-         pcie_mast_bready     => pcieWriteMaster.bready,
-         pcie_mast_araddr     => pcieReadMaster.araddr(31 downto 0),
-         pcie_mast_arlen      => pcieReadMaster.arlen(7 downto 0),
-         pcie_mast_arsize     => pcieReadMaster.arsize(2 downto 0),
-         pcie_mast_arburst    => pcieReadMaster.arburst(1 downto 0),
-         pcie_mast_arlock     => pcieReadMaster.arlock(0 downto 0),
-         pcie_mast_arcache    => pcieReadMaster.arcache(3 downto 0),
-         pcie_mast_arprot     => pcieReadMaster.arprot(2 downto 0),
-         pcie_mast_arregion   => pcieReadMaster.arregion(3 downto 0),
-         pcie_mast_arqos      => pcieReadMaster.arqos(3 downto 0),
-         pcie_mast_arvalid    => pcieReadMaster.arvalid,
-         pcie_mast_arready    => pcieReadSlave.arready,
-         pcie_mast_rdata      => pcieReadSlave.rdata(63 downto 0),
-         pcie_mast_rresp      => pcieReadSlave.rresp(1 downto 0),
-         pcie_mast_rlast      => pcieReadSlave.rlast,
-         pcie_mast_rvalid     => pcieReadSlave.rvalid,
-         pcie_mast_rready     => pcieReadMaster.rready,
+         pcie_mast_awaddr     => intWriteMaster.awaddr(31 downto 0),
+         pcie_mast_awlen      => intWriteMaster.awlen(3 downto 0),
+         pcie_mast_awsize     => intWriteMaster.awsize(2 downto 0),
+         pcie_mast_awburst    => intWriteMaster.awburst(1 downto 0),
+         pcie_mast_awlock     => intWriteMaster.awlock(1 downto 0),
+         pcie_mast_awcache    => intWriteMaster.awcache(3 downto 0),
+         pcie_mast_awprot     => intWriteMaster.awprot(2 downto 0),
+         pcie_mast_awvalid    => intWriteMaster.awvalid,
+         pcie_mast_awready    => intWriteSlave.awready,
+         pcie_mast_wdata      => intWriteMaster.wdata(63 downto 0),
+         pcie_mast_wstrb      => intWriteMaster.wstrb(7 downto 0),
+         pcie_mast_wlast      => intWriteMaster.wlast,
+         pcie_mast_wvalid     => intWriteMaster.wvalid,
+         pcie_mast_wready     => intWriteSlave.wready,
+         pcie_mast_bresp      => intWriteSlave.bresp(1 downto 0),
+         pcie_mast_bvalid     => intWriteSlave.bvalid,
+         pcie_mast_bready     => intWriteMaster.bready,
+         pcie_mast_araddr     => intReadMaster.araddr(31 downto 0),
+         pcie_mast_arlen      => intReadMaster.arlen(3 downto 0),
+         pcie_mast_arsize     => intReadMaster.arsize(2 downto 0),
+         pcie_mast_arburst    => intReadMaster.arburst(1 downto 0),
+         pcie_mast_arlock     => intReadMaster.arlock(1 downto 0),
+         pcie_mast_arcache    => intReadMaster.arcache(3 downto 0),
+         pcie_mast_arprot     => intReadMaster.arprot(2 downto 0),
+         pcie_mast_arvalid    => intReadMaster.arvalid,
+         pcie_mast_arready    => intReadSlave.arready,
+         pcie_mast_rdata      => intReadSlave.rdata(63 downto 0),
+         pcie_mast_rresp      => intReadSlave.rresp(1 downto 0),
+         pcie_mast_rlast      => intReadSlave.rlast,
+         pcie_mast_rvalid     => intReadSlave.rvalid,
+         pcie_mast_rready     => intReadMaster.rready,
 
          local_axi_awaddr     => locWriteMaster.awaddr(31 downto 0),
          local_axi_awlen      => locWriteMaster.awlen(7 downto 0),
@@ -380,6 +378,22 @@ begin
          gp_axi_rlast      => mGpReadSlave.rlast,
          gp_axi_rvalid     => mGpReadSlave.rvalid,
          gp_axi_rready     => mGpReadMaster.rready
+      );
+
+
+   U_AxiTranFilter: entity work.AxiTranFilter
+      generic map ( TPD_G => TPD_G )
+      port map (
+         axiClk          => axiClk,
+         axiRst          => axiRst,
+         sAxiReadMaster  => intReadMaster,
+         sAxiReadSlave   => intReadSlave,
+         sAxiWriteMaster => intWriteMaster,
+         sAxiWriteSlave  => intWriteSlave,
+         mAxiReadMaster  => pcieReadMaster,
+         mAxiReadSlave   => pcieReadSlave,
+         mAxiWriteMaster => pcieWriteMaster,
+         mAxiWriteSlave  => pcieWriteSlave
       );
 
 end mapping;

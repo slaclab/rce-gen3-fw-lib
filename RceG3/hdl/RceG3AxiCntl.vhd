@@ -97,6 +97,7 @@ entity RceG3AxiCntl is
       auxReadSlave        : in  AxiReadSlaveType;
       auxWriteMaster      : out AxiWriteMasterType;
       auxWriteSlave       : in  AxiWriteSlaveType;
+      auxAxiClk           : out sl;
 
       -- PCIE AXI Interface
       pciRefClkP      : in  sl;
@@ -331,8 +332,6 @@ begin
          port map (
             axiClk           => axiClk,
             axiRst           => axiClkRst,
-            axiDmaClk        => axiDmaClk,
-            axiDmaRst        => axiDmaRst,
             mGpReadMaster    => mGpReadMaster(1),
             mGpReadSlave     => mGpReadSlave(1),
             mGpWriteMaster   => mGpWriteMaster(1),
@@ -345,6 +344,7 @@ begin
             pcieReadSlave    => auxReadSlave,
             pcieWriteMaster  => auxWriteMaster,
             pcieWriteSlave   => auxWriteSlave,
+            pcieAxiClk       => auxAxiClk,
             pciRefClkP       => pciRefClkP,
             pciRefClkM       => pciRefClkM,
             pciResetL        => pciResetL,
@@ -366,6 +366,8 @@ begin
       userReadSlave  <= auxReadSlave;
       auxWriteMaster <= userWriteMaster;
       userWriteSlave <= auxWriteSlave;
+
+      auxAxiClk <= axiDmaClk;
 
       pciResetL  <= '0';
       pcieInt    <= '0';

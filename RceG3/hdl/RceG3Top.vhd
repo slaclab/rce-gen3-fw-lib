@@ -157,6 +157,7 @@ architecture structure of RceG3Top is
    signal deviceDna           : slv(63 downto 0);
    signal auxReadMaster       : AxiReadMasterType;
    signal auxReadSlave        : AxiReadSlaveType;
+   signal auxAxiClk           : sl;
    signal auxWriteMaster      : AxiWriteMasterType;
    signal auxWriteSlave       : AxiWriteSlaveType;
    signal pcieInterrupt       : sl;
@@ -208,7 +209,7 @@ begin
             acpReadMaster        => acpReadMaster,
             hpAxiClk(0)          => axiDmaClk,
             hpAxiClk(1)          => axiDmaClk,
-            hpAxiClk(2)          => axiDmaClk,
+            hpAxiClk(2)          => auxAxiClk,
             hpAxiClk(3)          => axiDmaClk,
             hpWriteSlave         => hpWriteSlave,
             hpWriteMaster        => hpWriteMaster,
@@ -344,6 +345,7 @@ begin
          auxReadSlave         => auxReadSlave,
          auxWriteMaster       => auxWriteMaster,
          auxWriteSlave        => auxWriteSlave,
+         auxAxiClk            => auxAxiClk,
          pciRefClkP           => pciRefClkP,
          pciRefClkM           => pciRefClkM,
          pciResetL            => pciResetL,
