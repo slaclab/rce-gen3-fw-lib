@@ -344,7 +344,6 @@ begin
             pcieReadSlave    => auxReadSlave,
             pcieWriteMaster  => auxWriteMaster,
             pcieWriteSlave   => auxWriteSlave,
-            pcieAxiClk       => auxAxiClk,
             pciRefClkP       => pciRefClkP,
             pciRefClkM       => pciRefClkM,
             pciResetL        => pciResetL,
@@ -357,6 +356,7 @@ begin
 
       userReadSlave  <= AXI_READ_SLAVE_INIT_C;
       userWriteSlave <= AXI_WRITE_SLAVE_INIT_C;
+      auxAxiClk      <= axiClk;
 
    end generate;
 

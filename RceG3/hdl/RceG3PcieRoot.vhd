@@ -50,7 +50,6 @@ entity RceG3PcieRoot is
       pcieReadSlave   : in  AxiReadSlaveType;
       pcieWriteMaster : out AxiWriteMasterType;
       pcieWriteSlave  : in  AxiWriteSlaveType;
-      pcieAxiClk      : out sl;
 
       -- PCIE
       pciRefClkP      : in  sl;
@@ -114,13 +113,12 @@ architecture mapping of RceG3PcieRoot is
          pcie_mast_rvalid : in STD_LOGIC;
          pcie_mast_rready : out STD_LOGIC;
          local_axi_awaddr : out STD_LOGIC_VECTOR ( 31 downto 0 );
-         local_axi_awlen : out STD_LOGIC_VECTOR ( 7 downto 0 );
+         local_axi_awlen : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_awsize : out STD_LOGIC_VECTOR ( 2 downto 0 );
          local_axi_awburst : out STD_LOGIC_VECTOR ( 1 downto 0 );
-         local_axi_awlock : out STD_LOGIC_VECTOR ( 0 to 0 );
+         local_axi_awlock : out STD_LOGIC_VECTOR ( 1 to 0 );
          local_axi_awcache : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_awprot : out STD_LOGIC_VECTOR ( 2 downto 0 );
-         local_axi_awregion : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_awqos : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_awvalid : out STD_LOGIC;
          local_axi_awready : in STD_LOGIC;
@@ -133,13 +131,12 @@ architecture mapping of RceG3PcieRoot is
          local_axi_bvalid : in STD_LOGIC;
          local_axi_bready : out STD_LOGIC;
          local_axi_araddr : out STD_LOGIC_VECTOR ( 31 downto 0 );
-         local_axi_arlen : out STD_LOGIC_VECTOR ( 7 downto 0 );
+         local_axi_arlen : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_arsize : out STD_LOGIC_VECTOR ( 2 downto 0 );
          local_axi_arburst : out STD_LOGIC_VECTOR ( 1 downto 0 );
-         local_axi_arlock : out STD_LOGIC_VECTOR ( 0 to 0 );
+         local_axi_arlock : out STD_LOGIC_VECTOR ( 1 to 0 );
          local_axi_arcache : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_arprot : out STD_LOGIC_VECTOR ( 2 downto 0 );
-         local_axi_arregion : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_arqos : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_arvalid : out STD_LOGIC;
          local_axi_arready : in STD_LOGIC;
@@ -149,14 +146,13 @@ architecture mapping of RceG3PcieRoot is
          local_axi_rvalid : in STD_LOGIC;
          local_axi_rready : out STD_LOGIC;
          gp_axi_awaddr : in STD_LOGIC_VECTOR ( 31 downto 0 );
-         gp_axi_awlen : in STD_LOGIC_VECTOR ( 7 downto 0 );
+         gp_axi_awlen : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_awsize : in STD_LOGIC_VECTOR ( 2 downto 0 );
          gp_axi_awburst : in STD_LOGIC_VECTOR ( 1 downto 0 );
-         gp_axi_awlock : in STD_LOGIC_VECTOR ( 0 to 0 );
+         gp_axi_awlock : in STD_LOGIC_VECTOR ( 1 to 0 );
          gp_axi_awcache : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_awid : in STD_LOGIC_VECTOR ( 11 downto 0 );
          gp_axi_awprot : in STD_LOGIC_VECTOR ( 2 downto 0 );
-         gp_axi_awregion : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_awqos : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_awvalid : in STD_LOGIC;
          gp_axi_bid : out STD_LOGIC_VECTOR ( 11 downto 0 );
@@ -170,14 +166,13 @@ architecture mapping of RceG3PcieRoot is
          gp_axi_bvalid : out STD_LOGIC;
          gp_axi_bready : in STD_LOGIC;
          gp_axi_araddr : in STD_LOGIC_VECTOR ( 31 downto 0 );
-         gp_axi_arlen : in STD_LOGIC_VECTOR ( 7 downto 0 );
+         gp_axi_arlen : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_arsize : in STD_LOGIC_VECTOR ( 2 downto 0 );
          gp_axi_arburst : in STD_LOGIC_VECTOR ( 1 downto 0 );
-         gp_axi_arlock : in STD_LOGIC_VECTOR ( 0 to 0 );
+         gp_axi_arlock : in STD_LOGIC_VECTOR ( 1 to 0 );
          gp_axi_arcache : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_arid : in STD_LOGIC_VECTOR ( 11 downto 0 );
          gp_axi_arprot : in STD_LOGIC_VECTOR ( 2 downto 0 );
-         gp_axi_arregion : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_arqos : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_arvalid : in STD_LOGIC;
          gp_axi_arready : out STD_LOGIC;
@@ -193,50 +188,14 @@ architecture mapping of RceG3PcieRoot is
    signal intRefClk     : sl;
    signal axiClkRstN    : sl;
 
-   signal intReadMaster  : AxiReadMasterType;
-   signal intReadSlave   : AxiReadSlaveType;
-   signal intWriteMaster : AxiWriteMasterType;
-   signal intWriteSlave  : AxiWriteSlaveType;
+   signal imGpReadSlave    : AxiReadSlaveType   := AXI_READ_SLAVE_INIT_C;
+   signal imGpWriteSlave   : AxiWriteSlaveType  := AXI_WRITE_SLAVE_INIT_C;
+   signal ilocReadMaster   : AxiReadMasterType  := AXI_READ_MASTER_INIT_C;
+   signal ilocWriteMaster  : AxiWriteMasterType := AXI_WRITE_MASTER_INIT_C;
+   signal ipcieReadMaster  : AxiReadMasterType  := AXI_READ_MASTER_INIT_C;
+   signal ipcieWriteMaster : AxiWriteMasterType := AXI_WRITE_MASTER_INIT_C;
 
 begin
-
-   --- Unused regions
-   intWriteMaster.awregion(3 downto 0) <= (others=>'0');
-   intWriteMaster.awqos(3 downto 0)    <= (others=>'0');
-   intReadMaster.arregion(3 downto 0)  <= (others=>'0');
-   intReadMaster.arqos(3 downto 0)     <= (others=>'0');
-
-   -- Unused master read data 
-   mGpReadSlave.rdata(1023 downto 32) <= (others=>'0');
-
-   -- Unused master write address bits
-   locWriteMaster.awaddr(63 downto 32)  <= (others=>'0');
-   intWriteMaster.awaddr(63 downto 32) <= (others=>'0');
-
-   -- Unused master read address bits
-   locReadMaster.araddr(63 downto 32)  <= (others=>'0');
-   intReadMaster.araddr(63 downto 32) <= (others=>'0');
-
-   -- Unused master write data bits
-   locWriteMaster.wdata(1023 downto 32)  <= (others=>'0');
-   intWriteMaster.wdata(1023 downto 64) <= (others=>'0');
-
-   -- Unused master write data strobe bits
-   locWriteMaster.wstrb(127 downto 4)  <= (others=>'0');
-   intWriteMaster.wstrb(127 downto 8) <= (others=>'0');
-
-   -- Unused IDs
-   locReadMaster.arid   <= (others=>'0');
-   intReadMaster.arid  <= (others=>'0');
-   locWriteMaster.awid  <= (others=>'0');
-   intWriteMaster.awid <= (others=>'0');
-   locWriteMaster.wid   <= (others=>'0');
-   intWriteMaster.wid  <= (others=>'0');
-   mGpWriteSlave.bid(31 downto 12) <= (others=>'0');
-   mGpReadSlave.rid(31 downto 12)  <= (others=>'0');
-
-   pcieAxiClk <= axiClk;
-
 
    -- Local Ref Clk 
    U_RefClk : IBUFDS_GTE2
@@ -251,6 +210,13 @@ begin
    -- Invert resets
    axiClkRstN    <= not axiRst;
 
+   -- Connect outputs
+   mGpReadSlave    <= imGpReadSlave;
+   mGpWriteSlave   <= imGpWriteSlave;
+   locReadMaster   <= ilocReadMaster;
+   locWriteMaster  <= ilocWriteMaster;
+   pcieReadMaster  <= ipcieReadMaster;
+   pcieWriteMaster <= ipcieWriteMaster;
 
    -- PCIE Core
    U_PcieRoot : pcie_root
@@ -271,130 +237,111 @@ begin
          msi_enable       => open,    -- out STD_LOGIC;
          msi_vector_width => open,    -- out STD_LOGIC_VECTOR ( 2 downto 0 );
 
-         pcie_mast_awaddr     => intWriteMaster.awaddr(31 downto 0),
-         pcie_mast_awlen      => intWriteMaster.awlen(3 downto 0),
-         pcie_mast_awsize     => intWriteMaster.awsize(2 downto 0),
-         pcie_mast_awburst    => intWriteMaster.awburst(1 downto 0),
-         pcie_mast_awlock     => intWriteMaster.awlock(1 downto 0),
-         pcie_mast_awcache    => intWriteMaster.awcache(3 downto 0),
-         pcie_mast_awprot     => intWriteMaster.awprot(2 downto 0),
-         pcie_mast_awvalid    => intWriteMaster.awvalid,
-         pcie_mast_awready    => intWriteSlave.awready,
-         pcie_mast_wdata      => intWriteMaster.wdata(63 downto 0),
-         pcie_mast_wstrb      => intWriteMaster.wstrb(7 downto 0),
-         pcie_mast_wlast      => intWriteMaster.wlast,
-         pcie_mast_wvalid     => intWriteMaster.wvalid,
-         pcie_mast_wready     => intWriteSlave.wready,
-         pcie_mast_bresp      => intWriteSlave.bresp(1 downto 0),
-         pcie_mast_bvalid     => intWriteSlave.bvalid,
-         pcie_mast_bready     => intWriteMaster.bready,
-         pcie_mast_araddr     => intReadMaster.araddr(31 downto 0),
-         pcie_mast_arlen      => intReadMaster.arlen(3 downto 0),
-         pcie_mast_arsize     => intReadMaster.arsize(2 downto 0),
-         pcie_mast_arburst    => intReadMaster.arburst(1 downto 0),
-         pcie_mast_arlock     => intReadMaster.arlock(1 downto 0),
-         pcie_mast_arcache    => intReadMaster.arcache(3 downto 0),
-         pcie_mast_arprot     => intReadMaster.arprot(2 downto 0),
-         pcie_mast_arvalid    => intReadMaster.arvalid,
-         pcie_mast_arready    => intReadSlave.arready,
-         pcie_mast_rdata      => intReadSlave.rdata(63 downto 0),
-         pcie_mast_rresp      => intReadSlave.rresp(1 downto 0),
-         pcie_mast_rlast      => intReadSlave.rlast,
-         pcie_mast_rvalid     => intReadSlave.rvalid,
-         pcie_mast_rready     => intReadMaster.rready,
+         pcie_mast_awaddr     => ipcieWriteMaster.awaddr(31 downto 0),
+         pcie_mast_awlen      => ipcieWriteMaster.awlen(3 downto 0),
+         pcie_mast_awsize     => ipcieWriteMaster.awsize(2 downto 0),
+         pcie_mast_awburst    => ipcieWriteMaster.awburst(1 downto 0),
+         pcie_mast_awlock     => ipcieWriteMaster.awlock(1 downto 0),
+         pcie_mast_awcache    => ipcieWriteMaster.awcache(3 downto 0),
+         pcie_mast_awprot     => ipcieWriteMaster.awprot(2 downto 0),
+         pcie_mast_awvalid    => ipcieWriteMaster.awvalid,
+         pcie_mast_awready    => pcieWriteSlave.awready,
+         pcie_mast_wdata      => ipcieWriteMaster.wdata(63 downto 0),
+         pcie_mast_wstrb      => ipcieWriteMaster.wstrb(7 downto 0),
+         pcie_mast_wlast      => ipcieWriteMaster.wlast,
+         pcie_mast_wvalid     => ipcieWriteMaster.wvalid,
+         pcie_mast_wready     => pcieWriteSlave.wready,
+         pcie_mast_bresp      => pcieWriteSlave.bresp(1 downto 0),
+         pcie_mast_bvalid     => pcieWriteSlave.bvalid,
+         pcie_mast_bready     => ipcieWriteMaster.bready,
+         pcie_mast_araddr     => ipcieReadMaster.araddr(31 downto 0),
+         pcie_mast_arlen      => ipcieReadMaster.arlen(3 downto 0),
+         pcie_mast_arsize     => ipcieReadMaster.arsize(2 downto 0),
+         pcie_mast_arburst    => ipcieReadMaster.arburst(1 downto 0),
+         pcie_mast_arlock     => ipcieReadMaster.arlock(1 downto 0),
+         pcie_mast_arcache    => ipcieReadMaster.arcache(3 downto 0),
+         pcie_mast_arprot     => ipcieReadMaster.arprot(2 downto 0),
+         pcie_mast_arvalid    => ipcieReadMaster.arvalid,
+         pcie_mast_arready    => pcieReadSlave.arready,
+         pcie_mast_rdata      => pcieReadSlave.rdata(63 downto 0),
+         pcie_mast_rresp      => pcieReadSlave.rresp(1 downto 0),
+         pcie_mast_rlast      => pcieReadSlave.rlast,
+         pcie_mast_rvalid     => pcieReadSlave.rvalid,
+         pcie_mast_rready     => ipcieReadMaster.rready,
 
-         local_axi_awaddr     => locWriteMaster.awaddr(31 downto 0),
-         local_axi_awlen      => locWriteMaster.awlen(7 downto 0),
-         local_axi_awsize     => locWriteMaster.awsize(2 downto 0),
-         local_axi_awburst    => locWriteMaster.awburst(1 downto 0),
-         local_axi_awlock     => locWriteMaster.awlock(0 downto 0),
-         local_axi_awcache    => locWriteMaster.awcache(3 downto 0),
-         local_axi_awprot     => locWriteMaster.awprot(2 downto 0),
-         local_axi_awregion   => locWriteMaster.awregion(3 downto 0),
-         local_axi_awqos      => locWriteMaster.awqos(3 downto 0),
-         local_axi_awvalid    => locWriteMaster.awvalid,
+         local_axi_awaddr     => ilocWriteMaster.awaddr(31 downto 0),
+         local_axi_awlen      => ilocWriteMaster.awlen(3 downto 0),
+         local_axi_awsize     => ilocWriteMaster.awsize(2 downto 0),
+         local_axi_awburst    => ilocWriteMaster.awburst(1 downto 0),
+         local_axi_awlock     => ilocWriteMaster.awlock(1 downto 0),
+         local_axi_awcache    => ilocWriteMaster.awcache(3 downto 0),
+         local_axi_awprot     => ilocWriteMaster.awprot(2 downto 0),
+         local_axi_awqos      => ilocWriteMaster.awqos(3 downto 0),
+         local_axi_awvalid    => ilocWriteMaster.awvalid,
          local_axi_awready    => locWriteSlave.awready,
-         local_axi_wdata      => locWriteMaster.wdata(31 downto 0),
-         local_axi_wstrb      => locWriteMaster.wstrb(3 downto 0),
-         local_axi_wlast      => locWriteMaster.wlast,
-         local_axi_wvalid     => locWriteMaster.wvalid,
+         local_axi_wdata      => ilocWriteMaster.wdata(31 downto 0),
+         local_axi_wstrb      => ilocWriteMaster.wstrb(3 downto 0),
+         local_axi_wlast      => ilocWriteMaster.wlast,
+         local_axi_wvalid     => ilocWriteMaster.wvalid,
          local_axi_wready     => locWriteSlave.wready,
          local_axi_bresp      => locWriteSlave.bresp(1 downto 0),
          local_axi_bvalid     => locWriteSlave.bvalid,
-         local_axi_bready     => locWriteMaster.bready,
-         local_axi_araddr     => locReadMaster.araddr(31 downto 0),
-         local_axi_arlen      => locReadMaster.arlen(7 downto 0),
-         local_axi_arsize     => locReadMaster.arsize(2 downto 0),
-         local_axi_arburst    => locReadMaster.arburst(1 downto 0),
-         local_axi_arlock     => locReadMaster.arlock(0 downto 0),
-         local_axi_arcache    => locReadMaster.arcache(3 downto 0),
-         local_axi_arprot     => locReadMaster.arprot(2 downto 0),
-         local_axi_arregion   => locReadMaster.arregion(3 downto 0),
-         local_axi_arqos      => locReadMaster.arqos(3 downto 0),
-         local_axi_arvalid    => locReadMaster.arvalid,
+         local_axi_bready     => ilocWriteMaster.bready,
+         local_axi_araddr     => ilocReadMaster.araddr(31 downto 0),
+         local_axi_arlen      => ilocReadMaster.arlen(3 downto 0),
+         local_axi_arsize     => ilocReadMaster.arsize(2 downto 0),
+         local_axi_arburst    => ilocReadMaster.arburst(1 downto 0),
+         local_axi_arlock     => ilocReadMaster.arlock(1 downto 0),
+         local_axi_arcache    => ilocReadMaster.arcache(3 downto 0),
+         local_axi_arprot     => ilocReadMaster.arprot(2 downto 0),
+         local_axi_arqos      => ilocReadMaster.arqos(3 downto 0),
+         local_axi_arvalid    => ilocReadMaster.arvalid,
          local_axi_arready    => locReadSlave.arready,
          local_axi_rdata      => locReadSlave.rdata(31 downto 0),
          local_axi_rresp      => locReadSlave.rresp(1 downto 0),
          local_axi_rlast      => locReadSlave.rlast,
          local_axi_rvalid     => locReadSlave.rvalid,
-         local_axi_rready     => locReadMaster.rready,
+         local_axi_rready     => ilocReadMaster.rready,
 
          gp_axi_awaddr     => mGpWriteMaster.awaddr(31 downto 0),
-         gp_axi_awlen      => mGpWriteMaster.awlen(7 downto 0),
+         gp_axi_awlen      => mGpWriteMaster.awlen(3 downto 0),
          gp_axi_awsize     => mGpWriteMaster.awsize(2 downto 0),
          gp_axi_awburst    => mGpWriteMaster.awburst(1 downto 0),
-         gp_axi_awlock     => mGpWriteMaster.awlock(0 downto 0),
+         gp_axi_awlock     => mGpWriteMaster.awlock(1 downto 0),
          gp_axi_awcache    => mGpWriteMaster.awcache(3 downto 0),
          gp_axi_awid       => mGpWriteMaster.awid(11 downto 0),
          gp_axi_awprot     => mGpWriteMaster.awprot(2 downto 0),
-         gp_axi_awregion   => mgpWriteMaster.awregion(3 downto 0),
          gp_axi_awqos      => mGpWriteMaster.awqos(3 downto 0),
          gp_axi_awvalid    => mGpWriteMaster.awvalid,
-         gp_axi_bid        => mGpWriteSlave.bid(11 downto 0),
-         gp_axi_awready    => mGpWriteSlave.awready,
+         gp_axi_bid        => imGpWriteSlave.bid(11 downto 0),
+         gp_axi_awready    => imGpWriteSlave.awready,
          gp_axi_wdata      => mGpWriteMaster.wdata(31 downto 0),
          gp_axi_wstrb      => mGpWriteMaster.wstrb(3 downto 0),
          gp_axi_wlast      => mGpWriteMaster.wlast,
          gp_axi_wvalid     => mGpWriteMaster.wvalid,
-         gp_axi_wready     => mGpWriteSlave.wready,
-         gp_axi_bresp      => mGpWriteSlave.bresp(1 downto 0),
-         gp_axi_bvalid     => mGpWriteSlave.bvalid,
-         gp_axi_bready     => mGpWriteMaster.bready,
+         gp_axi_wready     => imGpWriteSlave.wready,
+         gp_axi_bresp      => imGpWriteSlave.bresp(1 downto 0),
+         gp_axi_bvalid     => imGpWriteSlave.bvalid,
+         gp_axi_bready     => imGpWriteMaster.bready,
          gp_axi_araddr     => mGpReadMaster.araddr(31 downto 0),
-         gp_axi_arlen      => mGpReadMaster.arlen(7 downto 0),
+         gp_axi_arlen      => mGpReadMaster.arlen(3 downto 0),
          gp_axi_arsize     => mGpReadMaster.arsize(2 downto 0),
          gp_axi_arburst    => mGpReadMaster.arburst(1 downto 0),
-         gp_axi_arlock     => mGpReadMaster.arlock(0 downto 0),
+         gp_axi_arlock     => mGpReadMaster.arlock(1 downto 0),
          gp_axi_arcache    => mGpReadMaster.arcache(3 downto 0),
          gp_axi_arid       => mGpReadMaster.arid(11 downto 0),
          gp_axi_arprot     => mGpReadMaster.arprot(2 downto 0),
-         gp_axi_arregion   => mgpReadMaster.arregion(3 downto 0),
          gp_axi_arqos      => mGpReadMaster.arqos(3 downto 0),
          gp_axi_arvalid    => mGpReadMaster.arvalid,
-         gp_axi_arready    => mGpReadSlave.arready,
-         gp_axi_rdata      => mGpReadSlave.rdata(31 downto 0),
-         gp_axi_rid        => mGpReadSlave.rid(11 downto 0),
-         gp_axi_rresp      => mGpReadSlave.rresp(1 downto 0),
-         gp_axi_rlast      => mGpReadSlave.rlast,
-         gp_axi_rvalid     => mGpReadSlave.rvalid,
+         gp_axi_arready    => imGpReadSlave.arready,
+         gp_axi_rdata      => imGpReadSlave.rdata(31 downto 0),
+         gp_axi_rid        => imGpReadSlave.rid(11 downto 0),
+         gp_axi_rresp      => imGpReadSlave.rresp(1 downto 0),
+         gp_axi_rlast      => imGpReadSlave.rlast,
+         gp_axi_rvalid     => imGpReadSlave.rvalid,
          gp_axi_rready     => mGpReadMaster.rready
       );
 
-
-   U_AxiTranFilter: entity work.AxiTranFilter
-      generic map ( TPD_G => TPD_G )
-      port map (
-         axiClk          => axiClk,
-         axiRst          => axiRst,
-         sAxiReadMaster  => intReadMaster,
-         sAxiReadSlave   => intReadSlave,
-         sAxiWriteMaster => intWriteMaster,
-         sAxiWriteSlave  => intWriteSlave,
-         mAxiReadMaster  => pcieReadMaster,
-         mAxiReadSlave   => pcieReadSlave,
-         mAxiWriteMaster => pcieWriteMaster,
-         mAxiWriteSlave  => pcieWriteSlave
-      );
 
 end mapping;
 
