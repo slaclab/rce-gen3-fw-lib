@@ -472,9 +472,9 @@ architecture mapping of RceG3Cpu is
          emio_enet1_ext_int_in         : in  std_logic;
          emio_enet0_dma_bus_width      : out std_logic_vector(1 downto 0);
          emio_enet1_dma_bus_width      : out std_logic_vector(1 downto 0);
-         emio_gpio_i                   : in  std_logic_vector(31 downto 0);
-         emio_gpio_o                   : out std_logic_vector(31 downto 0);
-         emio_gpio_t                   : out std_logic_vector(31 downto 0);
+         emio_gpio_i                   : in  std_logic_vector(95 downto 0);
+         emio_gpio_o                   : out std_logic_vector(95 downto 0);
+         emio_gpio_t                   : out std_logic_vector(95 downto 0);
          pl_ps_irq0                    : in  std_logic_vector(0 downto 0);
          pl_ps_irq1                    : in  std_logic_vector(0 downto 0);
          pl_acpinact                   : in  std_logic;
