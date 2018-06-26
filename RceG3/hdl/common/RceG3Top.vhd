@@ -37,6 +37,8 @@ entity RceG3Top is
    generic (
       TPD_G                 : time                  := 1 ns;
       BUILD_INFO_G          : BuildInfoType;
+      SYNTH_MODE_G          : string                := "inferred";
+      MEMORY_TYPE_G         : string                := "block";      
       XIL_DEVICE_G          : string                := "7SERIES";  -- Either "7SERIES" or "ULTRASCALE"
       DMA_CLKDIV_EN_G       : boolean               := false;
       DMA_CLKDIV_G          : real                  := 5.0;
@@ -356,9 +358,11 @@ begin
    --------------------------------------------
    U_RceG3Dma: entity work.RceG3Dma 
       generic map (
-         TPD_G                 => TPD_G,
-         RCE_DMA_MODE_G        => RCE_DMA_MODE_G
-      ) port map (
+         TPD_G                => TPD_G,
+         SYNTH_MODE_G         => SYNTH_MODE_G,
+         MEMORY_TYPE_G        => MEMORY_TYPE_G,      
+         RCE_DMA_MODE_G       => RCE_DMA_MODE_G) 
+      port map (
          axiDmaClk            => axiDmaClk,
          axiDmaRst            => axiDmaRst,
          acpWriteSlave        => acpWriteSlave,

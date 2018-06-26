@@ -2,7 +2,7 @@
 -- File       : DuneDpmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-06-16
+-- Last update: 2018-06-25
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DUNE DPM
 -------------------------------------------------------------------------------
@@ -290,6 +290,8 @@ begin
       generic map (
          TPD_G          => TPD_G,
          BUILD_INFO_G   => BUILD_INFO_G,
+         SYNTH_MODE_G   => "xpm",
+         MEMORY_TYPE_G  => "ultra",
          XIL_DEVICE_G   => "ULTRASCALE",
          RCE_DMA_MODE_G => RCE_DMA_AXISV2_C)
       port map (
