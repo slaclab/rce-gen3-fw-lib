@@ -107,9 +107,8 @@ begin
          SLAVE_READY_EN_G    => true,
          VALID_THOLD_G       => 1,
          -- FIFO configurations
-         BRAM_EN_G           => false,
+         MEMORY_TYPE_G       => "distributed",
          GEN_SYNC_FIFO_G     => false,
-         CASCADE_SIZE_G      => 1,
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => RCEG3_AXIS_DMA_CONFIG_C,
@@ -133,9 +132,8 @@ begin
          SLAVE_READY_EN_G    => true,
          VALID_THOLD_G       => 1,
          -- FIFO configurations
-         BRAM_EN_G           => false,
+         MEMORY_TYPE_G       => "distributed",
          GEN_SYNC_FIFO_G     => false,
-         CASCADE_SIZE_G      => 1,
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => EMAC_AXIS_CONFIG_C,
