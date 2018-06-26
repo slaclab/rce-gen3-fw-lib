@@ -43,7 +43,7 @@ end PpiOnlineMonitor;
 
 architecture rtl of PpiOnlineMonitor is
 
-   constant MAX_CNT_C : natural := getTimeRatio(getRealMult(CLK_FREQ_G, TIMEOUT_G), 1.0);
+   constant MAX_CNT_C : natural := getTimeRatio((CLK_FREQ_G*TIMEOUT_G), 1.0);
    
    type StateType is (
       OFFLINE_S,
