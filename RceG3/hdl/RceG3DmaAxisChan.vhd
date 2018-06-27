@@ -85,7 +85,7 @@ begin
    U_AxiStreamDma : entity work.AxiStreamDma
       generic map (
          TPD_G             => TPD_G,
-         FREE_ADDR_WIDTH_G => 12,    -- 4096 entries
+         FREE_ADDR_WIDTH_G => 10,    -- 1024 entries
          AXIL_COUNT_G      => 2,
          AXIL_BASE_ADDR_G  => x"00000000",
          AXI_READY_EN_G    => false,
