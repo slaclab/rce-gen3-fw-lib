@@ -37,6 +37,7 @@ entity RceG3AxiCntl is
    generic (
       TPD_G          : time           := 1 ns;
       BUILD_INFO_G   : BuildInfoType;
+      XIL_DEVICE_G   : string         := "7SERIES";  -- Either "7SERIES" or "ULTRASCALE"
       RCE_DMA_MODE_G : RceDmaModeType := RCE_DMA_PPI_C
       );
    port (
@@ -392,12 +393,15 @@ begin
                   v.intReadSlave.rdata(1) := r.clkSelB(0);
                when X"0014" =>
                   v.intReadSlave.rdata(0) := r.clkSelA(1);
-                  v.intReadSlave.rdata(1) := r.clkSelB(1);
+                  v.intReadSlave.rdata(1) := r.clkSelB(1);                  
                when X"0020" =>
-                  v.intReadSlave.rdata(31)          := dnaValid;
-                  v.intReadSlave.rdata(24 downto 0) := dnaValue(56 downto 32);
-               when X"0024" =>
                   v.intReadSlave.rdata := dnaValue(31 downto 0);
+               when X"0024" =>
+                  v.intReadSlave.rdata := dnaValue(63 downto 32);
+               when X"0028" =>
+                  v.intReadSlave.rdata := dnaValue(95 downto 64);
+               when X"002C" =>
+                  v.intReadSlave.rdata := dnaValue(127 downto 96);                  
                when X"0030" =>
                   v.intReadSlave.rdata := eFuseUsr;
                when X"0034" =>
@@ -443,18 +447,16 @@ begin
 
    -------------------------------------
    -- Device DNA
-   -------------------------------------
+   ------------------------------------- 
    U_DeviceDna : entity work.DeviceDna
       generic map (
          TPD_G           => TPD_G,
-         RST_POLARITY_G  => '1',
-         SIM_DNA_VALUE_G => X"000000000000000"
-         ) port map (
-            clk      => axiClk,
-            rst      => axiClkRst,
-            dnaValue => dnaValue,
-            dnaValid => dnaValid
-            );
+         XIL_DEVICE_G    => XIL_DEVICE_G) 
+      port map (
+         clk      => axiClk,
+         rst      => axiClkRst,
+         dnaValue => dnaValue,
+         dnaValid => dnaValid);
    deviceDna <= dnaValue(63 downto 0);
 
    -------------------------------------

@@ -36,8 +36,9 @@ use work.AxiPkg.all;
 entity RceG3Dma is
    generic (
       TPD_G           : time           := 1 ns;
-      RCE_DMA_MODE_G  : RceDmaModeType := RCE_DMA_PPI_C
-   );
+      SYNTH_MODE_G    : string         := "inferred";
+      MEMORY_TYPE_G   : string         := "block";      
+      RCE_DMA_MODE_G  : RceDmaModeType := RCE_DMA_PPI_C);
    port (
 
       -- AXI BUS Clock
@@ -168,8 +169,10 @@ begin
 
       U_RceG3DmaAxisV2 : entity work.RceG3DmaAxisV2
          generic map (
-            TPD_G            => TPD_G
-         ) port map (
+            TPD_G            => TPD_G,
+            SYNTH_MODE_G     => SYNTH_MODE_G,
+            MEMORY_TYPE_G    => MEMORY_TYPE_G) 
+         port map (
             axiDmaClk        => axiDmaClk,
             axiDmaRst        => axiDmaRst,
             acpWriteSlave    => acpWriteSlave,

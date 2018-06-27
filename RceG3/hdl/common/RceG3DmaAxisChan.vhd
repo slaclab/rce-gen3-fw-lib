@@ -37,6 +37,8 @@ use work.AxiDmaPkg.all;
 entity RceG3DmaAxisChan is
    generic (
       TPD_G        : time            := 1 ns;
+      SYNTH_MODE_G : string          := "inferred";
+      MEMORY_TYPE_G: string          := "block";
       AXI_CACHE_G  : slv(3 downto 0) := "0000";
       BYP_SHIFT_G  : boolean         := false;
       AXI_CONFIG_G : AxiConfigType   := AXI_CONFIG_INIT_C);
@@ -85,6 +87,8 @@ begin
    U_AxiStreamDma : entity work.AxiStreamDma
       generic map (
          TPD_G             => TPD_G,
+         SYNTH_MODE_G      => SYNTH_MODE_G,
+         MEMORY_TYPE_G     => MEMORY_TYPE_G,
          FREE_ADDR_WIDTH_G => 12,    -- 4096 entries
          AXIL_COUNT_G      => 2,
          AXIL_BASE_ADDR_G  => x"00000000",
@@ -123,14 +127,11 @@ begin
          TPD_G               => TPD_G,
          INT_PIPE_STAGES_G   => 1,
          PIPE_STAGES_G       => 1,
-         SLAVE_READY_EN_G    => true,
          VALID_THOLD_G       => 1,
-         BRAM_EN_G           => true,
-         XIL_DEVICE_G        => "7SERIES",
-         USE_BUILT_IN_G      => false,
+         SLAVE_READY_EN_G    => true,
+         SYNTH_MODE_G        => SYNTH_MODE_G,
+         MEMORY_TYPE_G       => "block",         
          GEN_SYNC_FIFO_G     => false,
-         ALTERA_SYN_G        => false,
-         ALTERA_RAM_G        => "M9K",
          CASCADE_SIZE_G      => 1,
          FIFO_ADDR_WIDTH_G   => 9,
          FIFO_FIXED_THRESH_G => true,
@@ -153,14 +154,11 @@ begin
          TPD_G               => TPD_G,
          INT_PIPE_STAGES_G   => 1,
          PIPE_STAGES_G       => 1,
-         SLAVE_READY_EN_G    => false,
          VALID_THOLD_G       => 1,
-         BRAM_EN_G           => true,
-         XIL_DEVICE_G        => "7SERIES",
-         USE_BUILT_IN_G      => false,
+         SLAVE_READY_EN_G    => false,
+         SYNTH_MODE_G        => SYNTH_MODE_G,
+         MEMORY_TYPE_G       => "block",         
          GEN_SYNC_FIFO_G     => false,
-         ALTERA_SYN_G        => false,
-         ALTERA_RAM_G        => "M9K",
          CASCADE_SIZE_G      => 1,
          FIFO_ADDR_WIDTH_G   => 9,
          FIFO_FIXED_THRESH_G => true,
@@ -182,11 +180,7 @@ begin
    U_AxiReadPathFifo : entity work.AxiReadPathFifo
       generic map (
          TPD_G                  => TPD_G,
-         XIL_DEVICE_G           => "7SERIES",
-         USE_BUILT_IN_G         => false,
          GEN_SYNC_FIFO_G        => true,
-         ALTERA_SYN_G           => false,
-         ALTERA_RAM_G           => "M9K",
          ADDR_LSB_G             => 3,
          ID_FIXED_EN_G          => true,
          SIZE_FIXED_EN_G        => true,
@@ -195,13 +189,14 @@ begin
          LOCK_FIXED_EN_G        => true,
          PROT_FIXED_EN_G        => true,
          CACHE_FIXED_EN_G       => true,
-         ADDR_BRAM_EN_G         => false,
+         ADDR_MEMORY_TYPE_G     => "distributed",
          ADDR_CASCADE_SIZE_G    => 1,
          ADDR_FIFO_ADDR_WIDTH_G => 4,
-         DATA_BRAM_EN_G         => false,
+         DATA_MEMORY_TYPE_G     => "distributed",
          DATA_CASCADE_SIZE_G    => 1,
          DATA_FIFO_ADDR_WIDTH_G => 4,
-         AXI_CONFIG_G           => AXI_CONFIG_G)
+         AXI_CONFIG_G           => AXI_CONFIG_G,
+         SYNTH_MODE_G           => SYNTH_MODE_G)         
       port map (
          sAxiClk        => axiDmaClk,
          sAxiRst        => axiDmaRst,
@@ -216,11 +211,7 @@ begin
    U_AxiWritePathFifo : entity work.AxiWritePathFifo
       generic map (
          TPD_G                    => TPD_G,
-         XIL_DEVICE_G             => "7SERIES",
-         USE_BUILT_IN_G           => false,
          GEN_SYNC_FIFO_G          => true,
-         ALTERA_SYN_G             => false,
-         ALTERA_RAM_G             => "M9K",
          ADDR_LSB_G               => 3,
          ID_FIXED_EN_G            => true,
          SIZE_FIXED_EN_G          => true,
@@ -229,17 +220,18 @@ begin
          LOCK_FIXED_EN_G          => true,
          PROT_FIXED_EN_G          => true,
          CACHE_FIXED_EN_G         => true,
-         ADDR_BRAM_EN_G           => true,
+         ADDR_MEMORY_TYPE_G       => "block",
          ADDR_CASCADE_SIZE_G      => 1,
          ADDR_FIFO_ADDR_WIDTH_G   => 9,
-         DATA_BRAM_EN_G           => true,
+         DATA_MEMORY_TYPE_G       => "block",
          DATA_CASCADE_SIZE_G      => 1,
          DATA_FIFO_ADDR_WIDTH_G   => 9,
          DATA_FIFO_PAUSE_THRESH_G => 456,
-         RESP_BRAM_EN_G           => false,
+         RESP_MEMORY_TYPE_G       => "distributed",
          RESP_CASCADE_SIZE_G      => 1,
          RESP_FIFO_ADDR_WIDTH_G   => 4,
-         AXI_CONFIG_G             => AXI_CONFIG_G) 
+         AXI_CONFIG_G             => AXI_CONFIG_G,
+         SYNTH_MODE_G             => SYNTH_MODE_G)
       port map (
          sAxiClk         => axiDmaClk,
          sAxiRst         => axiDmaRst,

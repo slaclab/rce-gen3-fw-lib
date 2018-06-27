@@ -15,9 +15,7 @@
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
 -------------------------------------------------------------------------------
--- Modification history:
--- 04/02/2013: created.
--------------------------------------------------------------------------------
+
 library ieee;
 use ieee.std_logic_1164.all;
 use IEEE.STD_LOGIC_UNSIGNED.all;
@@ -56,28 +54,28 @@ package RceG3Pkg is
    --------------------------------------------------------
 
    constant AXI_MAST_GP_INIT_C : AxiConfigType := (
-      ADDR_WIDTH_C => 32,
-      DATA_BYTES_C => 4,
-      ID_BITS_C    => 12,
-      LEN_BITS_C   => 4);
+      ADDR_WIDTH_C => 40,
+      DATA_BYTES_C => 4,                -- 32-bit
+      ID_BITS_C    => 16,
+      LEN_BITS_C   => 8);
 
    constant AXI_SLAVE_GP_INIT_C : AxiConfigType := (
-      ADDR_WIDTH_C => 32,
-      DATA_BYTES_C => 4,
+      ADDR_WIDTH_C => 49,
+      DATA_BYTES_C => 4,                -- 32-bit
       ID_BITS_C    => 6,
-      LEN_BITS_C   => 4);
-
-   constant AXI_ACP_INIT_C : AxiConfigType := (
-      ADDR_WIDTH_C => 32,
-      DATA_BYTES_C => 8,
-      ID_BITS_C    => 3,
-      LEN_BITS_C   => 4);
+      LEN_BITS_C   => 8);
 
    constant AXI_HP_INIT_C : AxiConfigType := (
-      ADDR_WIDTH_C => 32,
-      DATA_BYTES_C => 8,
+      ADDR_WIDTH_C => 49,
+      DATA_BYTES_C => 8,                -- 64-bit 
       ID_BITS_C    => 6,
-      LEN_BITS_C   => 4);
+      LEN_BITS_C   => 8);
+
+   constant AXI_ACP_INIT_C : AxiConfigType := (
+      ADDR_WIDTH_C => 40,
+      DATA_BYTES_C => 16,               -- 128-bit 
+      ID_BITS_C    => 5,
+      LEN_BITS_C   => 8);
 
    --------------------------------------------------------
    -- AXIS Configuration Constants
@@ -85,13 +83,22 @@ package RceG3Pkg is
 
    constant RCEG3_AXIS_DMA_CONFIG_C : AxiStreamConfigType := (
       TSTRB_EN_C    => false,
-      TDATA_BYTES_C => 8,
+      TDATA_BYTES_C => AXI_HP_INIT_C.DATA_BYTES_C,
       TDEST_BITS_C  => 8,
       TID_BITS_C    => 0,
       TKEEP_MODE_C  => TKEEP_COMP_C,
       TUSER_BITS_C  => 4,
       TUSER_MODE_C  => TUSER_FIRST_LAST_C);
-   constant RCEG3_AXIS_DMA_ACP_CONFIG_C : AxiStreamConfigType := RCEG3_AXIS_DMA_CONFIG_C;
+      
+   constant RCEG3_AXIS_DMA_ACP_CONFIG_C : AxiStreamConfigType := (
+      TSTRB_EN_C    => RCEG3_AXIS_DMA_CONFIG_C.TSTRB_EN_C,
+      TDATA_BYTES_C => AXI_ACP_INIT_C.DATA_BYTES_C,
+      TDEST_BITS_C  => RCEG3_AXIS_DMA_CONFIG_C.TDEST_BITS_C,
+      TID_BITS_C    => RCEG3_AXIS_DMA_CONFIG_C.TID_BITS_C,
+      TKEEP_MODE_C  => RCEG3_AXIS_DMA_CONFIG_C.TKEEP_MODE_C,
+      TUSER_BITS_C  => RCEG3_AXIS_DMA_CONFIG_C.TUSER_BITS_C,
+      TUSER_MODE_C  => RCEG3_AXIS_DMA_CONFIG_C.TUSER_MODE_C);
+
 
    --------------------------------------------------------
    -- Ethernet Types
@@ -115,6 +122,7 @@ package RceG3Pkg is
       enetSofRx           : sl;
       enetSofTx           : sl;
       enetGmiiTxD         : slv(7 downto 0);
+      enetGmiispeedMode   : slv(2 downto 0);
    end record;
 
    -- Initialization constants
@@ -134,8 +142,8 @@ package RceG3Pkg is
       enetPtpSyncFrameTx  => '0',
       enetSofRx           => '0',
       enetSofTx           => '0',
-      enetGmiiTxD         => (others => '0')
-      );
+      enetGmiiTxD         => (others => '0'),
+      enetGmiispeedMode   => (others => '0'));
 
    -- Array
    type ArmEthTxArray is array (natural range<>) of ArmEthTxType;

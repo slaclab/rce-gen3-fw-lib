@@ -307,18 +307,15 @@ begin
       end if;
    end process;
 
-
    U_BsiFifo : entity work.Fifo
       generic map (
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
          RST_ASYNC_G     => false,
          GEN_SYNC_FIFO_G => true,
-         BRAM_EN_G       => true,
+         SYNTH_MODE_G    => "xpm",
+         MEMORY_TYPE_G   => "block",
          FWFT_EN_G       => true,
-         USE_DSP48_G     => "no",
-         USE_BUILT_IN_G  => true,
-         XIL_DEVICE_G    => "7SERIES",
          SYNC_STAGES_G   => 3,
          DATA_WIDTH_G    => 48,
          ADDR_WIDTH_G    => 9,
