@@ -322,7 +322,7 @@ begin
          gp_axi_wready     => imGpWriteSlave.wready,
          gp_axi_bresp      => imGpWriteSlave.bresp(1 downto 0),
          gp_axi_bvalid     => imGpWriteSlave.bvalid,
-         gp_axi_bready     => imGpWriteMaster.bready,
+         gp_axi_bready     => mGpWriteMaster.bready,
          gp_axi_araddr     => mGpReadMaster.araddr(31 downto 0),
          gp_axi_arlen      => mGpReadMaster.arlen(3 downto 0),
          gp_axi_arsize     => mGpReadMaster.arsize(2 downto 0),

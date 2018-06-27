@@ -232,8 +232,8 @@ begin
 
       pcieAxilReadMaster  <= AXI_LITE_READ_MASTER_INIT_C;
       pcieAxilReadSlave   <= AXI_LITE_READ_SLAVE_INIT_C;
-      pcieAxilWriteMaster <= AXI_LITE_READ_MASTER_INIT_C;
-      pcieAxilWriteSlave  <= AXI_LITE_READ_SLAVE_INIT_C;
+      pcieAxilWriteMaster <= AXI_LITE_WRITE_MASTER_INIT_C;
+      pcieAxilWriteSlave  <= AXI_LITE_WRITE_SLAVE_INIT_C;
 
       coreAxilReadSlave  <= AXI_LITE_READ_SLAVE_EMPTY_OK_C;
       coreAxilWriteSlave <= AXI_LITE_WRITE_SLAVE_EMPTY_OK_C;
