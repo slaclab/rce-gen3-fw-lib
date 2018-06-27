@@ -39,7 +39,6 @@ entity DpmCore is
       ETH_10G_EN_G       : boolean               := false;
       RCE_DMA_MODE_G     : RceDmaModeType        := RCE_DMA_PPI_C;
       AXI_ST_COUNT_G     : natural range 3 to 4  := 3;
-      USE_AXI_IC_G       : boolean               := false;
       UDP_SERVER_EN_G    : boolean               := false;
       UDP_SERVER_SIZE_G  : positive              := 1;
       UDP_SERVER_PORTS_G : PositiveArray         := (0 => 8192);
@@ -172,7 +171,6 @@ begin
    U_RceG3Top : entity work.RceG3Top
       generic map (
          TPD_G          => TPD_G,
-         USE_AXI_IC_G   => USE_AXI_IC_G,
          BUILD_INFO_G   => BUILD_INFO_G,
          RCE_DMA_MODE_G => RCE_DMA_MODE_G)
       port map (
