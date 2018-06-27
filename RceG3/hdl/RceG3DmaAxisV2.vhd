@@ -112,7 +112,7 @@ begin
    interrupt(DMA_INT_COUNT_C-1 downto 4) <= (others => '0');
 
    -------------------------------------------
-   -- Version 2 DMA Core For Ethernet
+   -- Version 2 DMA Core 
    -------------------------------------------
    U_Gen2Dma: for i in 0 to 2 generate
       U_RceG3DmaAxisChan: entity work.RceG3DmaAxisV2Chan
