@@ -184,8 +184,7 @@ begin
    end generate;
 
    U_DmaClkDisGen : if DMA_CLKDIV_EN_G = false generate
-      --idmaClk <= isysClk200;
-      idmaClk <= isysClk125;
+      idmaClk <= isysClk200;
    end generate;
 
    U_sysClk200Buf : BUFG
