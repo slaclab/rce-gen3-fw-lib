@@ -18,3 +18,6 @@ loadRuckusTcl "$::DIR_PATH/../ZynqPcieMaster"
 loadSource      -dir "$::DIR_PATH/hdl/"
 loadIpCore      -dir "$::DIR_PATH/coregen/GmiiToRgmiiCore/"
 loadConstraints -dir "$::DIR_PATH/hdl/"
+
+loadBlockDesign -path "$::DIR_PATH/coregen/pcie_root/pcie_root.bd"
+
