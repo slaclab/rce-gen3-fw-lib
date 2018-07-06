@@ -240,7 +240,7 @@ begin
    U_AxiStreamDmaV2: entity work.AxiStreamDmaV2 
       generic map (
          TPD_G             => TPD_G,
-         DESC_AWIDTH_G     => 10,
+         DESC_AWIDTH_G     => 12,
          AXIL_BASE_ADDR_G  => AXIL_BASE_ADDR_G,
          AXI_READY_EN_G    => false,
          AXIS_READY_EN_G   => false,
