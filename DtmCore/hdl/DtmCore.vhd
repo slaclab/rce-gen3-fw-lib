@@ -3,7 +3,6 @@
 -- File       : DtmCore.vhd
 -- Author     : Ryan Herbst, rherbst@slac.stanford.edu
 -- Created    : 2013-11-14
--- Last update: 2014-01-17
 -------------------------------------------------------------------------------
 -- Description:
 -- Common top level module for DTM
@@ -35,6 +34,7 @@ entity DtmCore is
    generic (
       TPD_G          : time           := 1 ns;
       BUILD_INFO_G   : BuildInfoType;
+      COB_GTE_C10_G  : boolean        := false;
       RCE_DMA_MODE_G : RceDmaModeType := RCE_DMA_PPI_C);
    port (
 
@@ -88,7 +88,9 @@ entity DtmCore is
       sysClk200               : out   sl;
       sysClk200Rst            : out   sl;
 
-      -- External Axi Bus, 0xA0000000 - 0xAFFFFFFF
+      -- External Axi Bus
+      -- 0xA0000000 - 0xAFFFFFFF (COB_MIN_C10_G = False)
+      -- 0x90000000 - 0x97FFFFFF (COB_MIN_C10_G = True)
       axiClk                  : out   sl;
       axiClkRst               : out   sl;
       extAxilReadMaster       : out   AxiLiteReadMasterType;
@@ -134,17 +136,17 @@ architecture STRUCTURE of DtmCore is
    signal pcieAxilReadSlave   : AxiLiteReadSlaveType;
    signal pcieAxilWriteMaster : AxiLiteWriteMasterType;
    signal pcieAxilWriteSlave  : AxiLiteWriteSlaveType;
+   signal ipciRefClkP         : sl;
+   signal ipciRefClkM         : sl;
+   signal ipciRxP             : sl;
+   signal ipciRxM             : sl;
+   signal ipciTxP             : sl;
+   signal ipciTxM             : sl;
+   signal ipciResetL          : sl;
    signal armEthTx            : ArmEthTxArray(1 downto 0);
    signal armEthRx            : ArmEthRxArray(1 downto 0);
    signal armEthMode          : slv(31 downto 0);
 
-   attribute KEEP_HIERARCHY : string;
-   attribute KEEP_HIERARCHY of
-      U_RceG3Top,
-      U_AxiCrossbar,
-      U_ZynqPcieMaster,
-      U_ZynqEthernet : label is "TRUE";   
-   
 begin
 
    --------------------------------------------------
@@ -174,6 +176,7 @@ begin
       generic map (
          TPD_G          => TPD_G,
          BUILD_INFO_G   => BUILD_INFO_G,
+         PCIE_EN_G      => COB_GTE_C10_G,
          RCE_DMA_MODE_G => RCE_DMA_MODE_G
       ) port map (
          i2cSda              => i2cSda,
@@ -187,11 +190,18 @@ begin
          extAxilReadMaster   => extAxilReadMaster,
          extAxilReadSlave    => extAxilReadSlave ,
          extAxilWriteMaster  => extAxilWriteMaster,
-         extAxilWriteSlave   => extAxilWriteSlave ,
+         extAxilWriteSlave   => extAxilWriteSlave,
          coreAxilReadMaster  => coreAxilReadMaster,
          coreAxilReadSlave   => coreAxilReadSlave,
          coreAxilWriteMaster => coreAxilWriteMaster,
          coreAxilWriteSlave  => coreAxilWriteSlave,
+         pciRefClkP          => ipciRefClkP,
+         pciRefClkM          => ipciRefClkM,
+         pciResetL           => ipciResetL,
+         pcieRxP             => ipciRxP,
+         pcieRxM             => ipciRxM,
+         pcieTxP             => ipciTxP,
+         pcieTxM             => ipciTxM,
          dmaClk              => idmaClk,
          dmaClkRst           => idmaClkRst,
          dmaState            => idmaState,
@@ -211,60 +221,86 @@ begin
    clkSelA <= '1';
    clkSelB <= '1';
 
+   U_C10_EN_G: if COB_GTE_C10_G = true generate
+      ipciRefClkP <= pciRefClkP;
+      ipciRefClkM <= pciRefClkM;
+      ipciRxP     <= pciRxP;
+      ipciRxM     <= pciRxM;
+      pciTxP      <= ipciTxP;
+      pciTxM      <= ipciTxM;
+      pciResetL   <= ipciResetL;
 
-   -------------------------------------
-   -- AXI Lite Crossbar
-   -- Base: 0xB0000000 - 0xBFFFFFFF
-   -------------------------------------
-   U_AxiCrossbar : entity work.AxiLiteCrossbar 
-      generic map (
-         TPD_G              => TPD_G,
-         NUM_SLAVE_SLOTS_G  => 1,
-         NUM_MASTER_SLOTS_G => 1,
-         DEC_ERROR_RESP_G   => AXI_RESP_OK_C,
-         MASTERS_CONFIG_G   => (
+      pcieAxilReadMaster  <= AXI_LITE_READ_MASTER_INIT_C;
+      pcieAxilReadSlave   <= AXI_LITE_READ_SLAVE_INIT_C;
+      pcieAxilWriteMaster <= AXI_LITE_WRITE_MASTER_INIT_C;
+      pcieAxilWriteSlave  <= AXI_LITE_WRITE_SLAVE_INIT_C;
 
-            -- Channel 1 = 0xBC000000 - 0xBC00FFFF : PCI Express Registers
-            0 => ( baseAddr     => x"BC000000",
-                   addrBits     => 16,
-                   connectivity => x"FFFF")
-         )
-      ) port map (
-         axiClk              => iaxiClk,
-         axiClkRst           => iaxiClkRst,
-         sAxiWriteMasters(0) => coreAxilWriteMaster,
-         sAxiWriteSlaves(0)  => coreAxilWriteSlave,
-         sAxiReadMasters(0)  => coreAxilReadMaster,
-         sAxiReadSlaves(0)   => coreAxilReadSlave,
-         mAxiWriteMasters(0) => pcieAxilWriteMaster,
-         mAxiWriteSlaves(0)  => pcieAxilWriteSlave,
-         mAxiReadMasters(0)  => pcieAxilReadMaster,
-         mAxiReadSlaves(0)   => pcieAxilReadSlave
-      );
+      coreAxilReadSlave  <= AXI_LITE_READ_SLAVE_EMPTY_OK_C;
+      coreAxilWriteSlave <= AXI_LITE_WRITE_SLAVE_EMPTY_OK_C;
+
+   end generate;
+
+   U_C10_DIS_G: if COB_GTE_C10_G = false generate
+
+      ipciRefClkP <= '0';
+      ipciRefClkM <= '0';
+      ipciRxP     <= '0';
+      ipciRxM     <= '0';
+
+      -------------------------------------
+      -- AXI Lite Crossbar
+      -- Base: 0xB0000000 - 0xBFFFFFFF
+      -------------------------------------
+      U_AxiCrossbar : entity work.AxiLiteCrossbar 
+         generic map (
+            TPD_G              => TPD_G,
+            NUM_SLAVE_SLOTS_G  => 1,
+            NUM_MASTER_SLOTS_G => 1,
+            DEC_ERROR_RESP_G   => AXI_RESP_OK_C,
+            MASTERS_CONFIG_G   => (
+
+               -- Channel 1 = 0xBC000000 - 0xBC00FFFF : PCI Express Registers
+               0 => ( baseAddr     => x"BC000000",
+                      addrBits     => 16,
+                      connectivity => x"FFFF")
+            )
+         ) port map (
+            axiClk              => iaxiClk,
+            axiClkRst           => iaxiClkRst,
+            sAxiWriteMasters(0) => coreAxilWriteMaster,
+            sAxiWriteSlaves(0)  => coreAxilWriteSlave,
+            sAxiReadMasters(0)  => coreAxilReadMaster,
+            sAxiReadSlaves(0)   => coreAxilReadSlave,
+            mAxiWriteMasters(0) => pcieAxilWriteMaster,
+            mAxiWriteSlaves(0)  => pcieAxilWriteSlave,
+            mAxiReadMasters(0)  => pcieAxilReadMaster,
+            mAxiReadSlaves(0)   => pcieAxilReadSlave
+         );
 
 
-   --------------------------------------------------
-   -- PCI Express : 0xBC00_0000 - 0xBC00_FFFF
-   --------------------------------------------------
-   U_ZynqPcieMaster : entity work.ZynqPcieMaster 
-      generic map (
-         HSIO_MODE_G => false
-      ) port map (
-         axiClk          => iaxiClk,
-         axiClkRst       => iaxiClkRst,
-         axiReadMaster   => pcieAxilReadMaster,
-         axiReadSlave    => pcieAxilReadSlave,
-         axiWriteMaster  => pcieAxilWriteMaster,
-         axiWriteSlave   => pcieAxilWriteSlave,
-         pciRefClkP      => pciRefClkP,
-         pciRefClkM      => pciRefClkM,
-         pcieResetL      => pciResetL,
-         pcieRxP         => pciRxP,
-         pcieRxM         => pciRxM,
-         pcieTxP         => pciTxP,
-         pcieTxM         => pciTxM
-      );
+      --------------------------------------------------
+      -- PCI Express : 0xBC00_0000 - 0xBC00_FFFF
+      --------------------------------------------------
+      U_ZynqPcieMaster : entity work.ZynqPcieMaster 
+         generic map (
+            HSIO_MODE_G => false
+         ) port map (
+            axiClk          => iaxiClk,
+            axiClkRst       => iaxiClkRst,
+            axiReadMaster   => pcieAxilReadMaster,
+            axiReadSlave    => pcieAxilReadSlave,
+            axiWriteMaster  => pcieAxilWriteMaster,
+            axiWriteSlave   => pcieAxilWriteSlave,
+            pciRefClkP      => pciRefClkP,
+            pciRefClkM      => pciRefClkM,
+            pcieResetL      => pciResetL,
+            pcieRxP         => pciRxP,
+            pcieRxM         => pciRxM,
+            pcieTxP         => pciTxP,
+            pcieTxM         => pciTxM
+         );
 
+   end generate;
 
    --------------------------------------------------
    -- Ethernet

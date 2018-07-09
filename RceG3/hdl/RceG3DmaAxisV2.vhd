@@ -52,10 +52,10 @@ entity RceG3DmaAxisV2 is
       hpReadSlave     : in  AxiReadSlaveArray(3 downto 0);
       hpReadMaster    : out AxiReadMasterArray(3 downto 0);
       -- User memory access
-      userWriteSlave  : out AxiWriteSlaveType;
-      userWriteMaster : in  AxiWriteMasterType;
-      userReadSlave   : out AxiReadSlaveType;
-      userReadMaster  : in  AxiReadMasterType;
+      auxWriteSlave   : out AxiWriteSlaveType;
+      auxWriteMaster  : in  AxiWriteMasterType;
+      auxReadSlave    : out AxiReadSlaveType;
+      auxReadMaster   : in  AxiReadMasterType;
       -- Local AXI Lite Bus, 0x600n0000
       axilReadMaster  : in  AxiLiteReadMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
       axilReadSlave   : out AxiLiteReadSlaveArray(DMA_AXIL_COUNT_C-1 downto 0) := (others => AXI_LITE_READ_SLAVE_EMPTY_DECERR_C);
@@ -96,11 +96,11 @@ begin
    intReadSlave(2)  <= acpReadSlave;
    acpReadMaster    <= intReadMaster(2);
 
-   -- HP 2 goes to user space
-   userWriteSlave   <= hpWriteSlave(2);
-   hpWriteMaster(2) <= userWriteMaster;
-   userReadSlave    <= hpReadSlave(2);
-   hpReadMaster(2)  <= userReadMaster;
+   -- HP 2 goes to aux space
+   auxWriteSlave    <= hpWriteSlave(2);
+   hpWriteMaster(2) <= auxWriteMaster;
+   auxReadSlave     <= hpReadSlave(2);
+   hpReadMaster(2)  <= auxReadMaster;
 
    -- HP for channel 3
    intWriteSlave(3) <= hpWriteSlave(3);
