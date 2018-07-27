@@ -5,7 +5,7 @@
 -- Author     : Ryan Herbst <rherbst@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2015-09-03
--- Last update: 2018-06-27
+-- Last update: 2018-07-26
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -41,16 +41,16 @@ entity RceEthernetReg is
    port (
       -- AXI Lite Buses
       axilClk         : in  sl;
-      axilClkRst      : in  sl;
+      axilRst         : in  sl;
       axilWriteMaster : in  AxiLiteWriteMasterType;
       axilWriteSlave  : out AxiLiteWriteSlaveType;
       axilReadMaster  : in  AxiLiteReadMasterType;
       axilReadSlave   : out AxiLiteReadSlaveType;
       -- Config/Status signals
       dmaClk          : in  sl;
-      dmaClkRst       : in  sl;
+      dmaRst          : in  sl;
       ethClk          : in  sl;
-      ethClkRst       : in  sl;
+      ethRst          : in  sl;
       phyStatus       : in  slv(7 downto 0);
       phyDebug        : in  slv(5 downto 0);
       phyConfig       : out slv(6 downto 0);
@@ -144,11 +144,11 @@ begin
          irqEnIn               => (others => '0'),
          irqOut                => open,
          wrClk                 => ethClk,
-         wrRst                 => ethClkRst,
+         wrRst                 => ethRst,
          rdClk                 => axilClk,
-         rdRst                 => axilClkRst);
+         rdRst                 => axilRst);
 
-   comb : process (axilClkRst, axilReadMaster, axilWriteMaster, phyDebug,
+   comb : process (axilReadMaster, axilRst, axilWriteMaster, phyDebug,
                    phyStatus, r, statusCnt) is
       variable v      : RegType;
       variable axilEp : AxiLiteEndpointType;
@@ -209,7 +209,7 @@ begin
       axiSlaveDefault(axilEp, v.axilWriteSlave, v.axilReadSlave, AXI_RESP_OK_C);  -- Always return "OK" response for ZYNQ CPU 
 
       -- Reset
-      if (axilClkRst = '1') then
+      if (axilRst = '1') then
          v := REG_INIT_C;
       end if;
 
@@ -238,7 +238,7 @@ begin
          WIDTH_G  => 48)
       port map (
          clk     => ethClk,
-         rst     => ethClkRst,
+         rst     => ethRst,
          -- Input Data
          dataIn  => r.macAddress,
          -- Output Data
@@ -251,7 +251,7 @@ begin
          WIDTH_G  => 32)
       port map (
          clk     => ethClk,
-         rst     => ethClkRst,
+         rst     => ethRst,
          -- Input Data
          dataIn  => r.ipAddr,
          -- Output Data
@@ -264,7 +264,7 @@ begin
          WIDTH_G  => 16)
       port map (
          clk     => ethClk,
-         rst     => ethClkRst,
+         rst     => ethRst,
          -- Input Data
          dataIn  => r.pauseTime,
          -- Output Data
@@ -277,7 +277,7 @@ begin
          WIDTH_G  => 7)
       port map (
          clk     => ethClk,
-         rst     => ethClkRst,
+         rst     => ethRst,
          -- Input Data
          dataIn  => r.config,
          -- Output Data
@@ -290,7 +290,7 @@ begin
          WIDTH_G  => 6)
       port map (
          clk        => ethClk,
-         rst        => ethClkRst,
+         rst        => ethRst,
          -- Input Data
          dataIn(0)  => r.phyReset,
          dataIn(1)  => r.filtEnable,
@@ -313,7 +313,7 @@ begin
          WIDTH_G  => 24)
       port map (
          clk                   => dmaClk,
-         rst                   => dmaClkRst,
+         rst                   => dmaRst,
          -- Input Data
          dataIn(15 downto 0)   => r.ethHeaderSize,
          dataIn(19 downto 16)  => r.txShift,

@@ -5,7 +5,7 @@
 -- Author     : Ryan Herbst <rherbst@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2015-09-03
--- Last update: 2018-06-27
+-- Last update: 2018-07-26
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ entity RceEthernetMac is
    port (
       -- DMA Interface
       dmaClk               : in  sl;
-      dmaClkRst            : in  sl;
+      dmaRst               : in  sl;
       dmaState             : in  RceDmaStateType;
       dmaIbMaster          : out AxiStreamMasterType;
       dmaIbSlave           : in  AxiStreamSlaveType;
@@ -71,7 +71,7 @@ entity RceEthernetMac is
       macStatus            : out EthMacStatusType;
       -- PHY clock and Reset
       ethClk               : in  sl;
-      ethClkRst            : in  sl;
+      ethRst               : in  sl;
       -- User ETH interface
       userEthUdpIbMaster   : in  AxiStreamMasterType;
       userEthUdpIbSlave    : out AxiStreamSlaveType;
@@ -181,24 +181,24 @@ begin
       port map (
          -- Core Clock and Reset
          ethClk           => ethClk,
-         ethRst           => ethClkRst,
+         ethRst           => ethRst,
          -- Primary Interface
          primClk          => ethClk,
-         primRst          => ethClkRst,
+         primRst          => ethRst,
          ibMacPrimMaster  => ibMacPrimMaster,
          ibMacPrimSlave   => ibMacPrimSlave,
          obMacPrimMaster  => obMacPrimMaster,
          obMacPrimSlave   => obMacPrimSlave,
          -- Bypass interface
          bypClk           => ethClk,
-         bypRst           => ethClkRst,
+         bypRst           => ethRst,
          ibMacBypMaster   => userEthBypIbMaster,
          ibMacBypSlave    => userEthBypIbSlave,
          obMacBypMaster   => userEthBypObMaster,
          obMacBypSlave    => userEthBypObSlave,
          -- VLAN Interfaces
          vlanClk          => ethClk,
-         vlanRst          => ethClkRst,
+         vlanRst          => ethRst,
          ibMacVlanMasters => userEthVlanIbMasters,
          ibMacVlanSlaves  => userEthVlanIbSlaves,
          obMacVlanMasters => userEthVlanObMasters,
@@ -238,7 +238,7 @@ begin
       port map (
          -- MAC Interface (ethClk domain)
          ethClk          => ethClk,
-         ethRst          => ethClkRst,
+         ethRst          => ethRst,
          ibMacPrimMaster => ibMacPrimMaster,
          ibMacPrimSlave  => ibMacPrimSlave,
          obMacPrimMaster => obMacPrimMaster,
@@ -250,7 +250,7 @@ begin
          ethUdpIbSlave   => userEthUdpIbSlave,
          -- CPU Interface (axisClk domain)
          axisClk         => dmaClk,
-         axisRst         => dmaClkRst,
+         axisRst         => dmaRst,
          ibPrimMaster    => ibPrimMaster,
          ibPrimSlave     => ibPrimSlave,
          obPrimMaster    => obPrimMaster,
@@ -277,7 +277,7 @@ begin
             ADD_VALID_EN_G => true)
          port map (
             axisClk     => dmaClk,
-            axisRst     => dmaClkRst,
+            axisRst     => dmaRst,
             axiStart    => '1',
             axiShiftDir => '0',         -- 0 = left (lsb to msb)
             axiShiftCnt => rxShift,
@@ -300,7 +300,7 @@ begin
             AXIS_CONFIG_G => PPI_AXIS_CONFIG_INIT_C)
          port map (
             axisClk     => dmaClk,
-            axisRst     => dmaClkRst,
+            axisRst     => dmaRst,
             axiStart    => '1',
             axiShiftDir => '1',         -- 1 = right (msb to lsb)
             axiShiftCnt => txShift,
@@ -312,7 +312,7 @@ begin
       --------------
       -- PPI support
       --------------
-      comb : process (dmaClkRst, dmaIbSlave, ethHeaderSize, ibPrimSlave, r,
+      comb : process (dmaIbSlave, dmaRst, ethHeaderSize, ibPrimSlave, r,
                       rxMaster, txMaster) is
          variable v    : RegType;
          variable eofe : sl;
@@ -384,7 +384,7 @@ begin
          end if;
 
          -- Reset
-         if (dmaClkRst = '1') then
+         if (dmaRst = '1') then
             v := REG_INIT_C;
          end if;
 

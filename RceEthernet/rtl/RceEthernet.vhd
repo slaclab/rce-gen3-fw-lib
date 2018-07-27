@@ -65,7 +65,7 @@ entity RceEthernet is
       rst62                : in  sl;
       -- PPI Interface
       dmaClk               : out sl;
-      dmaClkRst            : out sl;
+      dmaRst               : out sl;
       dmaState             : in  RceDmaStateType;
       dmaIbMaster          : out AxiStreamMasterType;
       dmaIbSlave           : in  AxiStreamSlaveType;
@@ -73,7 +73,7 @@ entity RceEthernet is
       dmaObSlave           : out AxiStreamSlaveType;
       -- User ETH interface
       userEthClk           : out sl;
-      userEthClkRst        : out sl;
+      userEthRst           : out sl;
       userEthIpAddr        : out slv(31 downto 0);
       userEthMacAddr       : out slv(47 downto 0);
       userEthUdpIbMaster   : in  AxiStreamMasterType;
@@ -90,7 +90,7 @@ entity RceEthernet is
       userEthVlanObSlaves  : in  AxiStreamSlaveArray(VLAN_SIZE_G-1 downto 0);
       -- AXI-Lite Buses
       axilClk              : in  sl;
-      axilClkRst           : in  sl;
+      axilRst              : in  sl;
       axilWriteMaster      : in  AxiLiteWriteMasterType;
       axilWriteSlave       : out AxiLiteWriteSlaveType;
       axilReadMaster       : in  AxiLiteReadMasterType;
@@ -118,7 +118,7 @@ architecture mapping of RceEthernet is
    signal phyConfig : slv(6 downto 0);
 
    signal ethClk     : sl;
-   signal ethClkRst  : sl;
+   signal ethRst     : sl;
    signal ethClkLock : sl;
    signal phyReset   : sl;
    signal phyReady   : sl;
@@ -154,9 +154,9 @@ begin
    -- Outputs
    ----------
    dmaClk         <= clk200;
-   dmaClkRst      <= rst200;
+   dmaRst         <= rst200;
    userEthClk     <= ethClk;
-   userEthClkRst  <= ethClkRst;
+   userEthRst     <= ethRst;
    userEthMacAddr <= macConfig.macAddress;
 
    -----------------
@@ -167,15 +167,15 @@ begin
          TPD_G => TPD_G)
       port map (
          axilClk         => axilClk,
-         axilClkRst      => axilClkRst,
+         axilRst         => axilRst,
          axilWriteMaster => axilWriteMaster,
          axilWriteSlave  => axilWriteSlave,
          axilReadMaster  => axilReadMaster,
          axilReadSlave   => axilReadSlave,
          dmaClk          => clk200,
-         dmaClkRst       => rst200,
+         dmaRst          => rst200,
          ethClk          => ethClk,
-         ethClkRst       => ethClkRst,
+         ethRst          => ethRst,
          phyStatus       => phyStatus,
          phyDebug        => phyDebug,
          phyConfig       => phyConfig,
@@ -194,8 +194,8 @@ begin
    -----------
    GEN_1000Base : if (ETH_TYPE_G = "1000BASE-KX") generate
 
-      ethClk    <= clk125;
-      ethClkRst <= rst125;
+      ethClk <= clk125;
+      ethRst <= rst125;
 
       U_Eth : entity work.Rce1GbE1lane
          generic map (
@@ -238,7 +238,7 @@ begin
             extRst    => phyReset,
             dclk      => axilClk,
             phyClk    => ethClk,
-            phyRst    => ethClkRst,
+            phyRst    => ethRst,
             phyReady  => phyReady,
             phyStatus => phyStatus,
             phyDebug  => phyDebug,
@@ -271,7 +271,7 @@ begin
             coreClk   => clk156,
             coreRst   => rst156,
             phyClk    => ethClk,
-            phyRst    => ethClkRst,
+            phyRst    => ethRst,
             phyReady  => phyReady,
             phyStatus => phyStatus,
             phyDebug  => phyDebug,
@@ -311,7 +311,7 @@ begin
       port map (
          -- DMA Interface
          dmaClk               => clk200,
-         dmaClkRst            => rst200,
+         dmaRst               => rst200,
          dmaState             => dmaState,
          dmaIbMaster          => dmaIbMaster,
          dmaIbSlave           => dmaIbSlave,
@@ -326,7 +326,7 @@ begin
          macStatus            => macStatus,
          -- PHY clock and Reset
          ethClk               => ethClk,
-         ethClkRst            => ethClkRst,
+         ethRst               => ethRst,
          -- User ETH interface
          userEthUdpIbMaster   => userEthUdpIbMaster,
          userEthUdpIbSlave    => userEthUdpIbSlave,

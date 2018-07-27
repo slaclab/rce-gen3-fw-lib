@@ -36,7 +36,7 @@ entity DpmCore is
    generic (
       TPD_G              : time                  := 1 ns;
       BUILD_INFO_G       : BuildInfoType;
-      ETH_TYPE_G         : string                := "ZYNQ-ETH";  -- [ZYNQ-ETH, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
+      ETH_TYPE_G         : string                := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
       RCE_DMA_MODE_G     : RceDmaModeType        := RCE_DMA_PPI_C;
       AXI_ST_COUNT_G     : natural range 3 to 4  := 3;
       UDP_SERVER_EN_G    : boolean               := false;
@@ -127,18 +127,26 @@ architecture STRUCTURE of DpmCore is
 
    signal armEthTx   : ArmEthTxArray(1 downto 0) := (others => ARM_ETH_TX_INIT_C);
    signal armEthRx   : ArmEthRxArray(1 downto 0) := (others => ARM_ETH_RX_INIT_C);
-   signal armEthMode : slv(31 downto 0);
+   signal armEthMode : slv(31 downto 0)          := (others => '0');
 
    signal ethRefClk     : sl;
    signal ethRefClkDiv2 : sl;
    signal stableClk     : sl;
    signal stableRst     : sl;
-   signal rst625        : sl;
-   signal rst312        : sl;
-   signal rst200        : sl;
-   signal rst156        : sl;
-   signal rst125        : sl;
-   signal rst62         : sl;
+
+   signal clk312 : sl;
+   signal clk200 : sl;
+   signal clk156 : sl;
+   signal clk125 : sl;
+   signal clk62  : sl;
+
+   signal rst312 : sl;
+   signal rst200 : sl;
+   signal rst156 : sl;
+   signal rst125 : sl;
+   signal rst62  : sl;
+
+   signal locked : sl;
 
 begin
 
@@ -149,8 +157,11 @@ begin
    assert (RCE_DMA_MODE_G = RCE_DMA_Q4X2_C and AXI_ST_COUNT_G = 4) or RCE_DMA_MODE_G /= RCE_DMA_Q4X2_C
       report "Only AXI_ST_COUNT_G = 4 is supported when RCE_DMA_MODE_G = RCE_DMA_Q4X2_C"
       severity failure;
-   assert (RCE_DMA_MODE_G = RCE_DMA_Q4X2_C and ETH_10G_EN_G = false) or RCE_DMA_MODE_G /= RCE_DMA_Q4X2_C
+   assert (RCE_DMA_MODE_G = RCE_DMA_Q4X2_C and ETH_TYPE_G = "ZYNQ-GEM") or RCE_DMA_MODE_G /= RCE_DMA_Q4X2_C
       report "RCE_DMA_MODE_G = RCE_DMA_Q4X2_C is not supported when ETH_10G_EN_G = true"
+      severity failure;
+   assert (ETH_TYPE_G = "ZYNQ-GEM") or (ETH_TYPE_G = "1000BASE-KX") or (ETH_TYPE_G = "10GBASE-KX4") or (ETH_TYPE_G = "10GBASE-KR") or (ETH_TYPE_G = "40GBASE-KR4")
+      report "ETH_TYPE_G must be [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4]"
       severity failure;
 
    -- more assertion checks should be added e.g. ETH_10G_EN_G = true only with RCE_DMA_MODE_G = RCE_DMA_PPI_C ???
@@ -283,23 +294,32 @@ begin
          rstOut(1) => rst312,
          rstOut(2) => rst156,
          rstOut(3) => rst125,
-         rstOut(4) => rst62);
+         rstOut(4) => rst62,
+         -- Status
+         locked    => locked);
 
    --------------------------------------------------
    -- Ethernet
    --------------------------------------------------
-   U_Eth1gGen : if (ETH_TYPE_G = "ZYNQ-ETH") generate
-      U_ZynqEthernet : entity work.ZynqEthernet
+   U_Eth1gGen : if (ETH_TYPE_G = "ZYNQ-GEM") generate
+
+      U_RceEthGem : entity work.RceEthGem
+         generic map (
+            TPD_G => TPD_G)
          port map (
-            sysClk125    => clk125,
-            sysClk200    => clk200,
-            sysClk200Rst => rst200,
-            armEthTx     => armEthTx(0),
-            armEthRx     => armEthRx(0),
-            ethRxP       => ethRxP(0),
-            ethRxM       => ethRxM(0),
-            ethTxP       => ethTxP(0),
-            ethTxM       => ethTxM(0));
+            sysClk125 => clk125,
+            sysRst125 => rst125,
+            sysClk62  => clk62,
+            sysRst62  => rst62,
+            locked    => locked,
+            -- ARM Interface
+            armEthTx  => armEthTx(0),
+            armEthRx  => armEthRx(0),
+            -- Ethernet Lines
+            ethRxP    => ethRxP(0),
+            ethRxM    => ethRxM(0),
+            ethTxP    => ethTxP(0),
+            ethTxM    => ethTxM(0));
 
       userEthClk           <= clk125;
       userEthClkRst        <= rst125;
@@ -314,7 +334,7 @@ begin
 
       U_Q4X2DmaGen : if (RCE_DMA_MODE_G = RCE_DMA_Q4X2_C) generate
          idmaClk(3)                    <= dmaClk(AXI_ST_COUNT_G-1);
-         idmaClkRst(3)                 <= dmaClkRst(AXI_ST_COUNT_G-1);
+         idmaRst(3)                    <= dmaClkRst(AXI_ST_COUNT_G-1);
          idmaObSlave(3)                <= dmaObSlave(AXI_ST_COUNT_G-1);
          idmaIbMaster(3)               <= dmaIbMaster(AXI_ST_COUNT_G-1);
          dmaState(AXI_ST_COUNT_G-1)    <= idmaState(3);
@@ -323,18 +343,17 @@ begin
       end generate;
       U_NoQ4X2DmaGen : if (RCE_DMA_MODE_G /= RCE_DMA_Q4X2_C) generate
          idmaClk(3)      <= clk125;
-         idmaClkRst(3)   <= rst125;
-         idmaObSlave(3)  <= AXI_STREAM_SLAVE_INIT_C;
+         idmaRst(3)      <= rst125;
+         idmaObSlave(3)  <= AXI_STREAM_SLAVE_FORCE_C;
          idmaIbMaster(3) <= AXI_STREAM_MASTER_INIT_C;
       end generate;
 
       ethTxP(3 downto 1) <= (others => '0');
       ethTxM(3 downto 1) <= (others => '0');
-      armEthRx(1)        <= ARM_ETH_RX_INIT_C;
 
    end generate;
 
-   U_Eth10gGen : if (ETH_TYPE_G /= "ZYNQ-ETH") generate
+   U_Eth10gGen : if (ETH_TYPE_G /= "ZYNQ-GEM") generate
 
       U_RceEthernet : entity work.RceEthernet
          generic map (
@@ -364,7 +383,7 @@ begin
             rst62                => rst62,
             -- PPI Interface
             dmaClk               => idmaClk(3),
-            dmaClkRst            => idmaRst(3),
+            dmaRst               => idmaRst(3),
             dmaState             => idmaState(3),
             dmaIbMaster          => idmaIbMaster(3),
             dmaIbSlave           => idmaIbSlave(3),
@@ -372,7 +391,7 @@ begin
             dmaObSlave           => idmaObSlave(3),
             -- User ETH interface
             userEthClk           => userEthClk,
-            userEthClkRst        => userEthRst,
+            userEthRst           => userEthClkRst,
             userEthIpAddr        => userEthIpAddr,
             userEthMacAddr       => userEthMacAddr,
             userEthUdpIbMaster   => userEthUdpIbMaster,
@@ -389,7 +408,7 @@ begin
             userEthVlanObSlaves  => userEthVlanObSlaves,
             -- AXI-Lite Buses
             axilClk              => iaxiClk,
-            axilClkRst           => iaxiRst,
+            axilRst              => iaxiRst,
             axilWriteMaster      => coreAxilWriteMaster,
             axilWriteSlave       => coreAxilWriteSlave,
             axilReadMaster       => coreAxilReadMaster,
@@ -404,16 +423,18 @@ begin
 
    end generate;
 
-   process()
+   process (iaxiClk)
    begin
-      case ETH_TYPE_G is
-         when "ZYNQ-ETH"    => armEthMode <= x"00000001";
-         when "1000BASE-KX" => armEthMode <= x"00000001";
-         when "10GBASE-KX4" => armEthMode <= x"03030303";
-         when "10GBASE-KR"  => armEthMode <= x"0000000A";
-         when "40GBASE-KR4" => armEthMode <= x"0A0A0A0A";
-         when others        => armEthMode <= x"00000000";
-      end case;
+      if rising_edge(iaxiClk) then
+         case ETH_TYPE_G is
+            when "ZYNQ-GEM"    => armEthMode <= x"00000001";
+            when "1000BASE-KX" => armEthMode <= x"00000001";
+            when "10GBASE-KX4" => armEthMode <= x"03030303";
+            when "10GBASE-KR"  => armEthMode <= x"0000000A";
+            when "40GBASE-KR4" => armEthMode <= x"0A0A0A0A";
+            when others        => armEthMode <= x"00000000";
+         end case;
+      end if;
    end process;
 
 end architecture STRUCTURE;

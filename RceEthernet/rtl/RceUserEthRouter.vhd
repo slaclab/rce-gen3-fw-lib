@@ -113,8 +113,7 @@ begin
          -- MEMORY_TYPE_G       => "distributed", <--- generic for future XPM FIFO release
          BRAM_EN_G           => false,
          GEN_SYNC_FIFO_G     => false,         
-         
-         GEN_SYNC_FIFO_G     => false,
+        
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => RCEG3_AXIS_DMA_CONFIG_C,
@@ -144,7 +143,6 @@ begin
          BRAM_EN_G           => false,
          GEN_SYNC_FIFO_G     => false,              
          
-         GEN_SYNC_FIFO_G     => false,
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => EMAC_AXIS_CONFIG_C,
