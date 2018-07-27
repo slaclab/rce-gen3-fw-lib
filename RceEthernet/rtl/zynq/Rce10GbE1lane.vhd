@@ -2,7 +2,7 @@
 -- File       : Rce10GbE1lane.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2018-06-27
--- Last update: 2018-06-27
+-- Last update: 2018-07-27
 -------------------------------------------------------------------------------
 -- Description: 10 GigE (1 lane)
 -------------------------------------------------------------------------------
@@ -144,22 +144,33 @@ begin
    ----------------------
    -- Common Clock Module 
    ----------------------
-   U_QPLL : entity work.TenGigEthGtx7Clk
+   U_QPLL : entity work.Gtx7QuadPll
       generic map (
-         TPD_G             => TPD_G,
-         USE_GTREFCLK_G    => true,     -- TRUE: gtRefClk
-         REFCLK_DIV2_G     => false,    -- --  FALSE: gtClkP/N = 156.25 MHz
-         QPLL_REFCLK_SEL_G => "001")
+         TPD_G               => TPD_G,
+         SIM_RESET_SPEEDUP_G => "TRUE",        --Does not affect hardware
+         SIM_VERSION_G       => "4.0",
+         QPLL_CFG_G          => x"0680181",
+         QPLL_REFCLK_SEL_G   => "001",
+         QPLL_FBDIV_G        => "0101000000",  -- 64B/66B Encoding
+         QPLL_FBDIV_RATIO_G  => '0',    -- 64B/66B Encoding
+         QPLL_REFCLK_DIV_G   => 1)
       port map (
-         -- Clocks and Resets
-         extRst        => extRst,
-         -- MGT Clock Port
-         gtRefClk      => gtRefClk,
-         -- Quad PLL Ports
-         qplllock      => qplllock,
-         qplloutclk    => qplloutclk,
-         qplloutrefclk => qplloutrefclk,
-         qpllRst       => qpllReset);
+         qPllRefClk     => gtRefClk,    -- 156.25 MHz
+         qPllOutClk     => qPllOutClk,
+         qPllOutRefClk  => qPllOutRefClk,
+         qPllLock       => qPllLock,
+         qPllLockDetClk => '0',  -- IP Core ties this to GND (see note below) 
+         qPllRefClkLost => open,
+         qPllPowerDown  => '0',
+         qPllReset      => qpllReset);
+   ---------------------------------------------------------------------------------------------
+   -- Note: GTXE2_COMMON pin gtxe2_common_0_i.QPLLLOCKDETCLK cannot be driven by a clock derived 
+   --       from the same clock used as the reference clock for the QPLL, including TXOUTCLK*, 
+   --       RXOUTCLK*, the output from the IBUFDS_GTE2 providing the reference clock, and any 
+   --       buffered or multiplied/divided versions of these clock outputs. Please see UG476 for 
+   --       more information. Source, through a clock buffer, is the same as the GT cell 
+   --       reference clock.
+   ---------------------------------------------------------------------------------------------   
 
    qpllReset <= qpllRst and not(qPllLock);
 
