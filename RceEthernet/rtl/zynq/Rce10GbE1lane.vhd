@@ -97,7 +97,28 @@ architecture mapping of Rce10GbE1lane is
          drp_drdy_i           : in  std_logic;
          drp_drpdo_i          : in  std_logic_vector(15 downto 0);
          tx_disable           : out std_logic;
-         pma_pmd_type         : in  std_logic_vector(2 downto 0));
+         pma_pmd_type         : in  std_logic_vector(2 downto 0);
+         gt0_eyescanreset     : in  std_logic;
+         gt0_eyescandataerror : out std_logic;
+         gt0_txbufstatus      : out std_logic_vector(1 downto 0);
+         gt0_rxbufstatus      : out std_logic_vector(2 downto 0);
+         gt0_eyescantrigger   : in  std_logic;
+         gt0_rxcdrhold        : in  std_logic;
+         gt0_txprbsforceerr   : in  std_logic;
+         gt0_txpolarity       : in  std_logic;
+         gt0_rxpolarity       : in  std_logic;
+         gt0_rxprbserr        : out std_logic;
+         gt0_txpmareset       : in  std_logic;
+         gt0_rxpmareset       : in  std_logic;
+         gt0_txresetdone      : out std_logic;
+         gt0_rxresetdone      : out std_logic;
+         gt0_rxdfelpmreset    : in  std_logic;
+         gt0_rxlpmen          : in  std_logic;
+         gt0_dmonitorout      : out std_logic_vector(7 downto 0);
+         gt0_rxrate           : in  std_logic_vector(2 downto 0);
+         gt0_txprecursor      : in  std_logic_vector(4 downto 0);
+         gt0_txpostcursor     : in  std_logic_vector(4 downto 0);
+         gt0_txdiffctrl       : in  std_logic_vector(3 downto 0));
    end component;
 
    signal qplllock      : sl;
@@ -233,7 +254,29 @@ begin
          drp_daddr_i          => drpAddr,
          drp_di_i             => drpDi,
          drp_drdy_i           => drpRdy,
-         drp_drpdo_i          => drpDo);
+         drp_drpdo_i          => drpDo,
+         -- Transceiver Debug Interface
+         gt0_eyescanreset     => '0',
+         gt0_eyescandataerror => open,
+         gt0_txbufstatus      => open,
+         gt0_rxbufstatus      => open,
+         gt0_eyescantrigger   => '0',
+         gt0_rxcdrhold        => '0',
+         gt0_txprbsforceerr   => '0',
+         gt0_txpolarity       => '0',
+         gt0_rxpolarity       => '0',
+         gt0_rxprbserr        => open,
+         gt0_txpmareset       => '0',
+         gt0_rxpmareset       => '0',
+         gt0_txresetdone      => open,
+         gt0_rxresetdone      => open,
+         gt0_rxdfelpmreset    => '0',
+         gt0_rxlpmen          => '0',
+         gt0_dmonitorout      => open,
+         gt0_rxrate           => (others => '0'),
+         gt0_txprecursor      => "01111",
+         gt0_txpostcursor     => "01111",
+         gt0_txdiffctrl       => "1111");         
 
    -------------------------------------
    -- 10GBASE-R's Reset Module

@@ -169,9 +169,5 @@ set_clock_groups -asynchronous -group [get_clocks {xauiClk}] -group [get_clocks 
 set_clock_groups -asynchronous -group [get_clocks {xauiClk}] -group [get_clocks {fClk125}] 
 set_clock_groups -asynchronous -group [get_clocks {clk156}]  -group [get_clocks {ethRefClkP}] 
 
-set_clock_groups -asynchronous -group [get_clocks {ethRefClkP}] -group [get_clocks {U_Core/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/inst/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK}]                               
-set_clock_groups -asynchronous -group [get_clocks {ethRefClkP}] -group [get_clocks {U_Core/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/inst/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/RXOUTCLK}]      
-set_clock_groups -asynchronous -group [get_clocks {clk156}] -group [get_clocks {U_Core/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/inst/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK}]                               
-set_clock_groups -asynchronous -group [get_clocks {clk156}] -group [get_clocks {U_Core/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/inst/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/RXOUTCLK}]      
-
-
+set_clock_groups -asynchronous -group [get_clocks {ethRefClkP}] -group [get_clocks {U_Core/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK}]                               
+set_clock_groups -asynchronous -group [get_clocks {clk156}]     -group [get_clocks {U_Core/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK}]                               
