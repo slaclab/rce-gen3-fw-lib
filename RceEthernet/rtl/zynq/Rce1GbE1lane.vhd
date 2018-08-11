@@ -2,7 +2,7 @@
 -- File       : Rce1GbE1lane.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2018-06-27
--- Last update: 2018-06-27
+-- Last update: 2018-08-11
 -------------------------------------------------------------------------------
 -- Description: 1 GigE (1 lane)
 -------------------------------------------------------------------------------
@@ -56,8 +56,8 @@ architecture mapping of Rce1GbE1lane is
 begin
 
    phyReady  <= status(1);
-   phyStatus <= (others => '0');
-   phyDebug  <= (others => '0');
+   phyStatus <= x"FC"    when(status(1) = '1') else x"00";
+   phyDebug  <= "111111" when(status(1) = '1') else "000000";
 
    U_PwrUpRst : entity work.PwrUpRst
       generic map (

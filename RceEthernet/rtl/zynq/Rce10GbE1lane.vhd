@@ -2,7 +2,7 @@
 -- File       : Rce10GbE1lane.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2018-06-27
--- Last update: 2018-07-27
+-- Last update: 2018-08-11
 -------------------------------------------------------------------------------
 -- Description: 10 GigE (1 lane)
 -------------------------------------------------------------------------------
@@ -158,9 +158,9 @@ begin
    phyClock <= coreClk;
    phyReset <= coreRst;
 
-   phyStatus <= status;
    phyReady  <= status(0);
-   phyDebug  <= (others => '0');
+   phyStatus <= x"FC"    when(status(0) = '1') else x"00";
+   phyDebug  <= "111111" when(status(0) = '1') else "000000";
 
    ----------------------
    -- Common Clock Module 
@@ -276,7 +276,7 @@ begin
          gt0_rxrate           => (others => '0'),
          gt0_txprecursor      => "01111",
          gt0_txpostcursor     => "01111",
-         gt0_txdiffctrl       => "1111");         
+         gt0_txdiffctrl       => "1111");
 
    -------------------------------------
    -- 10GBASE-R's Reset Module
