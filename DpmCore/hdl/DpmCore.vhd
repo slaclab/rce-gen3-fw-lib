@@ -160,9 +160,6 @@ begin
    assert (RCE_DMA_MODE_G = RCE_DMA_Q4X2_C and ETH_TYPE_G = "ZYNQ-GEM") or RCE_DMA_MODE_G /= RCE_DMA_Q4X2_C
       report "RCE_DMA_MODE_G = RCE_DMA_Q4X2_C is not supported when ETH_10G_EN_G = true"
       severity failure;
-   assert (ETH_TYPE_G = "ZYNQ-GEM") or (ETH_TYPE_G = "1000BASE-KX") or (ETH_TYPE_G = "10GBASE-KX4") or (ETH_TYPE_G = "10GBASE-KR") or (ETH_TYPE_G = "40GBASE-KR4")
-      report "ETH_TYPE_G must be [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4]"
-      severity failure;
 
    -- more assertion checks should be added e.g. ETH_10G_EN_G = true only with RCE_DMA_MODE_G = RCE_DMA_PPI_C ???
    -- my 3rd assertion can be removed when the above check is added

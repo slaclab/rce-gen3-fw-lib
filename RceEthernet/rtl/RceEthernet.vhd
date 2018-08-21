@@ -5,7 +5,7 @@
 -- Author     : Ryan Herbst <rherbst@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2015-09-03
--- Last update: 2018-07-26
+-- Last update: 2018-08-21
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -150,6 +150,10 @@ architecture mapping of RceEthernet is
 
 begin
 
+   assert (ETH_TYPE_G = "ZYNQ-GEM") or (ETH_TYPE_G = "1000BASE-KX") or (ETH_TYPE_G = "10GBASE-KX4") or (ETH_TYPE_G = "10GBASE-KR") or (ETH_TYPE_G = "40GBASE-KR4")
+      report "ETH_TYPE_G must be [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4]"
+      severity failure;
+
    ----------
    -- Outputs
    ----------
@@ -189,9 +193,9 @@ begin
 
    phyReset <= cfgPhyReset or not dmaState.online;
 
-   -----------
-   -- 1000Base
-   -----------
+   --------------
+   -- 1000BASE-KX
+   --------------
    GEN_1000Base : if (ETH_TYPE_G = "1000BASE-KX") generate
 
       ethClk <= clk125;
@@ -225,9 +229,9 @@ begin
 
    end generate;
 
-   -------
-   -- XAUI
-   -------
+   --------------
+   -- 10GBASE-KX4
+   --------------
    GEN_XAUI : if (ETH_TYPE_G = "10GBASE-KX4") generate
 
       U_Eth : entity work.Rce10GbE4lane
@@ -257,9 +261,9 @@ begin
 
    end generate;
 
-   ----------
-   -- 10GBase
-   ----------
+   -------------
+   -- 10GBASE-KR
+   -------------
    GEN_10GBase : if (ETH_TYPE_G = "10GBASE-KR") generate
 
       U_Eth : entity work.Rce10GbE1lane
@@ -287,6 +291,36 @@ begin
             gtTxN     => ethTxN(0),
             gtRxP     => ethRxP(0),
             gtRxN     => ethRxN(0));
+
+   end generate;
+
+   --------------
+   -- 40GBASE-KR4
+   --------------
+   GEN_40GBase : if (ETH_TYPE_G = "40GBASE-KR4") generate
+
+      U_Eth : entity work.Rce40GbE4lane
+         generic map (
+            TPD_G => TPD_G)
+         port map (
+            -- Misc. Signals
+            phyClk    => ethClk,
+            phyRst    => ethRst,
+            phyReady  => phyReady,
+            phyStatus => phyStatus,
+            phyDebug  => phyDebug,
+            phyConfig => phyConfig,
+            -- PHY Interface
+            xlgmiiRxd => xlgmiiRxd,
+            xlgmiiRxc => xlgmiiRxc,
+            xlgmiiTxd => xlgmiiTxd,
+            xlgmiiTxc => xlgmiiTxc,
+            -- MGT Ports
+            gtRefClk  => ethRefClk,
+            gtTxP     => ethTxP,
+            gtTxN     => ethTxN,
+            gtRxP     => ethRxP,
+            gtRxN     => ethRxN);
 
    end generate;
 
