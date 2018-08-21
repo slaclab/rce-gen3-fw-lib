@@ -19,68 +19,10 @@
 #-- 11/14/2013: created.
 #-------------------------------------------------------------------------------
 
-# CPU Clock
-set fclk0Pin [get_pins U_DpmCore/U_RceG3Top/U_SimModeDis.U_RceG3Cpu/U_PS7/inst/PS7_i/FCLKCLK[0]]
-create_clock -name fclk0 -period 10 $fclk0Pin
+################
+## IO Placements
+################
 
-# Arm Core Clocks
-create_generated_clock -name sysClk200 -source $fclk0Pin \   
-    -multiply_by 2 [get_pins U_DpmCore/U_RceG3Top/U_RceG3Clocks/U_ClockGen/CLKOUT1]
-
-set sysClk125Pin [get_pins U_DpmCore/U_RceG3Top/U_RceG3Clocks/U_ClockGen/CLKOUT2]
-create_generated_clock -name sysClk125 -source $fclk0Pin \
-    -multiply_by 5 -divide_by 4 ${sysClk125Pin}
-
-set_clock_groups -asynchronous \
-    -group [get_clocks fclk0] \
-    -group [get_clocks -include_generated_clocks sysClk200] \
-    -group [get_clocks -include_generated_clocks sysClk125] \
-
-# Local 1G Ethernet Clocks
-set eth_txoutclk_pin [get_pins U_DpmCore/U_Eth1gGen.U_ZynqEthernet/core_wrapper/transceiver_inst/gtwizard_inst/U0/gtwizard_i/gt0_GTWIZARD_i/gtxe2_i/TXOUTCLK]
-create_clock -name eth_txoutclk -period 16 $eth_txoutclk_pin
-
-create_generated_clock -name intEthClk0 \
-    -source $eth_txoutclk_pin \
-    -multiply_by 2 [get_pins U_DpmCore/U_Eth1gGen.U_ZynqEthernet/mmcm_adv_inst/CLKOUT0]
-
-create_generated_clock -name intEthClk1 \
-    -source $eth_txoutclk_pin \
-    -multiply_by 1 [get_pins U_DpmCore/U_Eth1gGen.U_ZynqEthernet/mmcm_adv_inst/CLKOUT1]
-
-# Local 10G Ethernet Clock
-create_clock -name ethRefClk -period 6.4 [get_ports ethRefClkP]
-
-set_clock_groups -asynchronous \
-    -group [get_clocks -include_generated_clocks fclk0] \
-    -group [get_clocks -include_generated_clocks ethRefClk]
-
-create_clock -name eth10GClk -period 6.4 \
-   [get_pins U_DpmCore/U_Eth10gGen.U_ZynqEthernet10G/U_ZynqXaui/U0/xaui_block_i/gt_wrapper_i/gt0_zynq_10g_xaui_gt_wrapper_i/gtxe2_i/TXOUTCLK]
-
-# DNA Primitive Clock
-create_generated_clock -name dnaClk  [get_pins {U_DpmCore/U_RceG3Top/U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/BUFR_Inst/O}] 
-create_generated_clock -name dnaClkL [get_pins {U_DpmCore/U_RceG3Top/U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/DNA_CLK_INV_BUFR/O}] 
-set_clock_groups -asynchronous \
-    -group [get_clocks dnaClk] \
-    -group [get_clocks dnaClkL] \
-    -group [get_clocks sysClk125] 
-   
-# Set Asynchronous Paths
-set_clock_groups -asynchronous \
-    -group [get_clocks -include_generated_clocks fclk0] \
-    -group [get_clocks -include_generated_clocks eth_txoutclk]
-
-set_clock_groups -asynchronous \
-    -group [get_clocks -include_generated_clocks fclk0] \
-    -group [get_clocks -include_generated_clocks eth10GClk] 
-
-# # StdLib
-# set_property ASYNC_REG TRUE [get_cells -hierarchical *crossDomainSyncReg_reg*]
-
-#########################################################
-# Pin Locations. All Defined Here
-#########################################################
 set_property PACKAGE_PIN AA28 [get_ports led[0]]
 set_property PACKAGE_PIN AB26 [get_ports led[1]]
 
@@ -172,10 +114,6 @@ set_property PACKAGE_PIN N3  [get_ports dpmToRtmHsM[11]]
 set_property PACKAGE_PIN P6  [get_ports rtmToDpmHsP[11]]
 set_property PACKAGE_PIN P5  [get_ports rtmToDpmHsM[11]]
 
-#########################################################
-# Common IO Types
-#########################################################
-
 set_property IOSTANDARD LVCMOS25 [get_ports i2cScl]
 set_property IOSTANDARD LVCMOS25 [get_ports i2cSda]
 
@@ -190,3 +128,46 @@ set_property IOSTANDARD LVDS_25 [get_ports dtmClkM]
 set_property IOSTANDARD LVDS_25 [get_ports dtmFbP]
 set_property IOSTANDARD LVDS_25 [get_ports dtmFbM]
 
+
+####################
+# Timing Constraints
+####################
+
+
+create_clock -name ethRefClkP -period 6.400 [get_ports {ethRefClkP}]
+create_clock -name fclk0      -period 10.00 [get_pins {U_Core/U_RceG3Top/U_SimModeDis.U_RceG3Cpu/U_PS7/inst/buffer_fclk_clk_0.FCLK_CLK_0_BUFG/O}]
+set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethRefClkP}] -group [get_clocks -include_generated_clocks {fclk0}] 
+
+create_generated_clock -name fClk200 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_ClockGen/CLKOUT1}]
+create_generated_clock -name fClk125 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_ClockGen/CLKOUT2}]
+create_generated_clock -name dnaClk  [get_pins {U_Core/U_RceG3Top/U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/BUFR_Inst/O}] 
+create_generated_clock -name dnaClkL [get_pins {U_Core/U_RceG3Top/U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/DNA_CLK_INV_BUFR/O}] 
+
+create_generated_clock -name clk200 [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0}]
+create_generated_clock -name clk312 [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT1}]
+create_generated_clock -name clk156 [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT2}]
+create_generated_clock -name clk125 [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT3}]
+create_generated_clock -name clk62  [get_pins {U_Core/U_MMCM/MmcmGen.U_Mmcm/CLKOUT4}]
+
+set_clock_groups -asynchronous \
+    -group [get_clocks {dnaClk}] \
+    -group [get_clocks {dnaClkL}] \
+    -group [get_clocks {fclk0}] \
+    -group [get_clocks {fClk200}] \
+    -group [get_clocks {fClk125}] 
+    
+set_clock_groups -asynchronous -group [get_clocks {clk200}] -group [get_clocks {clk312}] 
+set_clock_groups -asynchronous -group [get_clocks {clk200}] -group [get_clocks {clk156}] 
+set_clock_groups -asynchronous -group [get_clocks {clk200}] -group [get_clocks {clk125}] 
+set_clock_groups -asynchronous -group [get_clocks {clk200}] -group [get_clocks {clk62}] 
+set_clock_groups -asynchronous -group [get_clocks {clk200}] -group [get_clocks {fClk125}] 
+set_clock_groups -asynchronous -group [get_clocks {clk200}] -group [get_clocks {fClk200}] 
+
+create_clock -name xauiClk  -period  6.400 [get_pins {U_Core/U_Eth10gGen.U_RceEthernet/GEN_XAUI.U_Eth/U_IpCore/U0/gt_wrapper_i/gt0_XauiGtx7Core_gt_wrapper_i/gtxe2_i/TXOUTCLK}]
+set_clock_groups -asynchronous -group [get_clocks {xauiClk}] -group [get_clocks {clk200}] 
+set_clock_groups -asynchronous -group [get_clocks {xauiClk}] -group [get_clocks {fClk200}] 
+set_clock_groups -asynchronous -group [get_clocks {xauiClk}] -group [get_clocks {fClk125}] 
+set_clock_groups -asynchronous -group [get_clocks {clk156}]  -group [get_clocks {ethRefClkP}] 
+
+set_clock_groups -asynchronous -group [get_clocks {ethRefClkP}] -group [get_clocks {U_Core/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK}]                               
+set_clock_groups -asynchronous -group [get_clocks {clk156}]     -group [get_clocks {U_Core/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK}]                               
