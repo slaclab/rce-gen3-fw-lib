@@ -425,7 +425,7 @@ begin
       if rising_edge(iaxiClk) then
          case ETH_TYPE_G is
             when "ZYNQ-GEM"    => armEthMode <= x"00000001";
-            when "1000BASE-KX" => armEthMode <= x"00000001";
+            when "1000BASE-KX" => armEthMode <= x"00000002";
             when "10GBASE-KX4" => armEthMode <= x"03030303";
             when "10GBASE-KR"  => armEthMode <= x"0000000A";
             when "40GBASE-KR4" => armEthMode <= x"0A0A0A0A";
