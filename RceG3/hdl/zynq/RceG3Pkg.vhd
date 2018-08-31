@@ -28,10 +28,12 @@ use work.AxiStreamPkg.all;
 
 package RceG3Pkg is
 
+   constant XIL_DEVICE_C : string := "7SERIES";
+
    constant DMA_AXIL_COUNT_C : integer := 9;
    constant DMA_INT_COUNT_C  : integer := 56;
 
-   constant USER_INT_COUNT_C : integer := 7;
+   constant USER_INT_COUNT_C : integer := 8;
 
    --------------------------------------------------------
    -- DMA Engine Types
@@ -91,6 +93,7 @@ package RceG3Pkg is
       TKEEP_MODE_C  => TKEEP_COMP_C,
       TUSER_BITS_C  => 4,
       TUSER_MODE_C  => TUSER_FIRST_LAST_C);
+   constant RCEG3_AXIS_DMA_ACP_CONFIG_C : AxiStreamConfigType := RCEG3_AXIS_DMA_CONFIG_C;
 
    --------------------------------------------------------
    -- Ethernet Types

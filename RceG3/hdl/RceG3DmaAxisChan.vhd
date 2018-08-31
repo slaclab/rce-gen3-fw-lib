@@ -36,10 +36,11 @@ use work.AxiDmaPkg.all;
 
 entity RceG3DmaAxisChan is
    generic (
-      TPD_G        : time            := 1 ns;
-      AXI_CACHE_G  : slv(3 downto 0) := "0000";
-      BYP_SHIFT_G  : boolean         := false;
-      AXI_CONFIG_G : AxiConfigType   := AXI_CONFIG_INIT_C);
+      TPD_G             : time                := 1 ns;
+      AXI_CACHE_G       : slv(3 downto 0)     := "0000";
+      BYP_SHIFT_G       : boolean             := false;
+      AXIS_DMA_CONFIG_G : AxiStreamConfigType := RCEG3_AXIS_DMA_CONFIG_C;      
+      AXI_CONFIG_G      : AxiConfigType       := AXI_CONFIG_INIT_C);
    port (
       -- Clock/Reset
       axiDmaClk       : in  sl;
@@ -90,7 +91,7 @@ begin
          AXIL_BASE_ADDR_G  => x"00000000",
          AXI_READY_EN_G    => false,
          AXIS_READY_EN_G   => false,
-         AXIS_CONFIG_G     => RCEG3_AXIS_DMA_CONFIG_C,
+         AXIS_CONFIG_G     => AXIS_DMA_CONFIG_G,
          AXI_CONFIG_G      => AXI_CONFIG_G,
          AXI_BURST_G       => "01",
          AXI_CACHE_G       => AXI_CACHE_G,
@@ -135,8 +136,8 @@ begin
          FIFO_ADDR_WIDTH_G   => 9,
          FIFO_FIXED_THRESH_G => true,
          FIFO_PAUSE_THRESH_G => 500,  -- Unused
-         SLAVE_AXI_CONFIG_G  => RCEG3_AXIS_DMA_CONFIG_C,
-         MASTER_AXI_CONFIG_G => RCEG3_AXIS_DMA_CONFIG_C) 
+         SLAVE_AXI_CONFIG_G  => AXIS_DMA_CONFIG_G,
+         MASTER_AXI_CONFIG_G => AXIS_DMA_CONFIG_G) 
       port map (
          sAxisClk        => dmaClk,
          sAxisRst        => dmaClkRst,
@@ -165,8 +166,8 @@ begin
          FIFO_ADDR_WIDTH_G   => 9,
          FIFO_FIXED_THRESH_G => true,
          FIFO_PAUSE_THRESH_G => 300,  -- 1800 byte buffer before pause and 1696 byte of buffer before FIFO FULL
-         SLAVE_AXI_CONFIG_G  => RCEG3_AXIS_DMA_CONFIG_C,
-         MASTER_AXI_CONFIG_G => RCEG3_AXIS_DMA_CONFIG_C) 
+         SLAVE_AXI_CONFIG_G  => AXIS_DMA_CONFIG_G,
+         MASTER_AXI_CONFIG_G => AXIS_DMA_CONFIG_G) 
       port map (
          sAxisClk        => axiDmaClk,
          sAxisRst        => axiDmaRst,

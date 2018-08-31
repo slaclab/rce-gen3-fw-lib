@@ -1,14 +1,13 @@
 # Load RUCKUS environment and library
 source -quiet $::env(RUCKUS_DIR)/vivado_proc.tcl
 
+# Get the family type
+set family [getFpgaFamily]
+
 # Load local Source Code
-loadSource -dir  "$::DIR_PATH/hdl/"
-
-loadSource -path "$::DIR_PATH/simlink/rtl/RceG3CpuSim.vhd"
-
-loadIpCore -dir       "$::DIR_PATH/coregen/processing_system7_0/"
-
-loadSource -sim_only -path "$::DIR_PATH/tb/rceg3_tb.vhd"
+loadSource -dir "$::DIR_PATH/hdl"
+loadSource -dir "$::DIR_PATH/hdl/${family}"
+loadIpCore -dir "$::DIR_PATH/coregen/${family}"
 
 # Check for submodule tagging
 if { [SubmoduleCheck {ruckus} {1.6.3} ] < 0 } {exit -1}

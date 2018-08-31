@@ -117,9 +117,10 @@ begin
    U_Gen2Dma: for i in 0 to 2 generate
       U_RceG3DmaAxisChan: entity work.RceG3DmaAxisV2Chan
          generic map (
-            TPD_G            => TPD_G,
-            AXIL_BASE_ADDR_G => DMA_BASE_ADDR_C(i),
-            AXI_CONFIG_G     => ite((i=2),AXI_ACP_INIT_C,AXI_HP_INIT_C))
+            TPD_G             => TPD_G,
+            AXIL_BASE_ADDR_G  => DMA_BASE_ADDR_C(i),
+            AXIS_DMA_CONFIG_G => ite((i=2),RCEG3_AXIS_DMA_ACP_CONFIG_C,RCEG3_AXIS_DMA_CONFIG_C),
+            AXI_CONFIG_G      => ite((i=2),AXI_ACP_INIT_C,AXI_HP_INIT_C))
          port map (
             axiDmaClk        => axiDmaClk,
             axiDmaRst        => axiDmaRst,

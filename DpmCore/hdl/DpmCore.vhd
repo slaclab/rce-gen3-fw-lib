@@ -1,13 +1,8 @@
 -------------------------------------------------------------------------------
--- Title      : 
--------------------------------------------------------------------------------
 -- File       : DpmCore.vhd
--- Author     : Ryan Herbst <rherbst@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-07-26
--- Platform   : 
--- Standard   : VHDL'93/02
+-- Last update: 2018-08-29
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DPM
 -------------------------------------------------------------------------------
@@ -23,19 +18,21 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-library unisim;
-use unisim.vcomponents.all;
-
 use work.RceG3Pkg.all;
 use work.StdRtlPkg.all;
 use work.AxiLitePkg.all;
 use work.AxiStreamPkg.all;
 use work.AxiPkg.all;
 
+library unisim;
+use unisim.vcomponents.all;
+
 entity DpmCore is
    generic (
       TPD_G              : time                  := 1 ns;
       BUILD_INFO_G       : BuildInfoType;
+      SIM_USER_ID_G      : natural range 0 to 100 := 1;
+      SIMULATION_G       : boolean                := false;      
       ETH_TYPE_G         : string                := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
       RCE_DMA_MODE_G     : RceDmaModeType        := RCE_DMA_PPI_C;
       AXI_ST_COUNT_G     : natural range 3 to 4  := 3;
@@ -107,10 +104,13 @@ entity DpmCore is
       userInterrupt        : in    slv(USER_INT_COUNT_C-1 downto 0)             := (others => '0'));
 end DpmCore;
 
-architecture STRUCTURE of DpmCore is
+architecture mapping of DpmCore is
 
-   signal iaxiClk : sl;
-   signal iaxiRst : sl;
+   signal axilClock : sl;
+   signal axilReset : sl;
+
+   signal axiDmaClock : sl;
+   signal axiDmaReset : sl;
 
    signal idmaClk      : slv(3 downto 0);
    signal idmaRst      : slv(3 downto 0);
@@ -128,6 +128,11 @@ architecture STRUCTURE of DpmCore is
    signal armEthTx   : ArmEthTxArray(1 downto 0) := (others => ARM_ETH_TX_INIT_C);
    signal armEthRx   : ArmEthRxArray(1 downto 0) := (others => ARM_ETH_RX_INIT_C);
    signal armEthMode : slv(31 downto 0)          := (others => '0');
+
+   signal gtRxP : slv(3 downto 0);
+   signal gtRxN : slv(3 downto 0);
+   signal gtTxP : slv(3 downto 0);
+   signal gtTxN : slv(3 downto 0);
 
    signal ethRefClk     : sl;
    signal ethRefClkDiv2 : sl;
@@ -167,12 +172,12 @@ begin
    --------------------------------------------------
    -- Inputs/Outputs
    --------------------------------------------------
-   axiClk       <= iaxiClk;
-   axiClkRst    <= iaxiRst;
-   sysClk125    <= clk125;
-   sysClk125Rst <= rst125;
-   sysClk200    <= clk200;
-   sysClk200Rst <= rst200;
+   axiClk       <= axilClock;
+   axiClkRst    <= axilReset;
+   sysClk125    <= axilClock;
+   sysClk125Rst <= axilReset;
+   sysClk200    <= axiDmaClock;
+   sysClk200Rst <= axiDmaReset;
 
    -- DMA Interfaces
    idmaClk(2 downto 0)      <= dmaClk(2 downto 0);
@@ -189,21 +194,50 @@ begin
    U_RceG3Top : entity work.RceG3Top
       generic map (
          TPD_G          => TPD_G,
+         SIM_USER_ID_G  => SIM_USER_ID_G,
+         SIMULATION_G   => SIMULATION_G,
+         SEL_REFCLK_G   => true, -- true = ETH ref
          BUILD_INFO_G   => BUILD_INFO_G,
          RCE_DMA_MODE_G => RCE_DMA_MODE_G)
       port map (
+         -- I2C Ports
          i2cSda              => i2cSda,
          i2cScl              => i2cScl,
-         axiClk              => iaxiClk,
-         axiClkRst           => iaxiRst,
+         -- Reference Clock
+         ethRefClkP          => ethRefClkP,
+         ethRefClkN          => ethRefClkM,
+         ethRefClk           => ethRefClk,
+         stableClk           => stableClk,
+         stableRst           => stableRst,
+         -- Top-level clocks and resets
+         clk312              => clk312,
+         rst312              => rst312,
+         clk200              => clk200,
+         rst200              => rst200,
+         clk156              => clk156,
+         rst156              => rst156,
+         clk125              => clk125,
+         rst125              => rst125,
+         clk62               => clk62,
+         rst62               => rst62,
+         locked              => locked,
+         -- DMA clock and reset
+         axiDmaClk           => axiDmaClock,
+         axiDmaRst           => axiDmaReset,
+         -- AXI-Lite clock and reset
+         axilClk             => axilClock,
+         axilRst             => axilReset,
+         -- External Axi Bus, 0xA0000000 - 0xAFFFFFFF  (axilClk domain)
          extAxilReadMaster   => extAxilReadMaster,
          extAxilReadSlave    => extAxilReadSlave,
          extAxilWriteMaster  => extAxilWriteMaster,
          extAxilWriteSlave   => extAxilWriteSlave,
+         -- Core Axi Bus, 0xB0000000 - 0xBFFFFFFF  (axilClk domain)
          coreAxilReadMaster  => coreAxilReadMaster,
          coreAxilReadSlave   => coreAxilReadSlave,
          coreAxilWriteMaster => coreAxilWriteMaster,
          coreAxilWriteSlave  => coreAxilWriteSlave,
+         -- DMA Interfaces (dmaClk domain)
          dmaClk              => idmaClk,
          dmaClkRst           => idmaRst,
          dmaState            => idmaState,
@@ -211,16 +245,17 @@ begin
          dmaObSlave          => idmaObSlave,
          dmaIbMaster         => idmaIbMaster,
          dmaIbSlave          => idmaIbSlave,
+         -- User Interrupts (axilClk domain)
          userInterrupt       => userInterrupt,
+         -- User memory access (axiDmaClk domain)
          userWriteSlave      => userWriteSlave,
          userWriteMaster     => userWriteMaster,
          userReadSlave       => userReadSlave,
          userReadMaster      => userReadMaster,
+         -- ZYNQ GEM Interface
          armEthTx            => armEthTx,
          armEthRx            => armEthRx,
-         armEthMode          => armEthMode,
-         clkSelA             => open,
-         clkSelB             => open);
+         armEthMode          => armEthMode);
 
    -- Osc 0 = 156.25
    clkSelA(0) <= '0';
@@ -230,76 +265,40 @@ begin
    clkSelA(1) <= '1';
    clkSelB(1) <= '1';
 
-   ------------------
-   -- Reference Clock
-   ------------------
-   U_IBUFDS_GTE2 : IBUFDS_GTE2
-      port map (
-         I     => ethRefClkP,
-         IB    => ethRefClkM,
-         CEB   => '0',
-         ODIV2 => ethRefClkDiv2,
-         O     => ethRefClk);
-
-   U_BUFG : BUFG
-      port map (
-         I => ethRefClkDiv2,
-         O => stableClk);
-
-   -----------------
-   -- Power Up Reset
-   -----------------
-   PwrUpRst_Inst : entity work.PwrUpRst
+   ----------------------------------------------------------------------------      
+   --                         ETH GT Mapping                                 --
+   ----------------------------------------------------------------------------      
+   -- This VHDL wrapper is determined by the ZYNQ family type
+   -- Zynq-7000:        rce-gen3-fw-lib/RceG3/hdl/zynq/RceEthGtMapping.vhd
+   -- Zynq Ultrascale+: rce-gen3-fw-lib/RceG3/hdl/zynquplus/RceEthGtMapping.vhd
+   ----------------------------------------------------------------------------      
+   U_RceEthGem : entity work.RceEthGtMapping
       generic map (
-         TPD_G => TPD_G)
+         TPD_G      => TPD_G,
+         ETH_TYPE_G => ETH_TYPE_G)
       port map (
-         clk    => stableClk,
-         rstOut => stableRst);
-
-   -----------------
-   -- Clock Managers
-   -----------------   
-   U_MMCM : entity work.ClockManager7
-      generic map(
-         TPD_G              => TPD_G,
-         TYPE_G             => "MMCM",
-         INPUT_BUFG_G       => false,
-         FB_BUFG_G          => false,
-         RST_IN_POLARITY_G  => '1',
-         NUM_CLOCKS_G       => 5,
-         -- MMCM attributes
-         BANDWIDTH_G        => "OPTIMIZED",
-         CLKIN_PERIOD_G     => 12.8,    -- 78.125
-         DIVCLK_DIVIDE_G    => 1,       -- 78.125 MHz = (78.125 MHz/1)
-         CLKFBOUT_MULT_F_G  => 16.0,
-         CLKOUT0_DIVIDE_F_G => 6.25,    -- 200 MHz = (1.25 GHz/6.25)   
-         CLKOUT1_DIVIDE_G   => 4,       -- 312.5 MHz = (1.25 GHz/4)    
-         CLKOUT2_DIVIDE_G   => 8,       -- 156.25 MHz=(1.25GHz/8)             
-         CLKOUT3_DIVIDE_G   => 10,      -- 125 MHz = (1.25 GHz/10)    
-         CLKOUT4_DIVIDE_G   => 20)      -- 62.5 MHz = (1.25 GHz/20)    
-      port map(
-         clkIn     => stableClk,
-         rstIn     => stableRst,
-         -- Clock Outputs
-         clkOut(0) => clk200,
-         clkOut(1) => clk312,
-         clkOut(2) => clk156,
-         clkOut(3) => clk125,
-         clkOut(4) => clk62,
-         -- Reset Outputs
-         rstOut(0) => rst200,
-         rstOut(1) => rst312,
-         rstOut(2) => rst156,
-         rstOut(3) => rst125,
-         rstOut(4) => rst62,
-         -- Status
-         locked    => locked);
+         stableClk => stableClk,
+         ethRxP    => ethRxP,
+         ethRxN    => ethRxM,
+         ethTxP    => ethTxP,
+         ethTxN    => ethTxM,
+         gtRxP     => gtRxP,
+         gtRxN     => gtRxN,
+         gtTxP     => gtTxP,
+         gtTxN     => gtTxN);
 
    --------------------------------------------------
    -- Ethernet
    --------------------------------------------------
-   U_Eth1gGen : if (ETH_TYPE_G = "ZYNQ-GEM") generate
+   U_Eth1gGen : if (ETH_TYPE_G = "ZYNQ-GEM") and (SIMULATION_G = false) generate
 
+      -----------------------------------------------------------------------------      
+      --                         ZYNQ GEM                                        --
+      -----------------------------------------------------------------------------    
+      -- This VHDL wrapper is determined by the ZYNQ family type
+      -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/RceEthGem.vhd
+      -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/RceEthGem.vhd
+      -----------------------------------------------------------------------------     
       U_RceEthGem : entity work.RceEthGem
          generic map (
             TPD_G => TPD_G)
@@ -309,14 +308,16 @@ begin
             sysClk62  => clk62,
             sysRst62  => rst62,
             locked    => locked,
+            stableClk => stableClk,
+            stableRst => stableRst,
             -- ARM Interface
             armEthTx  => armEthTx(0),
             armEthRx  => armEthRx(0),
             -- Ethernet Lines
-            ethRxP    => ethRxP(0),
-            ethRxM    => ethRxM(0),
-            ethTxP    => ethTxP(0),
-            ethTxM    => ethTxM(0));
+            gtRxP     => gtRxP(0),
+            gtRxN     => gtRxN(0),
+            gtTxP     => gtTxP(0),
+            gtTxN     => gtTxN(0));
 
       userEthClk           <= clk125;
       userEthClkRst        <= rst125;
@@ -345,12 +346,9 @@ begin
          idmaIbMaster(3) <= AXI_STREAM_MASTER_INIT_C;
       end generate;
 
-      ethTxP(3 downto 1) <= (others => '0');
-      ethTxM(3 downto 1) <= (others => '0');
-
    end generate;
 
-   U_Eth10gGen : if (ETH_TYPE_G /= "ZYNQ-GEM") generate
+   U_Eth10gGen : if (ETH_TYPE_G /= "ZYNQ-GEM") and (SIMULATION_G = false) generate
 
       U_RceEthernet : entity work.RceEthernet
          generic map (
@@ -370,6 +368,8 @@ begin
             VLAN_VID_G         => VLAN_VID_G)
          port map (
             -- Clocks and resets
+            clk312               => clk312,
+            rst312               => rst312,
             clk200               => clk200,
             rst200               => rst200,
             clk156               => clk156,
@@ -378,6 +378,8 @@ begin
             rst125               => rst125,
             clk62                => clk62,
             rst62                => rst62,
+            stableClk            => stableClk,
+            stableRst            => stableRst,
             -- PPI Interface
             dmaClk               => idmaClk(3),
             dmaRst               => idmaRst(3),
@@ -404,8 +406,8 @@ begin
             userEthVlanObMasters => userEthVlanObMasters,
             userEthVlanObSlaves  => userEthVlanObSlaves,
             -- AXI-Lite Buses
-            axilClk              => iaxiClk,
-            axilRst              => iaxiRst,
+            axilClk              => axilClock,
+            axilRst              => axilReset,
             axilWriteMaster      => coreAxilWriteMaster,
             axilWriteSlave       => coreAxilWriteSlave,
             axilReadMaster       => coreAxilReadMaster,
@@ -413,16 +415,16 @@ begin
             -- Ref Clock
             ethRefClk            => ethRefClk,
             -- Ethernet Lines
-            ethRxP               => ethRxP,
-            ethRxN               => ethRxM,
-            ethTxP               => ethTxP,
-            ethTxN               => ethTxM);
+            ethRxP                => gtRxP,
+            ethRxN                => gtRxN,
+            ethTxP                => gtTxP,
+            ethTxN                => gtTxN);
 
    end generate;
 
-   process (iaxiClk)
+   process (axilClock)
    begin
-      if rising_edge(iaxiClk) then
+      if rising_edge(axilClock) then
          case ETH_TYPE_G is
             when "ZYNQ-GEM"    => armEthMode <= x"00000001";
             when "1000BASE-KX" => armEthMode <= x"00000002";
@@ -434,4 +436,4 @@ begin
       end if;
    end process;
 
-end architecture STRUCTURE;
+end mapping;
