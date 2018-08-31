@@ -2,7 +2,7 @@
 -- File       : DtmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-08-30
+-- Last update: 2018-08-31
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DTM
 -------------------------------------------------------------------------------
@@ -49,10 +49,10 @@ entity DtmCore is
       i2cSda               : inout sl;
       i2cScl               : inout sl;
       -- PCI Express
-      pciRefClkP           : in    sl;
-      pciRefClkM           : in    sl;
-      pciRxP               : in    sl;
-      pciRxM               : in    sl;
+      pciRefClkP           : in    sl                                           := '0';  -- 7-series DTM only  
+      pciRefClkM           : in    sl                                           := '1';  -- 7-series DTM only 
+      pciRxP               : in    sl                                           := '0';  -- 7-series DTM only  
+      pciRxM               : in    sl                                           := '1';  -- 7-series DTM only  
       pciTxP               : out   sl;
       pciTxM               : out   sl;
       pciResetL            : out   sl;
@@ -67,12 +67,12 @@ entity DtmCore is
       clkSelA              : out   sl;
       clkSelB              : out   sl;
       -- Base Ethernet
-      ethRxCtrl            : in    slv(1 downto 0);
-      ethRxClk             : in    slv(1 downto 0);
-      ethRxDataA           : in    Slv(1 downto 0);
-      ethRxDataB           : in    Slv(1 downto 0);
-      ethRxDataC           : in    Slv(1 downto 0);
-      ethRxDataD           : in    Slv(1 downto 0);
+      ethRxCtrl            : in    slv(1 downto 0)                              := "00";  -- 7-series DTM only  
+      ethRxClk             : in    slv(1 downto 0)                              := "00";  -- 7-series DTM only  
+      ethRxDataA           : in    Slv(1 downto 0)                              := "00";  -- 7-series DTM only  
+      ethRxDataB           : in    Slv(1 downto 0)                              := "00";  -- 7-series DTM only  
+      ethRxDataC           : in    Slv(1 downto 0)                              := "00";  -- 7-series DTM only  
+      ethRxDataD           : in    Slv(1 downto 0)                              := "00";  -- 7-series DTM only  
       ethTxCtrl            : out   slv(1 downto 0);
       ethTxClk             : out   slv(1 downto 0);
       ethTxDataA           : out   Slv(1 downto 0);
@@ -91,8 +91,8 @@ entity DtmCore is
       sysClk200            : out   sl;
       sysClk200Rst         : out   sl;
       -- External AXI-Lite Bus
-      -- 0xA0000000 - 0xAFFFFFFF (COB_MIN_C10_G = False)
-      -- 0x90000000 - 0x97FFFFFF (COB_MIN_C10_G = True)
+      -- 0xA0000000 - 0xAFFFFFFF (COB_GTE_C10_G = False)
+      -- 0x90000000 - 0x97FFFFFF (COB_GTE_C10_G = True)
       axiClk               : out   sl;
       axiClkRst            : out   sl;
       extAxilReadMaster    : out   AxiLiteReadMasterType;
@@ -153,9 +153,9 @@ architecture mapping of DtmCore is
    signal idmaIbSlave  : AxiStreamSlaveArray(3 downto 0);
 
    signal coreAxilReadMaster  : AxiLiteReadMasterType;
-   signal coreAxilReadSlave   : AxiLiteReadSlaveType  := AXI_LITE_READ_SLAVE_EMPTY_DECERR_C;
+   signal coreAxilReadSlave   : AxiLiteReadSlaveType  := AXI_LITE_READ_SLAVE_EMPTY_OK_C;
    signal coreAxilWriteMaster : AxiLiteWriteMasterType;
-   signal coreAxilWriteSlave  : AxiLiteWriteSlaveType := AXI_LITE_WRITE_SLAVE_EMPTY_DECERR_C;
+   signal coreAxilWriteSlave  : AxiLiteWriteSlaveType := AXI_LITE_WRITE_SLAVE_EMPTY_OK_C;
 
    signal armEthTx   : ArmEthTxArray(1 downto 0) := (others => ARM_ETH_TX_INIT_C);
    signal armEthRx   : ArmEthRxArray(1 downto 0) := (others => ARM_ETH_RX_INIT_C);
@@ -185,19 +185,23 @@ architecture mapping of DtmCore is
 
    signal locked : sl;
 
-   signal pcieAxilReadMaster  : AxiLiteReadMasterType;
-   signal pcieAxilReadSlave   : AxiLiteReadSlaveType;
-   signal pcieAxilWriteMaster : AxiLiteWriteMasterType;
-   signal pcieAxilWriteSlave  : AxiLiteWriteSlaveType;
-   signal ipciRefClkP         : sl;
-   signal ipciRefClkM         : sl;
-   signal ipciRxP             : sl;
-   signal ipciRxM             : sl;
-   signal ipciTxP             : sl;
-   signal ipciTxM             : sl;
-   signal ipciResetL          : sl;
+   signal pcieAxilReadMaster  : AxiLiteReadMasterType  := AXI_LITE_READ_MASTER_INIT_C;
+   signal pcieAxilReadSlave   : AxiLiteReadSlaveType   := AXI_LITE_READ_SLAVE_INIT_C;
+   signal pcieAxilWriteMaster : AxiLiteWriteMasterType := AXI_LITE_WRITE_MASTER_INIT_C;
+   signal pcieAxilWriteSlave  : AxiLiteWriteSlaveType  := AXI_LITE_WRITE_SLAVE_INIT_C;
+   signal ipciRefClkP         : sl                     := '0';
+   signal ipciRefClkM         : sl                     := '1';
+   signal ipciRxP             : sl                     := '0';
+   signal ipciRxM             : sl                     := '1';
+   signal ipciTxP             : sl                     := '0';
+   signal ipciTxM             : sl                     := '1';
+   signal ipciResetL          : sl                     := '1';
 
 begin
+
+   assert (ETH_TYPE_G = "ZYNQ-GEM") or (ETH_TYPE_G = "1000BASE-KX") or (ETH_TYPE_G = "10GBASE-KR")
+      report "ETH_TYPE_G must be [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KR]"
+      severity failure;
 
    --------------------------------------------------
    -- Inputs/Outputs
@@ -302,7 +306,7 @@ begin
    clkSelA <= '1';
    clkSelB <= '1';
 
-   U_C10_EN_G : if (COB_GTE_C10_G = true) and (SIMULATION_G = false) generate
+   U_C10_EN_G : if (COB_GTE_C10_G = true) and (XIL_DEVICE_C = "7SERIES") and (SIMULATION_G = false) generate
       ipciRefClkP <= pciRefClkP;
       ipciRefClkM <= pciRefClkM;
       ipciRxP     <= pciRxP;
@@ -310,18 +314,9 @@ begin
       pciTxP      <= ipciTxP;
       pciTxM      <= ipciTxM;
       pciResetL   <= ipciResetL;
-
-      pcieAxilReadMaster  <= AXI_LITE_READ_MASTER_INIT_C;
-      pcieAxilReadSlave   <= AXI_LITE_READ_SLAVE_INIT_C;
-      pcieAxilWriteMaster <= AXI_LITE_WRITE_MASTER_INIT_C;
-      pcieAxilWriteSlave  <= AXI_LITE_WRITE_SLAVE_INIT_C;
-
-      coreAxilReadSlave  <= AXI_LITE_READ_SLAVE_EMPTY_OK_C;
-      coreAxilWriteSlave <= AXI_LITE_WRITE_SLAVE_EMPTY_OK_C;
-
    end generate;
 
-   U_C10_DIS_G : if (COB_GTE_C10_G = false) and (SIMULATION_G = false) generate
+   U_C10_DIS_G : if (COB_GTE_C10_G = false) and (XIL_DEVICE_C = "7SERIES") and (SIMULATION_G = false) generate
 
       ipciRefClkP <= '0';
       ipciRefClkM <= '0';
@@ -384,7 +379,7 @@ begin
    --------------------------------------------------
    -- Ethernet
    --------------------------------------------------   
-   U_Eth1gGen : if ((ETH_TYPE_G = "ZYNQ-GEM") or (SEL_REFCLK_C = false)) and (SIMULATION_G = false) generate
+   U_Eth1gGen : if (ETH_TYPE_G = "ZYNQ-GEM") and (SIMULATION_G = false) generate
 
       -----------------------------------------------------------------------------      
       --                         ZYNQ GEM                                        --
@@ -433,7 +428,7 @@ begin
 
    end generate;
 
-   U_Eth10gGen : if ((ETH_TYPE_G /= "ZYNQ-GEM") and (SEL_REFCLK_C = true)) and (SIMULATION_G = false) generate
+   U_Eth10gGen : if (ETH_TYPE_G /= "ZYNQ-GEM") and (SIMULATION_G = false) generate
 
       U_RceEthernet : entity work.RceEthernet
          generic map (
@@ -501,9 +496,13 @@ begin
             ethRefClk            => ethRefClk,
             -- Ethernet Lines
             ethRxP(0)            => ethRxP,
+            ethRxP(3 downto 1)   => "000",
             ethRxN(0)            => ethRxM,
+            ethRxN(3 downto 1)   => "111",
             ethTxP(0)            => ethTxP,
-            ethTxN(0)            => ethTxM);
+            ethTxP(3 downto 1)   => open,
+            ethTxN(0)            => ethTxM,
+            ethTxN(3 downto 1)   => open);
 
       process (axilClock)
       begin
@@ -511,9 +510,7 @@ begin
             case ETH_TYPE_G is
                when "ZYNQ-GEM"    => armEthMode <= x"00000001";
                when "1000BASE-KX" => armEthMode <= x"00000002";
-               when "10GBASE-KX4" => armEthMode <= x"03030303";
                when "10GBASE-KR"  => armEthMode <= x"0000000A";
-               when "40GBASE-KR4" => armEthMode <= x"0A0A0A0A";
                when others        => armEthMode <= x"00000000";
             end case;
          end if;

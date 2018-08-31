@@ -4,7 +4,7 @@
 -- Created    : 2018-08-21
 -- Last update: 2018-08-29
 -------------------------------------------------------------------------------
--- Description: 40GBASE-KR4 Wrapper
+-- Description: RceG3PcieRoot Wrapper
 -------------------------------------------------------------------------------
 -- This file is part of 'SLAC RCE Core'.
 -- It is subject to the license terms in the LICENSE.txt file found in the 
@@ -61,6 +61,6 @@ architecture mapping of RceG3PcieRoot is
 
 begin
 
-   assert (false) report "RCE ZYNQ Ultrascale+ uses the PS's GTs for the PCIe root complex (instead of PL GTs)" severity failure;
+   assert (false) report "RCE ZYNQ Ultrascale+ uses the PS's GTs for the PCIe root complex (instead of PL GTs)" severity warning;
 
 end mapping;
