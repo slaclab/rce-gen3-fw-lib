@@ -2,7 +2,7 @@
 -- File       : DtmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-08-31
+-- Last update: 2018-09-04
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DTM
 -------------------------------------------------------------------------------
@@ -136,7 +136,8 @@ end DtmCore;
 
 architecture mapping of DtmCore is
 
-   constant SEL_REFCLK_C : boolean := ite(XIL_DEVICE_C = "7SERIES", false, true);
+   constant SEL_REFCLK_C  : boolean := ite(XIL_DEVICE_C = "7SERIES", false, true);
+   constant MEMORY_TYPE_C : string  := ite(XIL_DEVICE_C = "7SERIES", "block", "ultra");
 
    signal axilClock : sl;
    signal axilReset : sl;
@@ -230,6 +231,7 @@ begin
          TPD_G          => TPD_G,
          SIM_USER_ID_G  => SIM_USER_ID_G,
          SIMULATION_G   => SIMULATION_G,
+         MEMORY_TYPE_G  => MEMORY_TYPE_C,
          SEL_REFCLK_G   => SEL_REFCLK_C,
          BUILD_INFO_G   => BUILD_INFO_G,
          PCIE_EN_G      => COB_GTE_C10_G,
@@ -436,6 +438,7 @@ begin
             TPD_G              => TPD_G,
             RCE_DMA_MODE_G     => RCE_DMA_MODE_G,
             ETH_TYPE_G         => ETH_TYPE_G,
+            MEMORY_TYPE_G      => MEMORY_TYPE_C,
             EN_JUMBO_G         => true,
             -- User ETH Configurations
             UDP_SERVER_EN_G    => UDP_SERVER_EN_G,

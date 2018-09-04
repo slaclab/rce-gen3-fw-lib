@@ -2,7 +2,7 @@
 -- File       : DpmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-08-29
+-- Last update: 2018-09-04
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DPM
 -------------------------------------------------------------------------------
@@ -29,21 +29,21 @@ use unisim.vcomponents.all;
 
 entity DpmCore is
    generic (
-      TPD_G              : time                  := 1 ns;
+      TPD_G              : time                   := 1 ns;
       BUILD_INFO_G       : BuildInfoType;
       SIM_USER_ID_G      : natural range 0 to 100 := 1;
-      SIMULATION_G       : boolean                := false;      
-      ETH_TYPE_G         : string                := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
-      RCE_DMA_MODE_G     : RceDmaModeType        := RCE_DMA_PPI_C;
-      AXI_ST_COUNT_G     : natural range 3 to 4  := 3;
-      UDP_SERVER_EN_G    : boolean               := false;
-      UDP_SERVER_SIZE_G  : positive              := 1;
-      UDP_SERVER_PORTS_G : PositiveArray         := (0 => 8192);
-      BYP_EN_G           : boolean               := false;
-      BYP_ETH_TYPE_G     : slv(15 downto 0)      := x"AAAA";
-      VLAN_EN_G          : boolean               := false;
-      VLAN_SIZE_G        : positive range 1 to 8 := 1;
-      VLAN_VID_G         : Slv12Array            := (0 => x"001"));
+      SIMULATION_G       : boolean                := false;
+      ETH_TYPE_G         : string                 := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
+      RCE_DMA_MODE_G     : RceDmaModeType         := RCE_DMA_PPI_C;
+      AXI_ST_COUNT_G     : natural range 3 to 4   := 3;
+      UDP_SERVER_EN_G    : boolean                := false;
+      UDP_SERVER_SIZE_G  : positive               := 1;
+      UDP_SERVER_PORTS_G : PositiveArray          := (0 => 8192);
+      BYP_EN_G           : boolean                := false;
+      BYP_ETH_TYPE_G     : slv(15 downto 0)       := x"AAAA";
+      VLAN_EN_G          : boolean                := false;
+      VLAN_SIZE_G        : positive range 1 to 8  := 1;
+      VLAN_VID_G         : Slv12Array             := (0 => x"001"));
    port (
       -- I2C
       i2cSda               : inout sl;
@@ -105,6 +105,8 @@ entity DpmCore is
 end DpmCore;
 
 architecture mapping of DpmCore is
+
+   constant MEMORY_TYPE_C : string := ite(XIL_DEVICE_C = "7SERIES", "block", "ultra");
 
    signal axilClock : sl;
    signal axilReset : sl;
@@ -196,7 +198,8 @@ begin
          TPD_G          => TPD_G,
          SIM_USER_ID_G  => SIM_USER_ID_G,
          SIMULATION_G   => SIMULATION_G,
-         SEL_REFCLK_G   => true, -- true = ETH ref
+         MEMORY_TYPE_G  => MEMORY_TYPE_C,
+         SEL_REFCLK_G   => true,        -- true = ETH ref
          BUILD_INFO_G   => BUILD_INFO_G,
          RCE_DMA_MODE_G => RCE_DMA_MODE_G)
       port map (
@@ -356,6 +359,7 @@ begin
             TPD_G              => TPD_G,
             RCE_DMA_MODE_G     => RCE_DMA_MODE_G,
             ETH_TYPE_G         => ETH_TYPE_G,
+            MEMORY_TYPE_G      => MEMORY_TYPE_C,
             EN_JUMBO_G         => true,
             -- User ETH Configurations
             UDP_SERVER_EN_G    => UDP_SERVER_EN_G,
@@ -415,10 +419,10 @@ begin
             -- Ref Clock
             ethRefClk            => ethRefClk,
             -- Ethernet Lines
-            ethRxP                => gtRxP,
-            ethRxN                => gtRxN,
-            ethTxP                => gtTxP,
-            ethTxN                => gtTxN);
+            ethRxP               => gtRxP,
+            ethRxN               => gtRxN,
+            ethTxP               => gtTxP,
+            ethTxN               => gtTxN);
 
    end generate;
 

@@ -31,6 +31,8 @@ entity RceG3Top is
    generic (
       TPD_G          : time                   := 1 ns;
       BUILD_INFO_G   : BuildInfoType;
+      SYNTH_MODE_G   : string                 := "xpm";
+      MEMORY_TYPE_G  : string                 := "block";      
       RCE_DMA_MODE_G : RceDmaModeType         := RCE_DMA_PPI_C;
       PCIE_EN_G      : boolean                := false;
       SEL_REFCLK_G   : boolean                := true;  -- false = ZYNQ ref, true = ETH ref
@@ -366,6 +368,8 @@ begin
    U_RceG3Dma : entity work.RceG3Dma
       generic map (
          TPD_G          => TPD_G,
+         SYNTH_MODE_G   => SYNTH_MODE_G,
+         MEMORY_TYPE_G  => MEMORY_TYPE_G,          
          RCE_DMA_MODE_G => RCE_DMA_MODE_G,
          SIM_USER_ID_G  => SIM_USER_ID_G,
          SIMULATION_G   => SIMULATION_G)

@@ -36,6 +36,8 @@ use work.AxiPkg.all;
 entity RceG3Dma is
    generic (
       TPD_G          : time                   := 1 ns;
+      SYNTH_MODE_G   : string                 := "xpm";
+      MEMORY_TYPE_G  : string                 := "block";
       RCE_DMA_MODE_G : RceDmaModeType         := RCE_DMA_PPI_C;
       SIM_USER_ID_G  : natural range 0 to 100 := 1;
       SIMULATION_G   : boolean                := false);
@@ -101,31 +103,32 @@ begin
 
          U_RceG3DmaPpi : entity work.RceG3DmaPpi
             generic map (
-               TPD_G => TPD_G
-               ) port map (
-                  axiDmaClk       => axiDmaClk,
-                  axiDmaRst       => axiDmaRst,
-                  acpWriteSlave   => acpWriteSlave,
-                  acpWriteMaster  => acpWriteMaster,
-                  acpReadSlave    => acpReadSlave,
-                  acpReadMaster   => acpReadMaster,
-                  hpWriteSlave    => hpWriteSlave,
-                  hpWriteMaster   => hpWriteMaster,
-                  hpReadSlave     => hpReadSlave,
-                  hpReadMaster    => hpReadMaster,
-                  axilReadMaster  => dmaAxilReadMaster,
-                  axilReadSlave   => dmaAxilReadSlave,
-                  axilWriteMaster => dmaAxilWriteMaster,
-                  axilWriteSlave  => dmaAxilWriteSlave,
-                  interrupt       => dmaInterrupt,
-                  dmaClk          => dmaClk,
-                  dmaClkRst       => dmaClkRst,
-                  dmaState        => dmaState,
-                  dmaObMaster     => dmaObMaster,
-                  dmaObSlave      => dmaObSlave,
-                  dmaIbMaster     => dmaIbMaster,
-                  dmaIbSlave      => dmaIbSlave
-                  );
+               TPD_G => TPD_G)
+            -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
+            -- MEMORY_TYPE_G    => MEMORY_TYPE_G)  <--- generic for future XPM FIFO release 
+            port map (
+               axiDmaClk       => axiDmaClk,
+               axiDmaRst       => axiDmaRst,
+               acpWriteSlave   => acpWriteSlave,
+               acpWriteMaster  => acpWriteMaster,
+               acpReadSlave    => acpReadSlave,
+               acpReadMaster   => acpReadMaster,
+               hpWriteSlave    => hpWriteSlave,
+               hpWriteMaster   => hpWriteMaster,
+               hpReadSlave     => hpReadSlave,
+               hpReadMaster    => hpReadMaster,
+               axilReadMaster  => dmaAxilReadMaster,
+               axilReadSlave   => dmaAxilReadSlave,
+               axilWriteMaster => dmaAxilWriteMaster,
+               axilWriteSlave  => dmaAxilWriteSlave,
+               interrupt       => dmaInterrupt,
+               dmaClk          => dmaClk,
+               dmaClkRst       => dmaClkRst,
+               dmaState        => dmaState,
+               dmaObMaster     => dmaObMaster,
+               dmaObSlave      => dmaObSlave,
+               dmaIbMaster     => dmaIbMaster,
+               dmaIbSlave      => dmaIbSlave);
 
          auxWriteSlave <= AXI_WRITE_SLAVE_INIT_C;
          auxReadSlave  <= AXI_READ_SLAVE_INIT_C;
@@ -140,70 +143,72 @@ begin
 
          U_RceG3DmaAxis : entity work.RceG3DmaAxis
             generic map (
-               TPD_G => TPD_G
-               ) port map (
-                  axiDmaClk       => axiDmaClk,
-                  axiDmaRst       => axiDmaRst,
-                  acpWriteSlave   => acpWriteSlave,
-                  acpWriteMaster  => acpWriteMaster,
-                  acpReadSlave    => acpReadSlave,
-                  acpReadMaster   => acpReadMaster,
-                  hpWriteSlave    => hpWriteSlave,
-                  hpWriteMaster   => hpWriteMaster,
-                  hpReadSlave     => hpReadSlave,
-                  hpReadMaster    => hpReadMaster,
-                  auxWriteSlave   => auxWriteSlave,
-                  auxWriteMaster  => auxWriteMaster,
-                  auxReadSlave    => auxReadSlave,
-                  auxReadMaster   => auxReadMaster,
-                  axilReadMaster  => dmaAxilReadMaster,
-                  axilReadSlave   => dmaAxilReadSlave,
-                  axilWriteMaster => dmaAxilWriteMaster,
-                  axilWriteSlave  => dmaAxilWriteSlave,
-                  interrupt       => dmaInterrupt,
-                  dmaClk          => dmaClk,
-                  dmaClkRst       => dmaClkRst,
-                  dmaState        => dmaState,
-                  dmaObMaster     => dmaObMaster,
-                  dmaObSlave      => dmaObSlave,
-                  dmaIbMaster     => dmaIbMaster,
-                  dmaIbSlave      => dmaIbSlave
-                  );
+               TPD_G => TPD_G)
+            -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
+            -- MEMORY_TYPE_G    => MEMORY_TYPE_G)  <--- generic for future XPM FIFO release 
+            port map (
+               axiDmaClk       => axiDmaClk,
+               axiDmaRst       => axiDmaRst,
+               acpWriteSlave   => acpWriteSlave,
+               acpWriteMaster  => acpWriteMaster,
+               acpReadSlave    => acpReadSlave,
+               acpReadMaster   => acpReadMaster,
+               hpWriteSlave    => hpWriteSlave,
+               hpWriteMaster   => hpWriteMaster,
+               hpReadSlave     => hpReadSlave,
+               hpReadMaster    => hpReadMaster,
+               auxWriteSlave   => auxWriteSlave,
+               auxWriteMaster  => auxWriteMaster,
+               auxReadSlave    => auxReadSlave,
+               auxReadMaster   => auxReadMaster,
+               axilReadMaster  => dmaAxilReadMaster,
+               axilReadSlave   => dmaAxilReadSlave,
+               axilWriteMaster => dmaAxilWriteMaster,
+               axilWriteSlave  => dmaAxilWriteSlave,
+               interrupt       => dmaInterrupt,
+               dmaClk          => dmaClk,
+               dmaClkRst       => dmaClkRst,
+               dmaState        => dmaState,
+               dmaObMaster     => dmaObMaster,
+               dmaObSlave      => dmaObSlave,
+               dmaIbMaster     => dmaIbMaster,
+               dmaIbSlave      => dmaIbSlave);
       end generate;
 
       U_AxisV2DmaGen : if RCE_DMA_MODE_G = RCE_DMA_AXISV2_C generate
 
          U_RceG3DmaAxisV2 : entity work.RceG3DmaAxisV2
             generic map (
-               TPD_G => TPD_G
-               ) port map (
-                  axiDmaClk       => axiDmaClk,
-                  axiDmaRst       => axiDmaRst,
-                  acpWriteSlave   => acpWriteSlave,
-                  acpWriteMaster  => acpWriteMaster,
-                  acpReadSlave    => acpReadSlave,
-                  acpReadMaster   => acpReadMaster,
-                  hpWriteSlave    => hpWriteSlave,
-                  hpWriteMaster   => hpWriteMaster,
-                  hpReadSlave     => hpReadSlave,
-                  hpReadMaster    => hpReadMaster,
-                  auxWriteSlave   => auxWriteSlave,
-                  auxWriteMaster  => auxWriteMaster,
-                  auxReadSlave    => auxReadSlave,
-                  auxReadMaster   => auxReadMaster,
-                  axilReadMaster  => dmaAxilReadMaster,
-                  axilReadSlave   => dmaAxilReadSlave,
-                  axilWriteMaster => dmaAxilWriteMaster,
-                  axilWriteSlave  => dmaAxilWriteSlave,
-                  interrupt       => dmaInterrupt,
-                  dmaClk          => dmaClk,
-                  dmaClkRst       => dmaClkRst,
-                  dmaState        => dmaState,
-                  dmaObMaster     => dmaObMaster,
-                  dmaObSlave      => dmaObSlave,
-                  dmaIbMaster     => dmaIbMaster,
-                  dmaIbSlave      => dmaIbSlave
-                  );
+               TPD_G => TPD_G)
+            -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
+            -- MEMORY_TYPE_G    => MEMORY_TYPE_G)  <--- generic for future XPM FIFO release 
+            port map (
+               axiDmaClk       => axiDmaClk,
+               axiDmaRst       => axiDmaRst,
+               acpWriteSlave   => acpWriteSlave,
+               acpWriteMaster  => acpWriteMaster,
+               acpReadSlave    => acpReadSlave,
+               acpReadMaster   => acpReadMaster,
+               hpWriteSlave    => hpWriteSlave,
+               hpWriteMaster   => hpWriteMaster,
+               hpReadSlave     => hpReadSlave,
+               hpReadMaster    => hpReadMaster,
+               auxWriteSlave   => auxWriteSlave,
+               auxWriteMaster  => auxWriteMaster,
+               auxReadSlave    => auxReadSlave,
+               auxReadMaster   => auxReadMaster,
+               axilReadMaster  => dmaAxilReadMaster,
+               axilReadSlave   => dmaAxilReadSlave,
+               axilWriteMaster => dmaAxilWriteMaster,
+               axilWriteSlave  => dmaAxilWriteSlave,
+               interrupt       => dmaInterrupt,
+               dmaClk          => dmaClk,
+               dmaClkRst       => dmaClkRst,
+               dmaState        => dmaState,
+               dmaObMaster     => dmaObMaster,
+               dmaObSlave      => dmaObSlave,
+               dmaIbMaster     => dmaIbMaster,
+               dmaIbSlave      => dmaIbSlave);
       end generate;
 
       ------------------------------------
@@ -215,33 +220,34 @@ begin
          U_RceG3DmaQueue4x2 : entity work.RceG3DmaQueue4x2
             generic map (
                TPD_G                => TPD_G,
+               -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
+               -- MEMORY_TYPE_G    => MEMORY_TYPE_G,  <--- generic for future XPM FIFO release                
                DMA_BUF_START_ADDR_G => x"3C000000",  -- set x"00000000" for simulation and x"3C000000" for implementation
                DMA_BUF_SIZE_BITS_G  => 24,  -- set 24 for implementation
-               MAX_CSPAD_PKT_SIZE_G => 1150000
-               ) port map (
-                  axiDmaClk       => axiDmaClk,
-                  axiDmaRst       => axiDmaRst,
-                  acpWriteSlave   => acpWriteSlave,
-                  acpWriteMaster  => acpWriteMaster,
-                  acpReadSlave    => acpReadSlave,
-                  acpReadMaster   => acpReadMaster,
-                  hpWriteSlave    => hpWriteSlave,
-                  hpWriteMaster   => hpWriteMaster,
-                  hpReadSlave     => hpReadSlave,
-                  hpReadMaster    => hpReadMaster,
-                  axilReadMaster  => dmaAxilReadMaster,
-                  axilReadSlave   => dmaAxilReadSlave,
-                  axilWriteMaster => dmaAxilWriteMaster,
-                  axilWriteSlave  => dmaAxilWriteSlave,
-                  interrupt       => dmaInterrupt,
-                  dmaClk          => dmaClk,
-                  dmaClkRst       => dmaClkRst,
-                  dmaState        => dmaState,
-                  dmaObMaster     => dmaObMaster,
-                  dmaObSlave      => dmaObSlave,
-                  dmaIbMaster     => dmaIbMaster,
-                  dmaIbSlave      => dmaIbSlave
-                  );
+               MAX_CSPAD_PKT_SIZE_G => 1150000)
+            port map (
+               axiDmaClk       => axiDmaClk,
+               axiDmaRst       => axiDmaRst,
+               acpWriteSlave   => acpWriteSlave,
+               acpWriteMaster  => acpWriteMaster,
+               acpReadSlave    => acpReadSlave,
+               acpReadMaster   => acpReadMaster,
+               hpWriteSlave    => hpWriteSlave,
+               hpWriteMaster   => hpWriteMaster,
+               hpReadSlave     => hpReadSlave,
+               hpReadMaster    => hpReadMaster,
+               axilReadMaster  => dmaAxilReadMaster,
+               axilReadSlave   => dmaAxilReadSlave,
+               axilWriteMaster => dmaAxilWriteMaster,
+               axilWriteSlave  => dmaAxilWriteSlave,
+               interrupt       => dmaInterrupt,
+               dmaClk          => dmaClk,
+               dmaClkRst       => dmaClkRst,
+               dmaState        => dmaState,
+               dmaObMaster     => dmaObMaster,
+               dmaObSlave      => dmaObSlave,
+               dmaIbMaster     => dmaIbMaster,
+               dmaIbSlave      => dmaIbSlave);
 
          auxWriteSlave <= AXI_WRITE_SLAVE_INIT_C;
          auxReadSlave  <= AXI_READ_SLAVE_INIT_C;
@@ -281,6 +287,8 @@ begin
                   TPD_G               => TPD_G,
                   DEST_ID_G           => j,
                   USER_ID_G           => SIM_USER_ID_G,
+                  -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
+                  -- MEMORY_TYPE_G    => MEMORY_TYPE_G,  <--- generic for future XPM FIFO release                   
                   COMMON_MASTER_CLK_G => true,
                   COMMON_SLAVE_CLK_G  => true,
                   AXIS_CONFIG_G       => ite((i = 2), RCEG3_AXIS_DMA_ACP_CONFIG_C, RCEG3_AXIS_DMA_CONFIG_C))
