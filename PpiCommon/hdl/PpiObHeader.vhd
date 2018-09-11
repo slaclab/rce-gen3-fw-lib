@@ -38,6 +38,8 @@ use work.PpiPkg.all;
 entity PpiObHeader is
    generic (
       TPD_G        : time          := 1 ns;
+      SYNTH_MODE_G : string        := "inferred";
+      MEMORY_TYPE_G: string        := "block";      
       AXI_CONFIG_G : AxiConfigType := AXI_CONFIG_INIT_C
    );
    port (
@@ -242,28 +244,25 @@ begin
    -- Read Path AXI FIFO
    U_AxiReadPathFifo : entity work.AxiReadPathFifo 
       generic map (
-         TPD_G                    => TPD_G,
-         XIL_DEVICE_G             => "7SERIES",
-         USE_BUILT_IN_G           => false,
-         GEN_SYNC_FIFO_G          => true,
-         ALTERA_SYN_G             => false,
-         ALTERA_RAM_G             => "M9K",
-         ADDR_LSB_G               => 3,
-         ID_FIXED_EN_G            => true,
-         SIZE_FIXED_EN_G          => true,
-         BURST_FIXED_EN_G         => true,
-         LEN_FIXED_EN_G           => false,
-         LOCK_FIXED_EN_G          => true,
-         PROT_FIXED_EN_G          => true,
-         CACHE_FIXED_EN_G         => true,
-         ADDR_BRAM_EN_G           => false, 
-         ADDR_CASCADE_SIZE_G      => 1,
-         ADDR_FIFO_ADDR_WIDTH_G   => 4,
-         DATA_BRAM_EN_G           => false,
-         DATA_CASCADE_SIZE_G      => 1,
-         DATA_FIFO_ADDR_WIDTH_G   => 4,
-         AXI_CONFIG_G             => AXI_CONFIG_G
-      ) port map (
+          TPD_G                  => TPD_G,
+          GEN_SYNC_FIFO_G        => true,
+          ADDR_LSB_G             => 3,
+          ID_FIXED_EN_G          => true,
+          SIZE_FIXED_EN_G        => true,
+          BURST_FIXED_EN_G       => true,
+          LEN_FIXED_EN_G         => false,
+          LOCK_FIXED_EN_G        => true,
+          PROT_FIXED_EN_G        => true,
+          CACHE_FIXED_EN_G       => true,
+          ADDR_MEMORY_TYPE_G     => "distributed",
+          ADDR_CASCADE_SIZE_G    => 1,
+          ADDR_FIFO_ADDR_WIDTH_G => 4,
+          DATA_MEMORY_TYPE_G     => "distributed",
+          DATA_CASCADE_SIZE_G    => 1,
+          DATA_FIFO_ADDR_WIDTH_G => 4,
+          AXI_CONFIG_G           => AXI_CONFIG_G,
+          SYNTH_MODE_G           => SYNTH_MODE_G)         
+       port map (
          sAxiClk        => axiClk,
          sAxiRst        => axiRst,
          sAxiReadMaster => intReadMaster,
@@ -281,18 +280,15 @@ begin
          TPD_G               => TPD_G,
          INT_PIPE_STAGES_G   => 1,
          PIPE_STAGES_G       => 1,
-         SLAVE_READY_EN_G    => false,
          VALID_THOLD_G       => 1,
-         BRAM_EN_G           => true,
-         XIL_DEVICE_G        => "7SERIES",
-         USE_BUILT_IN_G      => false,
-         GEN_SYNC_FIFO_G     => true,
-         ALTERA_SYN_G        => false,
-         ALTERA_RAM_G        => "M9K",
+         SLAVE_READY_EN_G    => false,
+         SYNTH_MODE_G        => SYNTH_MODE_G,
+         MEMORY_TYPE_G       => "block",         
+         GEN_SYNC_FIFO_G     => false,
          CASCADE_SIZE_G      => 1,
          FIFO_ADDR_WIDTH_G   => 9,
          FIFO_FIXED_THRESH_G => true,
-         FIFO_PAUSE_THRESH_G => 300,-- 1800 byte buffer before pause and 1696 byte of buffer before FIFO FULL
+         FIFO_PAUSE_THRESH_G => 300,  -- 1800 byte buffer before pause and 1696 byte of buffer before FIFO FULL
          SLAVE_AXI_CONFIG_G  => PPI_AXIS_HEADER_INIT_C,
          MASTER_AXI_CONFIG_G => PPI_AXIS_HEADER_INIT_C
       ) port map (

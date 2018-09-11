@@ -458,20 +458,12 @@ begin
          RST_POLARITY_G  => '1',
          RST_ASYNC_G     => false,
          GEN_SYNC_FIFO_G => false,      -- Async FIFO
-         BRAM_EN_G       => false,      -- Use Dist Ram
+         MEMORY_TYPE_G   => "distributed",      -- Use Dist Ram
          FWFT_EN_G       => true,
-         USE_DSP48_G     => "no",
-         ALTERA_SYN_G    => false,
-         ALTERA_RAM_G    => "M512",
-         USE_BUILT_IN_G  => false,
-         XIL_DEVICE_G    => "7SERIES",
-         SYNC_STAGES_G   => 3,
          DATA_WIDTH_G    => 95,
          ADDR_WIDTH_G    => 4,
-         INIT_G          => "0",
-         FULL_THRES_G    => 15,
-         EMPTY_THRES_G   => 1
-         ) port map (
+         FULL_THRES_G    => 15) 
+      port map (    
             rst           => axiClkRstInt,
             wr_clk        => axiClk,
             wr_en         => r.wrFifoWrEn,
@@ -503,21 +495,12 @@ begin
          RST_POLARITY_G  => '1',
          RST_ASYNC_G     => false,
          GEN_SYNC_FIFO_G => false,      -- Async FIFO
-         BRAM_EN_G       => false,      -- Use Dist Ram
+         MEMORY_TYPE_G   => "distributed",      -- Use Dist Ram
          FWFT_EN_G       => true,
-         USE_DSP48_G     => "no",
-         ALTERA_SYN_G    => false,
-         ALTERA_RAM_G    => "M512",
-         USE_BUILT_IN_G  => false,
-         XIL_DEVICE_G    => "7SERIES",
-         SYNC_STAGES_G   => 3,
          DATA_WIDTH_G    => 95,
          ADDR_WIDTH_G    => 4,
-         INIT_G          => "0",
-         FULL_THRES_G    => 15,
-         EMPTY_THRES_G   => 1
-         )
-      port map (
+         FULL_THRES_G    => 15) 
+      port map (           
          rst           => axiClkRstInt,
          wr_clk        => pciClk,
          wr_en         => rdFifoWrEn,

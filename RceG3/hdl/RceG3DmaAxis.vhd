@@ -38,7 +38,9 @@ use work.AxiDmaPkg.all;
 
 entity RceG3DmaAxis is
    generic (
-      TPD_G : time := 1 ns);
+      TPD_G          : time   := 1 ns;
+      SYNTH_MODE_G   : string := "xpm";
+      MEMORY_TYPE_G  : string := "block");
    port (
       -- Clock/Reset
       axiDmaClk       : in  sl;
@@ -122,6 +124,8 @@ begin
       U_RxG3DmaAxiChan: entity work.RceG3DmaAxisChan
          generic map (
             TPD_G             => TPD_G,
+            SYNTH_MODE_G      => SYNTH_MODE_G,
+            MEMORY_TYPE_G     => MEMORY_TYPE_G,            
             AXI_CACHE_G       => AXI_CACHE_C(i),
             BYP_SHIFT_G       => ite((i=3),false,true),  -- APP DMA driver enforces alignment, which means shift not required
             AXIS_DMA_CONFIG_G => ite((i=2),RCEG3_AXIS_DMA_ACP_CONFIG_C,RCEG3_AXIS_DMA_CONFIG_C),

@@ -5,7 +5,7 @@
 -- Author     : Ryan Herbst <rherbst@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2015-09-03
--- Last update: 2018-07-26
+-- Last update: 2018-09-11
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -155,8 +155,8 @@ begin
          PHY_TYPE_G          => PHY_TYPE_G,
          DROP_ERR_PKT_G      => true,
          JUMBO_G             => EN_JUMBO_G,
-         -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
-         -- MEMORY_TYPE_G       => MEMORY_TYPE_G, <--- generic for future XPM FIFO release
+         SYNTH_MODE_G        => SYNTH_MODE_G,
+         MEMORY_TYPE_G       => MEMORY_TYPE_G,
          -- RX FIFO Configurations
          INT_PIPE_STAGES_G   => 1,
          PIPE_STAGES_G       => 1,

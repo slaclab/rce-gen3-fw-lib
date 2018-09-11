@@ -63,6 +63,8 @@ use work.PpiPkg.all;
 entity PpiSocket is
    generic (
       TPD_G     : time    := 1 ns;
+      SYNTH_MODE_G : string        := "inferred";
+      MEMORY_TYPE_G: string        := "block";            
       CHAN_ID_G : integer := 0
    );
    port (
@@ -317,21 +319,19 @@ begin
          TPD_G              => TPD_G,
          POP_FIFO_COUNT_G   => POP_FIFO_COUNT_C,
          POP_SYNC_FIFO_G    => true,
-         POP_BRAM_EN_G      => true,
+         POP_MEMORY_TYPE_G  => "block",
          POP_ADDR_WIDTH_G   => 9,
          LOOP_FIFO_EN_G     => false,
          LOOP_FIFO_COUNT_G  => 1,
-         LOOP_BRAM_EN_G     => true,
+         LOOP_MEMORY_TYPE_G => "distributed",
          LOOP_ADDR_WIDTH_G  => 4,
          PUSH_FIFO_COUNT_G  => PUSH_FIFO_COUNT_C,
          PUSH_SYNC_FIFO_G   => true,
-         PUSH_BRAM_EN_G     => true,
+         PUSH_MEMORY_TYPE_G => "block",
          PUSH_ADDR_WIDTH_G  => 9,
          RANGE_LSB_G        => 8,
          VALID_POSITION_G   => 0,
-         VALID_POLARITY_G   => '0',
-         USE_BUILT_IN_G     => false,
-         XIL_DEVICE_G       => "7SERIES"
+         VALID_POLARITY_G   => '0'
       ) port map (
          axiClk             => axiClk,
          axiClkRst          => axiRst,
@@ -372,8 +372,10 @@ begin
 
    U_ObHeader : entity work.PpiObHeader 
       generic map (
-         TPD_G        => TPD_G,
-         AXI_CONFIG_G => AXI_ACP_INIT_C
+         TPD_G         => TPD_G,
+         SYNTH_MODE_G  => SYNTH_MODE_G,
+         MEMORY_TYPE_G => MEMORY_TYPE_G,         
+         AXI_CONFIG_G  => AXI_ACP_INIT_C
       ) port map (
          axiClk          => axiClk,
          axiRst          => axiRst,
@@ -393,9 +395,11 @@ begin
 
    U_ObPayload : entity work.PpiObPayload
       generic map (
-         TPD_G        => TPD_G,
-         AXI_CONFIG_G => AXI_HP_INIT_C,
-         CHAN_ID_G    => CHAN_ID_G
+         TPD_G         => TPD_G,
+         SYNTH_MODE_G  => SYNTH_MODE_G,
+         MEMORY_TYPE_G => MEMORY_TYPE_G,            
+         AXI_CONFIG_G  => AXI_HP_INIT_C,
+         CHAN_ID_G     => CHAN_ID_G
       ) port map (
          axiClk          => axiClk,
          axiRst          => axiRst,
@@ -437,8 +441,10 @@ begin
 
    U_IbHeader : entity work.PpiIbHeader
       generic map (
-         TPD_G          => TPD_G,
-         AXI_CONFIG_G   => AXI_ACP_INIT_C
+         TPD_G         => TPD_G,
+         SYNTH_MODE_G  => SYNTH_MODE_G,
+         MEMORY_TYPE_G => MEMORY_TYPE_G,          
+         AXI_CONFIG_G  => AXI_ACP_INIT_C
       ) port map (
          axiClk          => axiClk,
          axiRst          => axiRst,
@@ -462,6 +468,8 @@ begin
    U_IbPayload : entity work.PpiIbPayload
       generic map (
          TPD_G            => TPD_G,
+         SYNTH_MODE_G     => SYNTH_MODE_G,
+         MEMORY_TYPE_G    => MEMORY_TYPE_G,          
          AXI_RD_CONFIG_G  => AXI_ACP_INIT_C,
          AXI_WR_CONFIG_G  => AXI_HP_INIT_C,
          CHAN_ID_G        => CHAN_ID_G

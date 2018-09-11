@@ -103,9 +103,9 @@ begin
 
          U_RceG3DmaPpi : entity work.RceG3DmaPpi
             generic map (
-               TPD_G => TPD_G)
-            -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
-            -- MEMORY_TYPE_G    => MEMORY_TYPE_G)  <--- generic for future XPM FIFO release 
+               TPD_G         => TPD_G,
+               SYNTH_MODE_G  => SYNTH_MODE_G,
+               MEMORY_TYPE_G => MEMORY_TYPE_G)
             port map (
                axiDmaClk       => axiDmaClk,
                axiDmaRst       => axiDmaRst,
@@ -143,9 +143,9 @@ begin
 
          U_RceG3DmaAxis : entity work.RceG3DmaAxis
             generic map (
-               TPD_G => TPD_G)
-            -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
-            -- MEMORY_TYPE_G    => MEMORY_TYPE_G)  <--- generic for future XPM FIFO release 
+               TPD_G         => TPD_G,
+               SYNTH_MODE_G  => SYNTH_MODE_G,
+               MEMORY_TYPE_G => MEMORY_TYPE_G)
             port map (
                axiDmaClk       => axiDmaClk,
                axiDmaRst       => axiDmaRst,
@@ -179,9 +179,9 @@ begin
 
          U_RceG3DmaAxisV2 : entity work.RceG3DmaAxisV2
             generic map (
-               TPD_G => TPD_G)
-            -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
-            -- MEMORY_TYPE_G    => MEMORY_TYPE_G)  <--- generic for future XPM FIFO release 
+               TPD_G         => TPD_G,
+               SYNTH_MODE_G  => SYNTH_MODE_G,
+               MEMORY_TYPE_G => MEMORY_TYPE_G)
             port map (
                axiDmaClk       => axiDmaClk,
                axiDmaRst       => axiDmaRst,
@@ -220,8 +220,8 @@ begin
          U_RceG3DmaQueue4x2 : entity work.RceG3DmaQueue4x2
             generic map (
                TPD_G                => TPD_G,
-               -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
-               -- MEMORY_TYPE_G    => MEMORY_TYPE_G,  <--- generic for future XPM FIFO release                
+               SYNTH_MODE_G         => SYNTH_MODE_G,
+               MEMORY_TYPE_G        => MEMORY_TYPE_G,
                DMA_BUF_START_ADDR_G => x"3C000000",  -- set x"00000000" for simulation and x"3C000000" for implementation
                DMA_BUF_SIZE_BITS_G  => 24,  -- set 24 for implementation
                MAX_CSPAD_PKT_SIZE_G => 1150000)
@@ -287,8 +287,8 @@ begin
                   TPD_G               => TPD_G,
                   DEST_ID_G           => j,
                   USER_ID_G           => SIM_USER_ID_G,
-                  -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
-                  -- MEMORY_TYPE_G    => MEMORY_TYPE_G,  <--- generic for future XPM FIFO release                   
+                  SYNTH_MODE_G        => SYNTH_MODE_G,
+                  MEMORY_TYPE_G       => MEMORY_TYPE_G,
                   COMMON_MASTER_CLK_G => true,
                   COMMON_SLAVE_CLK_G  => true,
                   AXIS_CONFIG_G       => ite((i = 2), RCEG3_AXIS_DMA_ACP_CONFIG_C, RCEG3_AXIS_DMA_CONFIG_C))

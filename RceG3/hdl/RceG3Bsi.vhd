@@ -328,42 +328,21 @@ begin
    U_BsiFifo : entity work.Fifo
       generic map (
          TPD_G           => TPD_G,
-         RST_POLARITY_G  => '1',
-         RST_ASYNC_G     => false,
          GEN_SYNC_FIFO_G => true,
-         BRAM_EN_G       => true,
          FWFT_EN_G       => true,
-         USE_DSP48_G     => "no",
-         USE_BUILT_IN_G  => false,
-         XIL_DEVICE_G    => "7SERIES",
-         SYNC_STAGES_G   => 3,
          DATA_WIDTH_G    => 48,
          ADDR_WIDTH_G    => 9,
-         INIT_G          => "0",
-         FULL_THRES_G    => 479,
-         EMPTY_THRES_G   => 1)
+         FULL_THRES_G    => 479)
       port map (
          rst           => axiClkRst,
          wr_clk        => axiClk,
          wr_en         => bsiFifoWrite,
          din           => bsiFifoDin,
-         wr_data_count => open,
-         wr_ack        => open,
-         overflow      => open,
          prog_full     => bsiFifoAFull,
-         almost_full   => open,
-         full          => open,
-         not_full      => open,
          rd_clk        => axiClk,
          rd_en         => r.bsiFifoRd,
          dout          => bsiFifoDout,
-         rd_data_count => open,
-         valid         => bsiFifoValid,
-         underflow     => open,
-         prog_empty    => open,
-         almost_empty  => open,
-         empty         => open
-         );
+         valid         => bsiFifoValid);
 
 end architecture IMP;
 

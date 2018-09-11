@@ -108,12 +108,9 @@ begin
          SLAVE_READY_EN_G    => true,
          VALID_THOLD_G       => 1,
          -- FIFO configurations
-         
-         -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
-         -- MEMORY_TYPE_G       => "distributed", <--- generic for future XPM FIFO release
-         BRAM_EN_G           => false,
-         GEN_SYNC_FIFO_G     => false,         
-        
+         SYNTH_MODE_G        => SYNTH_MODE_G,
+         MEMORY_TYPE_G       => "distributed",
+         GEN_SYNC_FIFO_G     => false,
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => RCEG3_AXIS_DMA_CONFIG_C,
@@ -137,12 +134,9 @@ begin
          SLAVE_READY_EN_G    => true,
          VALID_THOLD_G       => 1,
          -- FIFO configurations
-         
-         -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
-         -- MEMORY_TYPE_G       => "distributed", <--- generic for future XPM FIFO release
-         BRAM_EN_G           => false,
-         GEN_SYNC_FIFO_G     => false,              
-         
+         SYNTH_MODE_G        => SYNTH_MODE_G,
+         MEMORY_TYPE_G       => "distributed",
+         GEN_SYNC_FIFO_G     => false,
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => EMAC_AXIS_CONFIG_C,
