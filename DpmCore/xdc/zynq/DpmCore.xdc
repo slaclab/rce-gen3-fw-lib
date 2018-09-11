@@ -133,6 +133,9 @@ set_property IOSTANDARD LVDS_25 [get_ports dtmFbM]
 # Timing Constraints
 ####################
 
+# CPU Clock
+create_clock -name fclk0 -period 10.0 [get_pins {U_DpmCore/U_RceG3Top/GEN_SYNTH.U_RceG3Cpu/U_PS7/inst/PS7_i/FCLKCLK[0]}]
+
 create_clock -name ethRefClkP -period 6.400 [get_ports {ethRefClkP}]
 
 create_generated_clock -name clk200 [get_pins {U_DpmCore/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0}]

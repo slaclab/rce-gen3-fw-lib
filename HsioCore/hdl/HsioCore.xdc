@@ -152,6 +152,11 @@ set_clock_groups -asynchronous -group [get_clocks {clk125}] -group [get_clocks {
 create_clock -name ethRxClk0 -period 8.0 [get_ports ethRxClk[0]]
 create_clock -name ethRxClk1 -period 8.0 [get_ports ethRxClk[1]]
 
+set_clock_groups -asynchronous \
+    -group [get_clocks -include_generated_clocks fclk0] \
+    -group [get_clocks -include_generated_clocks ethRxClk0] \
+    -group [get_clocks -include_generated_clocks ethRxClk1]
+
 set_property IDELAY_VALUE  "16"   [get_cells -hier -filter {name =~ *GmiiToRgmiiCore_Inst/*delay_rgmii_rx_ctl          }]
 set_property IDELAY_VALUE  "16"   [get_cells -hier -filter {name =~ *GmiiToRgmiiCore_Inst/*delay_rgmii_rxd*            }]
 set_property IODELAY_GROUP "GmiiToRgmiiGrpA" [get_cells -hier -filter {name =~ *GmiiToRgmiiCore_Inst/*delay_rgmii_rx_ctl          }]
