@@ -229,7 +229,7 @@ begin
             end if;
 
          when READ_A_S =>
-            v.wrReq.address := rdAxisMaster.tData(31 downto 0);
+            v.wrReq.address(31 downto 0) := rdAxisMaster.tData(31 downto 0);
             v.wrReq.maxSize := rdAxisMaster.tData(63 downto 32);
 
             if rdAxisMaster.tValid = '1' then

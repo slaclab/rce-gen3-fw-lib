@@ -5,7 +5,7 @@
 -- Author     : Ryan Herbst <rherbst@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-03-08
+-- Last update: 2018-07-26
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ entity DpmCore is
    generic (
       TPD_G              : time                  := 1 ns;
       BUILD_INFO_G       : BuildInfoType;
-      ETH_10G_EN_G       : boolean               := false;
+      ETH_TYPE_G         : string                := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
       RCE_DMA_MODE_G     : RceDmaModeType        := RCE_DMA_PPI_C;
       AXI_ST_COUNT_G     : natural range 3 to 4  := 3;
       UDP_SERVER_EN_G    : boolean               := false;
@@ -46,7 +46,7 @@ entity DpmCore is
       BYP_ETH_TYPE_G     : slv(15 downto 0)      := x"AAAA";
       VLAN_EN_G          : boolean               := false;
       VLAN_SIZE_G        : positive range 1 to 8 := 1;
-      VLAN_VID_G         : Slv12Array            := (0 => x"001"));       
+      VLAN_VID_G         : Slv12Array            := (0 => x"001"));
    port (
       -- I2C
       i2cSda               : inout sl;
@@ -109,37 +109,55 @@ end DpmCore;
 
 architecture STRUCTURE of DpmCore is
 
-   signal iaxiClk             : sl;
-   signal iaxiClkRst          : sl;
-   signal isysClk125          : sl;
-   signal isysClk125Rst       : sl;
-   signal isysClk200          : sl;
-   signal isysClk200Rst       : sl;
-   signal idmaClk             : slv(3 downto 0);
-   signal idmaClkRst          : slv(3 downto 0);
-   signal idmaState           : RceDmaStateArray(3 downto 0);
-   signal idmaObMaster        : AxiStreamMasterArray(3 downto 0);
-   signal idmaObSlave         : AxiStreamSlaveArray(3 downto 0);
-   signal idmaIbMaster        : AxiStreamMasterArray(3 downto 0);
-   signal idmaIbSlave         : AxiStreamSlaveArray(3 downto 0);
+   signal iaxiClk : sl;
+   signal iaxiRst : sl;
+
+   signal idmaClk      : slv(3 downto 0);
+   signal idmaRst      : slv(3 downto 0);
+   signal idmaState    : RceDmaStateArray(3 downto 0);
+   signal idmaObMaster : AxiStreamMasterArray(3 downto 0);
+   signal idmaObSlave  : AxiStreamSlaveArray(3 downto 0);
+   signal idmaIbMaster : AxiStreamMasterArray(3 downto 0);
+   signal idmaIbSlave  : AxiStreamSlaveArray(3 downto 0);
+
    signal coreAxilReadMaster  : AxiLiteReadMasterType;
-   signal coreAxilReadSlave   : AxiLiteReadSlaveType := AXI_LITE_READ_SLAVE_EMPTY_DECERR_C;
+   signal coreAxilReadSlave   : AxiLiteReadSlaveType  := AXI_LITE_READ_SLAVE_EMPTY_DECERR_C;
    signal coreAxilWriteMaster : AxiLiteWriteMasterType;
    signal coreAxilWriteSlave  : AxiLiteWriteSlaveType := AXI_LITE_WRITE_SLAVE_EMPTY_DECERR_C;
-   signal armEthTx            : ArmEthTxArray(1 downto 0);
-   signal armEthRx            : ArmEthRxArray(1 downto 0);
-   signal armEthMode          : slv(31 downto 0);
+
+   signal armEthTx   : ArmEthTxArray(1 downto 0) := (others => ARM_ETH_TX_INIT_C);
+   signal armEthRx   : ArmEthRxArray(1 downto 0) := (others => ARM_ETH_RX_INIT_C);
+   signal armEthMode : slv(31 downto 0)          := (others => '0');
+
+   signal ethRefClk     : sl;
+   signal ethRefClkDiv2 : sl;
+   signal stableClk     : sl;
+   signal stableRst     : sl;
+
+   signal clk312 : sl;
+   signal clk200 : sl;
+   signal clk156 : sl;
+   signal clk125 : sl;
+   signal clk62  : sl;
+
+   signal rst312 : sl;
+   signal rst200 : sl;
+   signal rst156 : sl;
+   signal rst125 : sl;
+   signal rst62  : sl;
+
+   signal locked : sl;
 
 begin
 
    --------------------------------------------------
    -- Assertions to validate the configuration
    --------------------------------------------------
-   
+
    assert (RCE_DMA_MODE_G = RCE_DMA_Q4X2_C and AXI_ST_COUNT_G = 4) or RCE_DMA_MODE_G /= RCE_DMA_Q4X2_C
       report "Only AXI_ST_COUNT_G = 4 is supported when RCE_DMA_MODE_G = RCE_DMA_Q4X2_C"
       severity failure;
-   assert (RCE_DMA_MODE_G = RCE_DMA_Q4X2_C and ETH_10G_EN_G = false) or RCE_DMA_MODE_G /= RCE_DMA_Q4X2_C
+   assert (RCE_DMA_MODE_G = RCE_DMA_Q4X2_C and ETH_TYPE_G = "ZYNQ-GEM") or RCE_DMA_MODE_G /= RCE_DMA_Q4X2_C
       report "RCE_DMA_MODE_G = RCE_DMA_Q4X2_C is not supported when ETH_10G_EN_G = true"
       severity failure;
 
@@ -150,15 +168,15 @@ begin
    -- Inputs/Outputs
    --------------------------------------------------
    axiClk       <= iaxiClk;
-   axiClkRst    <= iaxiClkRst;
-   sysClk125    <= isysClk125;
-   sysClk125Rst <= isysClk125Rst;
-   sysClk200    <= isysClk200;
-   sysClk200Rst <= isysClk200Rst;
+   axiClkRst    <= iaxiRst;
+   sysClk125    <= clk125;
+   sysClk125Rst <= rst125;
+   sysClk200    <= clk200;
+   sysClk200Rst <= rst200;
 
    -- DMA Interfaces
    idmaClk(2 downto 0)      <= dmaClk(2 downto 0);
-   idmaClkRst(2 downto 0)   <= dmaClkRst(2 downto 0);
+   idmaRst(2 downto 0)      <= dmaClkRst(2 downto 0);
    dmaState(2 downto 0)     <= idmaState(2 downto 0);
    dmaObMaster(2 downto 0)  <= idmaObMaster(2 downto 0);
    idmaObSlave(2 downto 0)  <= dmaObSlave(2 downto 0);
@@ -176,12 +194,8 @@ begin
       port map (
          i2cSda              => i2cSda,
          i2cScl              => i2cScl,
-         sysClk125           => isysClk125,
-         sysClk125Rst        => isysClk125Rst,
-         sysClk200           => isysClk200,
-         sysClk200Rst        => isysClk200Rst,
          axiClk              => iaxiClk,
-         axiClkRst           => iaxiClkRst,
+         axiClkRst           => iaxiRst,
          extAxilReadMaster   => extAxilReadMaster,
          extAxilReadSlave    => extAxilReadSlave,
          extAxilWriteMaster  => extAxilWriteMaster,
@@ -191,7 +205,7 @@ begin
          coreAxilWriteMaster => coreAxilWriteMaster,
          coreAxilWriteSlave  => coreAxilWriteSlave,
          dmaClk              => idmaClk,
-         dmaClkRst           => idmaClkRst,
+         dmaClkRst           => idmaRst,
          dmaState            => idmaState,
          dmaObMaster         => idmaObMaster,
          dmaObSlave          => idmaObSlave,
@@ -216,24 +230,96 @@ begin
    clkSelA(1) <= '1';
    clkSelB(1) <= '1';
 
+   ------------------
+   -- Reference Clock
+   ------------------
+   U_IBUFDS_GTE2 : IBUFDS_GTE2
+      port map (
+         I     => ethRefClkP,
+         IB    => ethRefClkM,
+         CEB   => '0',
+         ODIV2 => ethRefClkDiv2,
+         O     => ethRefClk);
+
+   U_BUFG : BUFG
+      port map (
+         I => ethRefClkDiv2,
+         O => stableClk);
+
+   -----------------
+   -- Power Up Reset
+   -----------------
+   PwrUpRst_Inst : entity work.PwrUpRst
+      generic map (
+         TPD_G => TPD_G)
+      port map (
+         clk    => stableClk,
+         rstOut => stableRst);
+
+   -----------------
+   -- Clock Managers
+   -----------------   
+   U_MMCM : entity work.ClockManager7
+      generic map(
+         TPD_G              => TPD_G,
+         TYPE_G             => "MMCM",
+         INPUT_BUFG_G       => false,
+         FB_BUFG_G          => false,
+         RST_IN_POLARITY_G  => '1',
+         NUM_CLOCKS_G       => 5,
+         -- MMCM attributes
+         BANDWIDTH_G        => "OPTIMIZED",
+         CLKIN_PERIOD_G     => 12.8,    -- 78.125
+         DIVCLK_DIVIDE_G    => 1,       -- 78.125 MHz = (78.125 MHz/1)
+         CLKFBOUT_MULT_F_G  => 16.0,
+         CLKOUT0_DIVIDE_F_G => 6.25,    -- 200 MHz = (1.25 GHz/6.25)   
+         CLKOUT1_DIVIDE_G   => 4,       -- 312.5 MHz = (1.25 GHz/4)    
+         CLKOUT2_DIVIDE_G   => 8,       -- 156.25 MHz=(1.25GHz/8)             
+         CLKOUT3_DIVIDE_G   => 10,      -- 125 MHz = (1.25 GHz/10)    
+         CLKOUT4_DIVIDE_G   => 20)      -- 62.5 MHz = (1.25 GHz/20)    
+      port map(
+         clkIn     => stableClk,
+         rstIn     => stableRst,
+         -- Clock Outputs
+         clkOut(0) => clk200,
+         clkOut(1) => clk312,
+         clkOut(2) => clk156,
+         clkOut(3) => clk125,
+         clkOut(4) => clk62,
+         -- Reset Outputs
+         rstOut(0) => rst200,
+         rstOut(1) => rst312,
+         rstOut(2) => rst156,
+         rstOut(3) => rst125,
+         rstOut(4) => rst62,
+         -- Status
+         locked    => locked);
+
    --------------------------------------------------
    -- Ethernet
    --------------------------------------------------
-   U_Eth1gGen : if ETH_10G_EN_G = false generate
-      U_ZynqEthernet : entity work.ZynqEthernet
-         port map (
-            sysClk125    => isysClk125,
-            sysClk200    => isysClk200,
-            sysClk200Rst => isysClk200Rst,
-            armEthTx     => armEthTx(0),
-            armEthRx     => armEthRx(0),
-            ethRxP       => ethRxP(0),
-            ethRxM       => ethRxM(0),
-            ethTxP       => ethTxP(0),
-            ethTxM       => ethTxM(0));
+   U_Eth1gGen : if (ETH_TYPE_G = "ZYNQ-GEM") generate
 
-      userEthClk           <= isysClk125;
-      userEthClkRst        <= isysClk125Rst;
+      U_RceEthGem : entity work.RceEthGem
+         generic map (
+            TPD_G => TPD_G)
+         port map (
+            sysClk125 => clk125,
+            sysRst125 => rst125,
+            sysClk62  => clk62,
+            sysRst62  => rst62,
+            locked    => locked,
+            -- ARM Interface
+            armEthTx  => armEthTx(0),
+            armEthRx  => armEthRx(0),
+            -- Ethernet Lines
+            ethRxP    => ethRxP(0),
+            ethRxM    => ethRxM(0),
+            ethTxP    => ethTxP(0),
+            ethTxM    => ethTxM(0));
+
+      userEthClk           <= clk125;
+      userEthClkRst        <= rst125;
       userEthIpAddr        <= (others => '0');
       userEthMacAddr       <= (others => '0');
       userEthUdpIbSlave    <= AXI_STREAM_SLAVE_FORCE_C;
@@ -245,7 +331,7 @@ begin
 
       U_Q4X2DmaGen : if (RCE_DMA_MODE_G = RCE_DMA_Q4X2_C) generate
          idmaClk(3)                    <= dmaClk(AXI_ST_COUNT_G-1);
-         idmaClkRst(3)                 <= dmaClkRst(AXI_ST_COUNT_G-1);
+         idmaRst(3)                    <= dmaClkRst(AXI_ST_COUNT_G-1);
          idmaObSlave(3)                <= dmaObSlave(AXI_ST_COUNT_G-1);
          idmaIbMaster(3)               <= dmaIbMaster(AXI_ST_COUNT_G-1);
          dmaState(AXI_ST_COUNT_G-1)    <= idmaState(3);
@@ -253,24 +339,27 @@ begin
          dmaIbSlave(AXI_ST_COUNT_G-1)  <= idmaIbSlave(3);
       end generate;
       U_NoQ4X2DmaGen : if (RCE_DMA_MODE_G /= RCE_DMA_Q4X2_C) generate
-         idmaClk(3)      <= isysClk125;
-         idmaClkRst(3)   <= isysClk125Rst;
-         idmaObSlave(3)  <= AXI_STREAM_SLAVE_INIT_C;
+         idmaClk(3)      <= clk125;
+         idmaRst(3)      <= rst125;
+         idmaObSlave(3)  <= AXI_STREAM_SLAVE_FORCE_C;
          idmaIbMaster(3) <= AXI_STREAM_MASTER_INIT_C;
       end generate;
 
       ethTxP(3 downto 1) <= (others => '0');
       ethTxM(3 downto 1) <= (others => '0');
-      armEthRx(1)        <= ARM_ETH_RX_INIT_C;
-      armEthMode         <= x"00000001";  -- 1 Gig on lane 0
 
-    end generate;
+   end generate;
 
-   U_Eth10gGen : if ETH_10G_EN_G = true generate
-      U_ZynqEthernet10G : entity work.ZynqEthernet10G
+   U_Eth10gGen : if (ETH_TYPE_G /= "ZYNQ-GEM") generate
+
+      U_RceEthernet : entity work.RceEthernet
          generic map (
+            -- Generic Configurations
             TPD_G              => TPD_G,
             RCE_DMA_MODE_G     => RCE_DMA_MODE_G,
+            ETH_TYPE_G         => ETH_TYPE_G,
+            EN_JUMBO_G         => true,
+            -- User ETH Configurations
             UDP_SERVER_EN_G    => UDP_SERVER_EN_G,
             UDP_SERVER_SIZE_G  => UDP_SERVER_SIZE_G,
             UDP_SERVER_PORTS_G => UDP_SERVER_PORTS_G,
@@ -280,53 +369,69 @@ begin
             VLAN_SIZE_G        => VLAN_SIZE_G,
             VLAN_VID_G         => VLAN_VID_G)
          port map (
-            -- Clocks
-            sysClk200            => isysClk200,
-            sysClk200Rst         => isysClk200Rst,
+            -- Clocks and resets
+            clk200               => clk200,
+            rst200               => rst200,
+            clk156               => clk156,
+            rst156               => rst156,
+            clk125               => clk125,
+            rst125               => rst125,
+            clk62                => clk62,
+            rst62                => rst62,
             -- PPI Interface
             dmaClk               => idmaClk(3),
-            dmaClkRst            => idmaClkRst(3),
+            dmaRst               => idmaRst(3),
             dmaState             => idmaState(3),
             dmaIbMaster          => idmaIbMaster(3),
             dmaIbSlave           => idmaIbSlave(3),
             dmaObMaster          => idmaObMaster(3),
             dmaObSlave           => idmaObSlave(3),
-            -- User ETH interface (userEthClk domain)
+            -- User ETH interface
             userEthClk           => userEthClk,
-            userEthClkRst        => userEthClkRst,
+            userEthRst           => userEthClkRst,
             userEthIpAddr        => userEthIpAddr,
             userEthMacAddr       => userEthMacAddr,
-            userEthUdpObMaster   => userEthUdpObMaster,
-            userEthUdpObSlave    => userEthUdpObSlave,
             userEthUdpIbMaster   => userEthUdpIbMaster,
             userEthUdpIbSlave    => userEthUdpIbSlave,
-            userEthBypObMaster   => userEthBypObMaster,
-            userEthBypObSlave    => userEthBypObSlave,
+            userEthUdpObMaster   => userEthUdpObMaster,
+            userEthUdpObSlave    => userEthUdpObSlave,
             userEthBypIbMaster   => userEthBypIbMaster,
             userEthBypIbSlave    => userEthBypIbSlave,
-            userEthVlanObMasters => userEthVlanObMasters,
-            userEthVlanObSlaves  => userEthVlanObSlaves,
+            userEthBypObMaster   => userEthBypObMaster,
+            userEthBypObSlave    => userEthBypObSlave,
             userEthVlanIbMasters => userEthVlanIbMasters,
             userEthVlanIbSlaves  => userEthVlanIbSlaves,
+            userEthVlanObMasters => userEthVlanObMasters,
+            userEthVlanObSlaves  => userEthVlanObSlaves,
             -- AXI-Lite Buses
             axilClk              => iaxiClk,
-            axilClkRst           => iaxiClkRst,
+            axilRst              => iaxiRst,
             axilWriteMaster      => coreAxilWriteMaster,
             axilWriteSlave       => coreAxilWriteSlave,
             axilReadMaster       => coreAxilReadMaster,
             axilReadSlave        => coreAxilReadSlave,
             -- Ref Clock
-            ethRefClkP           => ethRefClkP,
-            ethRefClkM           => ethRefClkM,
+            ethRefClk            => ethRefClk,
             -- Ethernet Lines
             ethRxP               => ethRxP,
-            ethRxM               => ethRxM,
+            ethRxN               => ethRxM,
             ethTxP               => ethTxP,
-            ethTxM               => ethTxM);
-
-      armEthRx   <= (others => ARM_ETH_RX_INIT_C);
-      armEthMode <= x"03030303";        -- XAUI on lanes 3:0
+            ethTxN               => ethTxM);
 
    end generate;
+
+   process (iaxiClk)
+   begin
+      if rising_edge(iaxiClk) then
+         case ETH_TYPE_G is
+            when "ZYNQ-GEM"    => armEthMode <= x"00000001";
+            when "1000BASE-KX" => armEthMode <= x"00000002";
+            when "10GBASE-KX4" => armEthMode <= x"03030303";
+            when "10GBASE-KR"  => armEthMode <= x"0000000A";
+            when "40GBASE-KR4" => armEthMode <= x"0A0A0A0A";
+            when others        => armEthMode <= x"00000000";
+         end case;
+      end if;
+   end process;
 
 end architecture STRUCTURE;

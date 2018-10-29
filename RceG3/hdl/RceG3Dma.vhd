@@ -57,10 +57,10 @@ entity RceG3Dma is
       hpReadMaster        : out AxiReadMasterArray(3 downto 0);
 
       -- User memory access
-      userWriteSlave      : out AxiWriteSlaveType;
-      userWriteMaster     : in  AxiWriteMasterType;
-      userReadSlave       : out AxiReadSlaveType;
-      userReadMaster      : in  AxiReadMasterType;
+      auxWriteSlave       : out AxiWriteSlaveType;
+      auxWriteMaster      : in  AxiWriteMasterType;
+      auxReadSlave        : out AxiReadSlaveType;
+      auxReadMaster       : in  AxiReadMasterType;
 
       -- Local AXI Lite Bus, 0x600n0000
       dmaAxilReadMaster   : in  AxiLiteReadMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
@@ -120,8 +120,8 @@ begin
             dmaIbSlave       => dmaIbSlave
          );
 
-         userWriteSlave <= AXI_WRITE_SLAVE_INIT_C;
-         userReadSlave  <= AXI_READ_SLAVE_INIT_C;
+         auxWriteSlave <= AXI_WRITE_SLAVE_INIT_C;
+         auxReadSlave  <= AXI_READ_SLAVE_INIT_C;
 
    end generate;
 
@@ -145,10 +145,10 @@ begin
             hpWriteMaster    => hpWriteMaster,
             hpReadSlave      => hpReadSlave,
             hpReadMaster     => hpReadMaster,
-            userWriteSlave   => userWriteSlave,  
-            userWriteMaster  => userWriteMaster, 
-            userReadSlave    => userReadSlave,   
-            userReadMaster   => userReadMaster,  
+            auxWriteSlave    => auxWriteSlave,  
+            auxWriteMaster   => auxWriteMaster, 
+            auxReadSlave     => auxReadSlave,   
+            auxReadMaster    => auxReadMaster,  
             axilReadMaster   => dmaAxilReadMaster,
             axilReadSlave    => dmaAxilReadSlave,
             axilWriteMaster  => dmaAxilWriteMaster,
@@ -180,10 +180,10 @@ begin
             hpWriteMaster    => hpWriteMaster,
             hpReadSlave      => hpReadSlave,
             hpReadMaster     => hpReadMaster,
-            userWriteSlave   => userWriteSlave,  
-            userWriteMaster  => userWriteMaster, 
-            userReadSlave    => userReadSlave,   
-            userReadMaster   => userReadMaster,  
+            auxWriteSlave    => auxWriteSlave,  
+            auxWriteMaster   => auxWriteMaster, 
+            auxReadSlave     => auxReadSlave,   
+            auxReadMaster    => auxReadMaster,  
             axilReadMaster   => dmaAxilReadMaster,
             axilReadSlave    => dmaAxilReadSlave,
             axilWriteMaster  => dmaAxilWriteMaster,
@@ -235,6 +235,10 @@ begin
             dmaIbMaster      => dmaIbMaster,
             dmaIbSlave       => dmaIbSlave
          );
+
+         auxWriteSlave <= AXI_WRITE_SLAVE_INIT_C;
+         auxReadSlave  <= AXI_READ_SLAVE_INIT_C;
+
    end generate;
 
 end architecture structure;

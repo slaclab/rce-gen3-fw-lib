@@ -41,40 +41,15 @@ set_clock_groups -asynchronous \
     -group [get_clocks -include_generated_clocks sysClk200] \
     -group [get_clocks -include_generated_clocks sysClk125] \
 
-
-
+create_clock -name ethRxClk0 -period 8.0 [get_ports ethRxClk[0]]
+create_clock -name ethRxClk1 -period 8.0 [get_ports ethRxClk[1]]
 
 # DNA Primitive Clock
 create_clock -period 64.000 -name dnaClk [get_pins  {U_HsioCore/U_RceG3Top/U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/BUFR_Inst/O}]
 set_clock_groups -asynchronous \
     -group [get_clocks dnaClk] \
-    -group [get_clocks sysClk125] 
-
-
-# GMII To RGMII 
-
-# create_generated_clock -name gmii_clk_125m \
-#     [get_pins U_HsioCore/U_GmiiToRgmii/GmiiToRgmiiCore_Inst/U0/i_GmiiToRgmiiCore_clocking/mmcm_adv_inst/CLKOUT0]
-
-# create_clock -add -name rgmii_rxc0 -period 8.000 [get_ports ethRxClk[0]]
-# create_clock -add -name rgmii_rxc1 -period 8.000 [get_ports ethRxClk[1]]
-
-
-# # Set the select line for the clock muxes so that the timing analysis is done on the fastest clock
-# set_case_analysis 0 [get_pins -hier -filter {name =~ *i_bufgmux_gmii_clk/CE0}]
-# set_case_analysis 0 [get_pins -hier -filter {name =~ *i_bufgmux_gmii_clk/S0}]
-# set_case_analysis 1 [get_pins -hier -filter {name =~ *i_bufgmux_gmii_clk/CE1}]
-# set_case_analysis 1 [get_pins -hier -filter {name =~ *i_bufgmux_gmii_clk/S1}]
-
-# # GMII To RGMII 
-# # False path constraints to async inputs coming directly to synchronizer
-# set_false_path -to [get_pins -of [get_cells -hier -filter { name =~ *i_MANAGEMENT/SYNC_*/data_sync* } ]  -filter { name =~ *D } ]
-# set_false_path -to [get_pins -hier -filter {name =~ *reset_sync*/PRE }]
-# set_false_path -to [get_pins -hier -filter {name =~ *idelayctrl_reset_gen/*reset_sync*/PRE }]
-
-# # False path constraints from Control Register outputs
-# set_false_path -from [get_pins -hier -filter {name =~ *i_MANAGEMENT/DUPLEX_MODE_REG*/C }]
-# set_false_path -from [get_pins -hier -filter {name =~ *i_MANAGEMENT/SPEED_SELECTION_REG*/C }]
+    -group [get_clocks sysClk125] \
+    -group [get_clocks -of_objects [get_pins U_HsioCore/U_RceG3Top/U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/DNA_CLK_INV_BUFR/O]]
 
 # GMII-To-RGMII IODELAY Groups
 set_property IDELAY_VALUE  "16"   [get_cells -hier -filter {name =~ *GmiiToRgmiiCore_Inst/*delay_rgmii_rx_ctl          }]
@@ -87,94 +62,6 @@ set_property IDELAY_VALUE  "16"   [get_cells -hier -filter {name =~ *GmiiToRgmii
 set_property IDELAY_VALUE  "16"   [get_cells -hier -filter {name =~ *GmiiToRgmiiSlave_Inst/*delay_rgmii_rxd*            }]
 set_property IODELAY_GROUP "GmiiToRgmiiGrpA" [get_cells -hier -filter {name =~ *GmiiToRgmiiSlave_Inst/*delay_rgmii_rx_ctl          }]
 set_property IODELAY_GROUP "GmiiToRgmiiGrpA" [get_cells -hier -filter {name =~ *GmiiToRgmiiSlave_Inst/*delay_rgmii_rxd*            }]
-
-
-# Identify RGMII Rx Pads only.  
-# Receiver clock period constraints: please do not relax
-# set rx_clk0 [get_clocks -include_generated_clocks -of [get_ports ethRxClk[0]]]
-# set rx_clk1 [get_clocks -include_generated_clocks -of [get_ports ethRxClk[1]]]
-
-# # define a virtual clock to simplify the timing constraints
-# create_clock -name GmiiToRgmiiCore_rgmii_rx_clk -period 8
-
-# # Identify RGMII Rx Pads only.  
-# # This prevents setup/hold analysis being performed on false inputs,
-# # eg, the configuration_vector inputs.
-
-# set_input_delay -clock [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -max -1.5 [get_ports {ethRxDataA[0] ethRxDataB[0] ethRxDataC[0] ethRxDataD[0] ethRxCtrl[0]}]
-# set_input_delay -clock [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -min -2.8 [get_ports {ethRxDataA[0] ethRxDataB[0] ethRxDataC[0] ethRxDataD[0] ethRxCtrl[0]}]
-# set_input_delay -clock [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -clock_fall -max -1.5 -add_delay [get_ports {ethRxDataA[0] ethRxDataB[0] ethRxDataC[0] ethRxDataD[0] ethRxCtrl[0]}]
-# set_input_delay -clock [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -clock_fall -min -2.8 -add_delay [get_ports {ethRxDataA[0] ethRxDataB[0] ethRxDataC[0] ethRxDataD[0] ethRxCtrl[0]}]
-
-# set_false_path -rise_from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -fall_to $rx_clk0 -setup
-# set_false_path -fall_from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -rise_to $rx_clk0 -setup
-# set_false_path -rise_from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -rise_to [get_clocks $rx_clk0] -hold
-# set_false_path -fall_from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -fall_to $rx_clk0 -hold
-
-# set_multicycle_path -from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -to $rx_clk0 -setup 0
-# set_multicycle_path -from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk] -to $rx_clk0 -hold -1
-
-# # Identify RGMII Tx Pads only.  
-# set ip_gtx_clk     [get_clocks -include_generated_clocks -of_objects [get_pins -of [get_cells -hier -filter {name =~ *i_bufgmux_gmii_clk}] -filter {name =~ *O}]]
-
-# create_generated_clock -add -name rgmii_tx_clk -divide_by 1 \
-# -source [get_pins -of [get_cells -hier -filter {name =~ *GmiiToRgmiiCore*rgmii_txc_out}] -filter {name =~ *C}] \
-# -master_clock [get_clocks gmii_clk_125m] [get_ports ethTxClk[0]]
-
-
-# set_false_path -rise_from $ip_gtx_clk -fall_to [get_clocks rgmii_tx_clk] -setup
-# set_false_path -fall_from $ip_gtx_clk -rise_to [get_clocks rgmii_tx_clk] -setup
-# set_false_path -rise_from $ip_gtx_clk -rise_to [get_clocks rgmii_tx_clk] -hold
-# set_false_path -fall_from $ip_gtx_clk -fall_to [get_clocks rgmii_tx_clk] -hold
-
-# set_output_delay -1.0 -max -clock [get_clocks rgmii_tx_clk] [get_ports {ethTxDataA[0] ethTxDataB[0] ethTxDataC[0] ethTxDataD[0] ethTxCtrl[0]}]
-# set_output_delay -2.6 -min -clock [get_clocks rgmii_tx_clk] [get_ports {ethTxDataA[0] ethTxDataB[0] ethTxDataC[0] ethTxDataD[0] ethTxCtrl[0]}] -add_delay 
-# set_output_delay -1.0 -max -clock [get_clocks rgmii_tx_clk] [get_ports {ethTxDataA[0] ethTxDataB[0] ethTxDataC[0] ethTxDataD[0] ethTxCtrl[0]}] -clock_fall
-# set_output_delay -2.6 -min -clock [get_clocks rgmii_tx_clk] [get_ports {ethTxDataA[0] ethTxDataB[0] ethTxDataC[0] ethTxDataD[0] ethTxCtrl[0]}] -clock_fall 
-
-# set_multicycle_path 0 -setup -end -rise_from $ip_gtx_clk -rise_to [get_clocks rgmii_tx_clk]
-# set_multicycle_path 0 -setup -end -fall_from $ip_gtx_clk -fall_to [get_clocks rgmii_tx_clk]
-
-# # define a virtual clock to simplify the timing constraints
-# create_clock -name GmiiToRgmiiCore_rgmii_rx_clk2 -period 8
-
-# # Identify RGMII Rx Pads only.  
-# # This prevents setup/hold analysis being performed on false inputs,
-# # eg, the configuration_vector inputs.
-
-# set_input_delay -clock [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -max -1.7 [get_ports {ethRxDataA[1] ethRxDataB[1] ethRxDataC[1] ethRxDataD[1] ethRxCtrl[1]}]
-# set_input_delay -clock [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -min -2.5 [get_ports {ethRxDataA[1] ethRxDataB[1] ethRxDataC[1] ethRxDataD[1] ethRxCtrl[1]}]
-# set_input_delay -clock [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -clock_fall -max -1.7 -add_delay [get_ports {ethRxDataA[1] ethRxDataB[1] ethRxDataC[1] ethRxDataD[1] ethRxCtrl[1]}]
-# set_input_delay -clock [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -clock_fall -min -2.5 -add_delay [get_ports {ethRxDataA[1] ethRxDataB[1] ethRxDataC[1] ethRxDataD[1] ethRxCtrl[1]}]
-
-# set_false_path -rise_from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -fall_to $rx_clk1 -setup
-# set_false_path -fall_from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -rise_to $rx_clk1 -setup
-# set_false_path -rise_from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -rise_to [get_clocks $rx_clk1] -hold
-# set_false_path -fall_from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -fall_to $rx_clk1 -hold
-
-# set_multicycle_path -from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -to $rx_clk1 -setup 0
-# set_multicycle_path -from [get_clocks GmiiToRgmiiCore_rgmii_rx_clk2] -to $rx_clk1 -hold -1
-
-# # Identify RGMII Tx Pads only.  
-# create_generated_clock -add -name rgmii_tx_clk2 -divide_by 1 \
-# -source [get_pins -of [get_cells -hier -filter {name =~ *GmiiToRgmiiSlave*rgmii_txc_out}] -filter {name =~ *C}] \
-# -master_clock [get_clocks gmii_clk_125m] [get_ports ethTxClk[1]]
-
-
-# set_false_path -rise_from $ip_gtx_clk -fall_to [get_clocks rgmii_tx_clk2] -setup
-# set_false_path -fall_from $ip_gtx_clk -rise_to [get_clocks rgmii_tx_clk2] -setup
-# set_false_path -rise_from $ip_gtx_clk -rise_to [get_clocks rgmii_tx_clk2] -hold
-# set_false_path -fall_from $ip_gtx_clk -fall_to [get_clocks rgmii_tx_clk2] -hold
-
-# set_output_delay -1.0 -max -clock [get_clocks rgmii_tx_clk2] [get_ports {ethTxDataA[1] ethTxDataB[1] ethTxDataC[1] ethTxDataD[1] ethTxCtrl[1]}]
-# set_output_delay -2.6 -min -clock [get_clocks rgmii_tx_clk2] [get_ports {ethTxDataA[1] ethTxDataB[1] ethTxDataC[1] ethTxDataD[1] ethTxCtrl[1]}] -add_delay 
-# set_output_delay -1.0 -max -clock [get_clocks rgmii_tx_clk2] [get_ports {ethTxDataA[1] ethTxDataB[1] ethTxDataC[1] ethTxDataD[1] ethTxCtrl[1]}] -clock_fall
-# set_output_delay -2.6 -min -clock [get_clocks rgmii_tx_clk2] [get_ports {ethTxDataA[1] ethTxDataB[1] ethTxDataC[1] ethTxDataD[1] ethTxCtrl[1]}] -clock_fall 
-
-# set_multicycle_path 0 -setup -end -rise_from $ip_gtx_clk -rise_to [get_clocks rgmii_tx_clk2]
-# set_multicycle_path 0 -setup -end -fall_from $ip_gtx_clk -fall_to [get_clocks rgmii_tx_clk2]
-# StdLib
-set_property ASYNC_REG TRUE [get_cells -hierarchical *crossDomainSyncReg_reg*]
 
 #########################################################
 # Pin Locations. All Defined Here
@@ -307,6 +194,8 @@ set_property PACKAGE_PIN K3 [get_ports ethTxDataD[0]]
 set_property PACKAGE_PIN K7 [get_ports ethMdc[0]]
 set_property PACKAGE_PIN K6 [get_ports ethMio[0]]
 set_property PACKAGE_PIN N5 [get_ports ethResetL[0]]
+
+set_property slew FAST [get_ports [list {ethTxCtrl[*]} {ethTxClk[*]} {ethTxDataA[*]} {ethTxDataB[*]} {ethTxDataC[*]} {ethTxDataD[*]} {ethMdc[*]}  {ethResetL[*]} ]]
 
 #########################################################
 # Common IO Types

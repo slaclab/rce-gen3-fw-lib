@@ -31,7 +31,7 @@ package RceG3Pkg is
    constant DMA_AXIL_COUNT_C : integer := 9;
    constant DMA_INT_COUNT_C  : integer := 56;
 
-   constant USER_INT_COUNT_C : integer := 8;
+   constant USER_INT_COUNT_C : integer := 7;
 
    --------------------------------------------------------
    -- DMA Engine Types

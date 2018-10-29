@@ -39,6 +39,7 @@ entity RceG3Top is
       BUILD_INFO_G          : BuildInfoType;
       DMA_CLKDIV_EN_G       : boolean               := false;
       DMA_CLKDIV_G          : real                  := 5.0;
+      PCIE_EN_G             : boolean               := false;
       RCE_DMA_MODE_G        : RceDmaModeType        := RCE_DMA_PPI_C;
       SIM_MODEL_G           : boolean               := false
    );
@@ -69,6 +70,15 @@ entity RceG3Top is
       coreAxilReadSlave        : in    AxiLiteReadSlaveType;
       coreAxilWriteMaster      : out   AxiLiteWriteMasterType;
       coreAxilWriteSlave       : in    AxiLiteWriteSlaveType;
+
+      -- PCIE
+      pciRefClkP               : in    sl := '0';
+      pciRefClkM               : in    sl := '0';
+      pciResetL                : out   sl;
+      pcieRxP                  : in    sl := '0';
+      pcieRxM                  : in    sl := '0';
+      pcieTxP                  : out   sl;
+      pcieTxM                  : out   sl;
 
       -- DMA Interfaces
       dmaClk                   : in    slv(3 downto 0);
@@ -145,6 +155,12 @@ architecture structure of RceG3Top is
    signal bsiInterrupt        : sl;
    signal eFuseValue          : slv(31 downto 0);
    signal deviceDna           : slv(63 downto 0);
+   signal auxReadMaster       : AxiReadMasterType;
+   signal auxReadSlave        : AxiReadSlaveType;
+   signal auxAxiClk           : sl;
+   signal auxWriteMaster      : AxiWriteMasterType;
+   signal auxWriteSlave       : AxiWriteSlaveType;
+   signal pcieInterrupt       : sl;
 
    attribute KEEP_HIERARCHY : string;
    attribute KEEP_HIERARCHY of
@@ -193,7 +209,7 @@ begin
             acpReadMaster        => acpReadMaster,
             hpAxiClk(0)          => axiDmaClk,
             hpAxiClk(1)          => axiDmaClk,
-            hpAxiClk(2)          => axiDmaClk,
+            hpAxiClk(2)          => auxAxiClk,
             hpAxiClk(3)          => axiDmaClk,
             hpWriteSlave         => hpWriteSlave,
             hpWriteMaster        => hpWriteMaster,
@@ -290,6 +306,7 @@ begin
       generic map (
          TPD_G            => TPD_G,
          BUILD_INFO_G     => BUILD_INFO_G,
+         PCIE_EN_G        => PCIE_EN_G,
          RCE_DMA_MODE_G   => RCE_DMA_MODE_G
       ) port map (
          mGpReadMaster        => mGpReadMaster,
@@ -320,6 +337,23 @@ begin
          coreAxilReadSlave    => coreAxilReadSlave,
          coreAxilWriteMaster  => coreAxilWriteMaster,
          coreAxilWriteSlave   => coreAxilWriteSlave,
+         userReadMaster       => userReadMaster,
+         userReadSlave        => userReadSlave,
+         userWriteMaster      => userWriteMaster,
+         userWriteSlave       => userWriteSlave,
+         auxReadMaster        => auxReadMaster,
+         auxReadSlave         => auxReadSlave,
+         auxWriteMaster       => auxWriteMaster,
+         auxWriteSlave        => auxWriteSlave,
+         auxAxiClk            => auxAxiClk,
+         pciRefClkP           => pciRefClkP,
+         pciRefClkM           => pciRefClkM,
+         pciResetL            => pciResetL,
+         pcieInt              => pcieInterrupt,
+         pcieRxP              => pcieRxP,
+         pcieRxM              => pcieRxM,
+         pcieTxP              => pcieTxP,
+         pcieTxM              => pcieTxM,
          clkSelA              => clkSelA,
          clkSelB              => clkSelB,
          armEthMode           => armEthMode,
@@ -367,10 +401,10 @@ begin
          hpWriteMaster        => hpWriteMaster,
          hpReadSlave          => hpReadSlave,
          hpReadMaster         => hpReadMaster,
-         userWriteSlave       => userWriteSlave,
-         userWriteMaster      => userWriteMaster,
-         userReadSlave        => userReadSlave,
-         userReadMaster       => userReadMaster,
+         auxWriteSlave        => auxWriteSlave,
+         auxWriteMaster       => auxWriteMaster,
+         auxReadSlave         => auxReadSlave,
+         auxReadMaster        => auxReadMaster,
          dmaAxilReadMaster    => dmaAxilReadMaster,
          dmaAxilReadSlave     => dmaAxilReadSlave,
          dmaAxilWriteMaster   => dmaAxilWriteMaster,
@@ -401,6 +435,7 @@ begin
          icAxilWriteMaster    => icAxilWriteMaster,
          icAxilWriteSlave     => icAxilWriteSlave,
          dmaInterrupt         => dmaInterrupt,
+         pcieInterrupt        => pcieInterrupt,
          userInterrupt        => userInterrupt,
          armInterrupt         => armInterrupt
       );

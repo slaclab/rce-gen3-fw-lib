@@ -55,25 +55,25 @@ create_generated_clock -name intEthClk1 -source ${eth_txoutclk_pin} \
 # PCI Express Clocks
 create_clock -name pciRefClk -period 10 [get_ports pciRefClkP]
 
-set pci_txoutclk_pin [get_pins {U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK}]
-#set pci_txoutclk_pin [get_pins U_DtmCore/U_ZynqPcieMaster/U_Pcie/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK]
+set pci_txoutclk_pin [get_pins {U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK}]
+#set pci_txoutclk_pin [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_Pcie/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK]
 create_clock -name pci_txoutclk -period 10 ${pci_txoutclk_pin}
 
 create_generated_clock -name pcieClk125 -source ${pci_txoutclk_pin} \
     -multiply_by 5 -divide_by 4 \
-    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT0]
+    [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT0]
 
 create_generated_clock -name pcieClk250 -source ${pci_txoutclk_pin} \
     -multiply_by 5 -divide_by 2 \
-    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT1]
+    [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT1]
 
 create_generated_clock -name pcieUserClk1 -source ${pci_txoutclk_pin} \ 
     -multiply_by 5 -divide_by 8 \
-    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT2]
+    [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT2]
 
 create_generated_clock -name pcieUserClk2 -source ${pci_txoutclk_pin} \
     -multiply_by 5 -divide_by 8 \
-    [get_pins U_DtmCore/U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT3]
+    [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT3]
 
 set_clock_groups -asynchronous \
     -group [get_clocks -include_generated_clocks fclk0] \

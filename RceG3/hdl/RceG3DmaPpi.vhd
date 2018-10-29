@@ -124,7 +124,6 @@ begin
       interrupt(DMA_INT_COUNT_C-1 downto PPI_COMP_CNT_C+24) <= (others=>'0');
    end generate;
 
-
    -- Sockets
    U_PpiGen : for i in 0 to 3 generate
       U_PpiSocket : entity work.PpiSocket

@@ -209,11 +209,11 @@ begin
 
          -- get payload descriptor portion of header
          when DESCA_S =>
-            v.dmaReq.address          := obPendMaster.tData(31 downto 0);
-            v.dmaReq.size             := obPendMaster.tData(63 downto 32);
-            v.dmaReq.dest(3 downto 0) := obPendMaster.tDest(3 downto 0);
-            v.hAxisSlave.tReady       := '1';
-            v.noHeader                := '0';
+            v.dmaReq.address(31 downto 0) := obPendMaster.tData(31 downto 0);
+            v.dmaReq.size                 := obPendMaster.tData(63 downto 32);
+            v.dmaReq.dest(3 downto 0)     := obPendMaster.tDest(3 downto 0);
+            v.hAxisSlave.tReady           := '1';
+            v.noHeader                    := '0';
             -- Update the Max. Size
             if obPendMaster.tData(63 downto 32) > r.sizeMax then
                v.sizeMax := obPendMaster.tData(63 downto 32);
