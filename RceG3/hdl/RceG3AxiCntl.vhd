@@ -31,6 +31,7 @@ use work.RceG3Pkg.all;
 use work.StdRtlPkg.all;
 use work.AxiLitePkg.all;
 use work.AxiPkg.all;
+use work.RceG3Pkg.all;
 use work.RceG3Version.all;
 
 entity RceG3AxiCntl is
@@ -101,18 +102,18 @@ entity RceG3AxiCntl is
 
       -- PCIE AXI Interface
       pciRefClkP      : in  sl;
-      pciRefClkM      : in  sl;
+      pciRefClkN      : in  sl;
       pciResetL       : out sl;
       pcieInt         : out sl;
       pcieRxP         : in  sl;
-      pcieRxM         : in  sl;
+      pcieRxN         : in  sl;
       pcieTxP         : out sl;
-      pcieTxM         : out sl;
+      pcieTxN         : out sl;
 
       -- Ethernet Mode
       armEthMode : in  slv(31 downto 0);
       eFuseValue : out slv(31 downto 0);
-      deviceDna  : out slv(63 downto 0);
+      deviceDna  : out slv(127 downto 0);
 
       -- Clock Select Lines
       clkSelA : out slv(1 downto 0);
@@ -158,7 +159,6 @@ architecture structure of RceG3AxiCntl is
    signal intWriteMaster : AxiLiteWriteMasterType;
    signal intWriteSlave  : AxiLiteWriteSlaveType;
    signal dnaValue       : slv(127 downto 0);
-   signal dnaValid       : sl;
    signal eFuseUsr       : slv(31 downto 0);
 
    type RegType is record
@@ -324,9 +324,17 @@ begin
    -------------------------------------
    U_ICEN: if PCIE_EN_G generate
 
+      ----------------------------------------------------------------------------      
+      --                         PCIE Root Complex                              --
+      ----------------------------------------------------------------------------      
+      -- This VHDL wrapper is determined by the ZYNQ family type
+      -- Zynq-7000:        rce-gen3-fw-lib/RceG3/hdl/zynq/RceG3PcieRoot.vhd
+      -- Zynq Ultrascale+: rce-gen3-fw-lib/RceG3/hdl/zynquplus/RceG3PcieRoot.vhd
+      ----------------------------------------------------------------------------    
       -- Local    = 0x80000000 - 9FFFFFFF
       -- pcie cfg = 0xA0000000 - AFFFFFFF
       -- pcie bar = 0xB0000000 - BFFFFFFF
+      ----------------------------------------------------------------------------    
       U_RceG3PcieRoot: entity work.RceG3PcieRoot
          generic map ( TPD_G  => TPD_G )
          port map (
@@ -345,13 +353,13 @@ begin
             pcieWriteMaster  => auxWriteMaster,
             pcieWriteSlave   => auxWriteSlave,
             pciRefClkP       => pciRefClkP,
-            pciRefClkM       => pciRefClkM,
+            pciRefClkN       => pciRefClkN,
             pciResetL        => pciResetL,
             pcieInt          => pcieInt,
             pcieRxP          => pcieRxP,
-            pcieRxM          => pcieRxM,
+            pcieRxN          => pcieRxN,
             pcieTxP          => pcieTxP,
-            pcieTxM          => pcieTxM
+            pcieTxN          => pcieTxN
          );
 
       userReadSlave  <= AXI_READ_SLAVE_INIT_C;
@@ -372,7 +380,7 @@ begin
       pciResetL  <= '0';
       pcieInt    <= '0';
       pcieTxP    <= '0';
-      pcieTxM    <= '0';
+      pcieTxN    <= '0';
 
       gp1AxiReadMaster  <= mGpReadMaster(1);
       mGpReadSlave(1)   <= gp1AxiReadSlave;
@@ -459,7 +467,7 @@ begin
    end process;
 
    -- Async
-   process (armEthMode, axiClkRst, dnaValid, dnaValue, eFuseUsr, intReadMaster, intWriteMaster, r) is
+   process (armEthMode, axiClkRst, dnaValue, eFuseUsr, intReadMaster, intWriteMaster, r) is
       variable v         : RegType;
       variable axiStatus : AxiLiteStatusType;
       variable c         : character;
@@ -511,10 +519,13 @@ begin
                   v.intReadSlave.rdata(0) := r.clkSelA(1);
                   v.intReadSlave.rdata(1) := r.clkSelB(1);
                when X"0020" =>
-                  v.intReadSlave.rdata(31)          := dnaValid;
-                  v.intReadSlave.rdata(24 downto 0) := dnaValue(56 downto 32);
-               when X"0024" =>
                   v.intReadSlave.rdata := dnaValue(31 downto 0);
+               when X"0024" =>
+                  v.intReadSlave.rdata := dnaValue(63 downto 32);
+               when X"0028" =>
+                  v.intReadSlave.rdata := dnaValue(95 downto 64);
+               when X"002C" =>
+                  v.intReadSlave.rdata := dnaValue(127 downto 96);   
                when X"0030" =>
                   v.intReadSlave.rdata := eFuseUsr;
                when X"0034" =>
@@ -557,22 +568,18 @@ begin
       
    end process;
 
-
    -------------------------------------
    -- Device DNA
    -------------------------------------
    U_DeviceDna : entity work.DeviceDna
       generic map (
-         TPD_G           => TPD_G,
-         RST_POLARITY_G  => '1',
-         SIM_DNA_VALUE_G => X"000000000000000"
-         ) port map (
+         TPD_G        => TPD_G,
+         XIL_DEVICE_G => XIL_DEVICE_C) 
+      port map (
             clk      => axiClk,
             rst      => axiClkRst,
-            dnaValue => dnaValue,
-            dnaValid => dnaValid
-            );
-   deviceDna <= dnaValue(63 downto 0);
+            dnaValue => dnaValue);
+   deviceDna <= dnaValue;
 
    -------------------------------------
    -- EFuse

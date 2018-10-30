@@ -1,23 +1,18 @@
 -------------------------------------------------------------------------------
--- Title      : Common DTM Core Module
--- File       : DtmCore.vhd
--- Author     : Ryan Herbst, rherbst@slac.stanford.edu
+-- File       : HsioCore.vhd
+-- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2016-08-02
+-- Last update: 2018-08-30
 -------------------------------------------------------------------------------
--- Description:
--- Common top level module for DTM
+-- Description: Common top level module for HSIO
 -------------------------------------------------------------------------------
--- This file is part of 'SLAC RCE DTM Core'.
+-- This file is part of 'SLAC RCE DPM Core'.
 -- It is subject to the license terms in the LICENSE.txt file found in the 
 -- top-level directory of this distribution and at: 
 --    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
--- No part of 'SLAC RCE DTM Core', including this file, 
+-- No part of 'SLAC RCE DPM Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 11/14/2013: created.
 -------------------------------------------------------------------------------
 
 library ieee;
@@ -27,158 +22,155 @@ use work.RceG3Pkg.all;
 use work.StdRtlPkg.all;
 use work.AxiLitePkg.all;
 use work.AxiStreamPkg.all;
+use work.AxiPkg.all;
 
 library unisim;
 use unisim.vcomponents.all;
 
 entity HsioCore is
    generic (
-      TPD_G          : time           := 1 ns;
+      TPD_G          : time                   := 1 ns;
       BUILD_INFO_G   : BuildInfoType;
-      RCE_DMA_MODE_G : RceDmaModeType := RCE_DMA_PPI_C
-   );
+      SIM_USER_ID_G  : natural range 0 to 100 := 1;
+      SIMULATION_G   : boolean                := false;
+      RCE_DMA_MODE_G : RceDmaModeType         := RCE_DMA_PPI_C);
    port (
-
       -- I2C
-      i2cSda                  : inout sl;
-      i2cScl                  : inout sl;
-
+      i2cSda             : inout sl;
+      i2cScl             : inout sl;
       -- Clock Select
-      clkSelA                 : out   sl;
-      clkSelB                 : out   sl;
-
+      clkSelA            : out   sl;
+      clkSelB            : out   sl;
       -- Base Ethernet
-      ethRxCtrl               : in    slv(1 downto 0);
-      ethRxClk                : in    slv(1 downto 0);
-      ethRxDataA              : in    Slv(1 downto 0);
-      ethRxDataB              : in    Slv(1 downto 0);
-      ethRxDataC              : in    Slv(1 downto 0);
-      ethRxDataD              : in    Slv(1 downto 0);
-      ethTxCtrl               : out   slv(1 downto 0);
-      ethTxClk                : out   slv(1 downto 0);
-      ethTxDataA              : out   Slv(1 downto 0);
-      ethTxDataB              : out   Slv(1 downto 0);
-      ethTxDataC              : out   Slv(1 downto 0);
-      ethTxDataD              : out   Slv(1 downto 0);
-      ethMdc                  : out   Slv(1 downto 0);
-      ethMio                  : inout Slv(1 downto 0);
-      ethResetL               : out   Slv(1 downto 0);
-
+      ethRxCtrl          : in    slv(1 downto 0);
+      ethRxClk           : in    slv(1 downto 0);
+      ethRxDataA         : in    Slv(1 downto 0);
+      ethRxDataB         : in    Slv(1 downto 0);
+      ethRxDataC         : in    Slv(1 downto 0);
+      ethRxDataD         : in    Slv(1 downto 0);
+      ethTxCtrl          : out   slv(1 downto 0);
+      ethTxClk           : out   slv(1 downto 0);
+      ethTxDataA         : out   Slv(1 downto 0);
+      ethTxDataB         : out   Slv(1 downto 0);
+      ethTxDataC         : out   Slv(1 downto 0);
+      ethTxDataD         : out   Slv(1 downto 0);
+      ethMdc             : out   Slv(1 downto 0);
+      ethMio             : inout Slv(1 downto 0);
+      ethResetL          : out   Slv(1 downto 0);
       -- IPMI
-      dtmToIpmiP              : out   slv(1 downto 0);
-      dtmToIpmiM              : out   slv(1 downto 0);
-
+      dtmToIpmiP         : out   slv(1 downto 0);
+      dtmToIpmiM         : out   slv(1 downto 0);
       -- Clocks
-      sysClk125               : out   sl;
-      sysClk125Rst            : out   sl;
-      sysClk200               : out   sl;
-      sysClk200Rst            : out   sl;
-
+      sysClk125          : out   sl;
+      sysClk125Rst       : out   sl;
+      sysClk200          : out   sl;
+      sysClk200Rst       : out   sl;
       -- External Axi Bus, 0xA0000000 - 0xAFFFFFFF
-      axiClk                  : out   sl;
-      axiClkRst               : out   sl;
-      extAxilReadMaster       : out   AxiLiteReadMasterType;
-      extAxilReadSlave        : in    AxiLiteReadSlaveType;
-      extAxilWriteMaster      : out   AxiLiteWriteMasterType;
-      extAxilWriteSlave       : in    AxiLiteWriteSlaveType;
-
+      axiClk             : out   sl;
+      axiClkRst          : out   sl;
+      extAxilReadMaster  : out   AxiLiteReadMasterType;
+      extAxilReadSlave   : in    AxiLiteReadSlaveType;
+      extAxilWriteMaster : out   AxiLiteWriteMasterType;
+      extAxilWriteSlave  : in    AxiLiteWriteSlaveType;
       -- DMA Interfaces
-      dmaClk                  : in    slv(3 downto 0);
-      dmaClkRst               : in    slv(3 downto 0);
-      dmaState                : out   RceDmaStateArray(3 downto 0);
-      dmaObMaster             : out   AxiStreamMasterArray(3 downto 0);
-      dmaObSlave              : in    AxiStreamSlaveArray(3 downto 0);
-      dmaIbMaster             : in    AxiStreamMasterArray(3 downto 0);
-      dmaIbSlave              : out   AxiStreamSlaveArray(3 downto 0);
-
+      dmaClk             : in    slv(3 downto 0);
+      dmaClkRst          : in    slv(3 downto 0);
+      dmaState           : out   RceDmaStateArray(3 downto 0);
+      dmaObMaster        : out   AxiStreamMasterArray(3 downto 0);
+      dmaObSlave         : in    AxiStreamSlaveArray(3 downto 0);
+      dmaIbMaster        : in    AxiStreamMasterArray(3 downto 0);
+      dmaIbSlave         : out   AxiStreamSlaveArray(3 downto 0);
       -- User Interrupts
-      userInterrupt            : in    slv(USER_INT_COUNT_C-1 downto 0)
-
-   );
+      userInterrupt      : in    slv(USER_INT_COUNT_C-1 downto 0) := (others => '0'));
 end HsioCore;
 
-architecture STRUCTURE of HsioCore is
+architecture mapping of HsioCore is
 
-   signal iaxiClk             : sl;
-   signal iaxiClkRst          : sl;
-   signal isysClk125          : sl;
-   signal isysClk125Rst       : sl;
-   signal isysClk200          : sl;
-   signal isysClk200Rst       : sl;
-   signal idmaClk             : slv(3 downto 0);
-   signal idmaClkRst          : slv(3 downto 0);
-   signal idmaState           : RceDmaStateArray(3 downto 0);
-   signal idmaObMaster        : AxiStreamMasterArray(3 downto 0);
-   signal idmaObSlave         : AxiStreamSlaveArray(3 downto 0);
-   signal idmaIbMaster        : AxiStreamMasterArray(3 downto 0);
-   signal idmaIbSlave         : AxiStreamSlaveArray(3 downto 0);
-   signal armEthTx            : ArmEthTxArray(1 downto 0);
-   signal armEthRx            : ArmEthRxArray(1 downto 0);
-   signal armEthMode          : slv(31 downto 0);
+   signal axilClock : sl;
+   signal axilReset : sl;
 
-   attribute KEEP_HIERARCHY : string;
-   attribute KEEP_HIERARCHY of
-      U_RceG3Top : label is "TRUE";   
-   
+   signal axiDmaClock : sl;
+   signal axiDmaReset : sl;
+
+   signal idmaClk      : slv(3 downto 0);
+   signal idmaRst      : slv(3 downto 0);
+   signal idmaState    : RceDmaStateArray(3 downto 0);
+   signal idmaObMaster : AxiStreamMasterArray(3 downto 0);
+   signal idmaObSlave  : AxiStreamSlaveArray(3 downto 0);
+   signal idmaIbMaster : AxiStreamMasterArray(3 downto 0);
+   signal idmaIbSlave  : AxiStreamSlaveArray(3 downto 0);
+
+   signal armEthTx   : ArmEthTxArray(1 downto 0);
+   signal armEthRx   : ArmEthRxArray(1 downto 0);
+   signal armEthMode : slv(31 downto 0);
+
 begin
 
    --------------------------------------------------
-   -- Outputs
+   -- Inputs/Outputs
    --------------------------------------------------
-   axiClk          <= iaxiClk;
-   axiClkRst       <= iaxiClkRst;
-   sysClk125       <= isysClk125;
-   sysClk125Rst    <= isysClk125Rst;
-   sysClk200       <= isysClk200;
-   sysClk200Rst    <= isysClk200Rst;
+   axiClk       <= axilClock;
+   axiClkRst    <= axilReset;
+   sysClk125    <= axilClock;
+   sysClk125Rst <= axilReset;
+   sysClk200    <= axiDmaClock;
+   sysClk200Rst <= axiDmaReset;
 
    -- DMA Interfaces
-   idmaClk(3 downto 0)      <= dmaClk;
-   idmaClkRst(3 downto 0)   <= dmaClkRst;
-   dmaState                 <= idmaState(3 downto 0);
-   dmaObMaster              <= idmaObMaster(3 downto 0);
-   idmaObSlave(3 downto 0)  <= dmaObSlave;
-   idmaIbMaster(3 downto 0) <= dmaIbMaster;
-   dmaIbSlave               <= idmaIbSlave(3 downto 0);
-
+   idmaClk(3 downto 0)      <= dmaClk(3 downto 0);
+   idmaRst(3 downto 0)      <= dmaClkRst(3 downto 0);
+   dmaState(3 downto 0)     <= idmaState(3 downto 0);
+   dmaObMaster(3 downto 0)  <= idmaObMaster(3 downto 0);
+   idmaObSlave(3 downto 0)  <= dmaObSlave(3 downto 0);
+   idmaIbMaster(3 downto 0) <= dmaIbMaster(3 downto 0);
+   dmaIbSlave(3 downto 0)   <= idmaIbSlave(3 downto 0);
 
    --------------------------------------------------
    -- RCE Core
    --------------------------------------------------
-   U_RceG3Top: entity work.RceG3Top
+   U_RceG3Top : entity work.RceG3Top
       generic map (
          TPD_G          => TPD_G,
          BUILD_INFO_G   => BUILD_INFO_G,
-         RCE_DMA_MODE_G => RCE_DMA_MODE_G
-      ) port map (
-         i2cSda              => i2cSda,
-         i2cScl              => i2cScl,
-         sysClk125           => isysClk125,
-         sysClk125Rst        => isysClk125Rst,
-         sysClk200           => isysClk200,
-         sysClk200Rst        => isysClk200Rst,
-         axiClk              => iaxiClk,
-         axiClkRst           => iaxiClkRst,
-         extAxilReadMaster   => extAxilReadMaster,
-         extAxilReadSlave    => extAxilReadSlave ,
-         extAxilWriteMaster  => extAxilWriteMaster,
-         extAxilWriteSlave   => extAxilWriteSlave ,
-         coreAxilReadSlave   => AXI_LITE_READ_SLAVE_INIT_C,
-         coreAxilWriteSlave  => AXI_LITE_WRITE_SLAVE_INIT_C,
-         dmaClk              => idmaClk,
-         dmaClkRst           => idmaClkRst,
-         dmaState            => idmaState,
-         dmaObMaster         => idmaObMaster,
-         dmaObSlave          => idmaObSlave,
-         dmaIbMaster         => idmaIbMaster,
-         dmaIbSlave          => idmaIbSlave,
-         userInterrupt       => userInterrupt,
-         armEthTx            => armEthTx,
-         armEthRx            => armEthRx,
-         armEthMode          => armEthMode,
-         clkSelA             => open,
-         clkSelB             => open
-      );
+         SIM_USER_ID_G  => SIM_USER_ID_G,
+         SIMULATION_G   => SIMULATION_G,
+         RCE_DMA_MODE_G => RCE_DMA_MODE_G,
+         SEL_REFCLK_G   => false)       -- false = ZYNQ ref
+      port map (
+         -- I2C Ports
+         i2cSda             => i2cSda,
+         i2cScl             => i2cScl,
+         -- Reference Clock
+         ethRefClkP         => '0',     -- Using ZYNQ ref
+         ethRefClkN         => '1',
+         -- DMA clock and reset
+         axiDmaClk          => axiDmaClock,
+         axiDmaRst          => axiDmaReset,
+         -- AXI-Lite clock and reset
+         axilClk            => axilClock,
+         axilRst            => axilReset,
+         -- External Axi Bus, 0xA0000000 - 0xAFFFFFFF  (axilClk domain)
+         extAxilReadMaster  => extAxilReadMaster,
+         extAxilReadSlave   => extAxilReadSlave,
+         extAxilWriteMaster => extAxilWriteMaster,
+         extAxilWriteSlave  => extAxilWriteSlave,
+         -- Core Axi Bus, 0xB0000000 - 0xBFFFFFFF  (axilClk domain)
+         coreAxilReadSlave  => AXI_LITE_READ_SLAVE_INIT_C,
+         coreAxilWriteSlave => AXI_LITE_WRITE_SLAVE_INIT_C,
+         -- DMA Interfaces (dmaClk domain)
+         dmaClk             => idmaClk,
+         dmaClkRst          => idmaRst,
+         dmaState           => idmaState,
+         dmaObMaster        => idmaObMaster,
+         dmaObSlave         => idmaObSlave,
+         dmaIbMaster        => idmaIbMaster,
+         dmaIbSlave         => idmaIbSlave,
+         -- User Interrupts (axilClk domain)
+         userInterrupt      => userInterrupt,
+         -- ZYNQ GEM Interface
+         armEthTx           => armEthTx,
+         armEthRx           => armEthRx,
+         armEthMode         => armEthMode);
 
    -- Hard code to 250Mhz
    clkSelA <= '1';
@@ -187,43 +179,36 @@ begin
    --------------------------------------------------
    -- Ethernet
    --------------------------------------------------
-   U_GmiiToRgmii : entity work.GmiiToRgmiiDual  -- Fix constraint path
+   U_GmiiToRgmii : entity work.GmiiToRgmiiDual
       port map (
-         sysClk200     => isysClk200,
-         sysClk200Rst  => isysClk200Rst,
-         armEthTx      => armEthTx,
-         armEthRx      => armEthRx,
-         ethRxCtrl     => ethRxCtrl,
-         ethRxClk      => ethRxClk,
-         ethRxDataA    => ethRxDataA,
-         ethRxDataB    => ethRxDataB,
-         ethRxDataC    => ethRxDataC,
-         ethRxDataD    => ethRxDataD,
-         ethTxCtrl     => ethTxCtrl,
-         ethTxClk      => ethTxClk,
-         ethTxDataA    => ethTxDataA,
-         ethTxDataB    => ethTxDataB,
-         ethTxDataC    => ethTxDataC,
-         ethTxDataD    => ethTxDataD,
-         ethMdc        => ethMdc,
-         ethMio        => ethMio,
-         ethResetL     => ethResetL
-      );
+         sysClk200    => axiDmaClock,
+         sysClk200Rst => axiDmaReset,
+         armEthTx     => armEthTx,
+         armEthRx     => armEthRx,
+         ethRxCtrl    => ethRxCtrl,
+         ethRxClk     => ethRxClk,
+         ethRxDataA   => ethRxDataA,
+         ethRxDataB   => ethRxDataB,
+         ethRxDataC   => ethRxDataC,
+         ethRxDataD   => ethRxDataD,
+         ethTxCtrl    => ethTxCtrl,
+         ethTxClk     => ethTxClk,
+         ethTxDataA   => ethTxDataA,
+         ethTxDataB   => ethTxDataB,
+         ethTxDataC   => ethTxDataC,
+         ethTxDataD   => ethTxDataD,
+         ethMdc       => ethMdc,
+         ethMio       => ethMio,
+         ethResetL    => ethResetL);
 
-   armEthMode      <= x"00000001"; -- 1 Gig on lane 0
---    idmaClk(3)      <= isysClk125;
---    idmaClkRst(3)   <= isysClk125Rst;
---    idmaObSlave(3)  <= AXI_STREAM_SLAVE_INIT_C;
---    idmaIbMaster(3) <= AXI_STREAM_MASTER_INIT_C;
+   armEthMode <= x"00000001";           -- 1 Gig on lane 0
 
    --------------------------------------------------
    -- Unused
    --------------------------------------------------
-
    dtmToIpmiP(0) <= 'Z';
    dtmToIpmiP(1) <= 'Z';
    dtmToIpmiM(0) <= 'Z';
    dtmToIpmiM(1) <= 'Z';
 
-end architecture STRUCTURE;
-
+end mapping;

@@ -2,7 +2,7 @@
 -- File       : RceEthGem.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2018-06-27
--- Last update: 2018-06-27
+-- Last update: 2018-08-29
 -------------------------------------------------------------------------------
 -- Description: Wrapper file for Zynq GEM 
 -------------------------------------------------------------------------------
@@ -31,14 +31,16 @@ entity RceEthGem is
       sysClk62  : in  sl;
       sysRst62  : in  sl;
       locked    : in  sl;
+      stableClk : in  sl;               -- free-running clock reference
+      stableRst : in  sl;
       -- ARM Interface
       armEthTx  : in  ArmEthTxType;
       armEthRx  : out ArmEthRxType;
       -- Ethernet Lines
-      ethRxP    : in  sl;
-      ethRxM    : in  sl;
-      ethTxP    : out sl;
-      ethTxM    : out sl);
+      gtTxP     : out sl;
+      gtTxN     : out sl;
+      gtRxP     : in  sl;
+      gtRxN     : in  sl);
 end RceEthGem;
 
 architecture mapping of RceEthGem is
@@ -124,10 +126,10 @@ begin
    U_IpCore : zynq_gige_block
       port map (
          gtrefclk               => sysClk125,
-         txn                    => ethTxM,
-         txp                    => ethTxP,
-         rxn                    => ethRxM,
-         rxp                    => ethRxP,
+         txn                    => gtTxN,
+         txp                    => gtTxP,
+         rxn                    => gtRxN,
+         rxp                    => gtRxP,
          independent_clock_bufg => sysClk62,
          txoutclk               => open,
          rxoutclk               => open,
