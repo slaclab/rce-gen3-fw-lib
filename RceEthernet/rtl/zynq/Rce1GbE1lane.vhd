@@ -2,7 +2,7 @@
 -- File       : Rce1GbE1lane.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2018-06-27
--- Last update: 2018-08-11
+-- Last update: 2018-08-29
 -------------------------------------------------------------------------------
 -- Description: 1 GigE (1 lane)
 -------------------------------------------------------------------------------
@@ -34,6 +34,8 @@ entity Rce1GbE1lane is
       phyStatus : out slv(7 downto 0);
       phyDebug  : out slv(5 downto 0);
       phyConfig : in  slv(6 downto 0);
+      stableClk : in  sl;               -- free-running clock reference
+      stableRst : in  sl;
       -- PHY Interface
       gmiiRxDv  : out sl;
       gmiiRxEr  : out sl;

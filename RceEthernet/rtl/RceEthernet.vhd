@@ -1,13 +1,8 @@
 -------------------------------------------------------------------------------
--- Title      : 
--------------------------------------------------------------------------------
 -- File       : RceEthernet.vhd
--- Author     : Ryan Herbst <rherbst@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2015-09-03
--- Last update: 2018-08-21
--- Platform   : 
--- Standard   : VHDL'93/02
+-- Last update: 2018-08-29
 -------------------------------------------------------------------------------
 -- Description: Wrapper file for Zynq Ethernet 10G core
 -------------------------------------------------------------------------------
@@ -55,6 +50,8 @@ entity RceEthernet is
       VLAN_VID_G         : Slv12Array            := (0 => x"001"));
    port (
       -- Clocks
+      clk312               : in  sl;
+      rst312               : in  sl;
       clk200               : in  sl;
       rst200               : in  sl;
       clk156               : in  sl;
@@ -63,6 +60,8 @@ entity RceEthernet is
       rst125               : in  sl;
       clk62                : in  sl;
       rst62                : in  sl;
+      stableClk            : in  sl;    -- free-running clock reference
+      stableRst            : in  sl;
       -- PPI Interface
       dmaClk               : out sl;
       dmaRst               : out sl;
@@ -117,6 +116,9 @@ architecture mapping of RceEthernet is
    signal phyDebug  : slv(5 downto 0);
    signal phyConfig : slv(6 downto 0);
 
+   signal dmaClock : sl;
+   signal dmaReset : sl;
+
    signal ethClk     : sl;
    signal ethRst     : sl;
    signal ethClkLock : sl;
@@ -156,9 +158,11 @@ begin
 
    ----------
    -- Outputs
-   ----------
-   dmaClk         <= clk200;
-   dmaRst         <= rst200;
+   ----------   
+   dmaClk         <= dmaClock;
+   dmaRst         <= dmaReset;
+   dmaClock       <= clk200;
+   dmaReset       <= rst200;
    userEthClk     <= ethClk;
    userEthRst     <= ethRst;
    userEthMacAddr <= macConfig.macAddress;
@@ -176,8 +180,8 @@ begin
          axilWriteSlave  => axilWriteSlave,
          axilReadMaster  => axilReadMaster,
          axilReadSlave   => axilReadSlave,
-         dmaClk          => clk200,
-         dmaRst          => rst200,
+         dmaClk          => dmaClock,
+         dmaRst          => dmaReset,
          ethClk          => ethClk,
          ethRst          => ethRst,
          phyStatus       => phyStatus,
@@ -201,6 +205,13 @@ begin
       ethClk <= clk125;
       ethRst <= rst125;
 
+      --------------------------------------------------------------------------------      
+      --                         1000BASE-KX                                        --
+      --------------------------------------------------------------------------------    
+      -- This VHDL wrapper is determined by the ZYNQ family type
+      -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce1GbE1lane.vhd
+      -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce1GbE1lane.vhd
+      --------------------------------------------------------------------------------        
       U_Eth : entity work.Rce1GbE1lane
          generic map (
             TPD_G => TPD_G)
@@ -214,6 +225,8 @@ begin
             phyStatus => phyStatus,
             phyDebug  => phyDebug,
             phyConfig => phyConfig,
+            stableClk => stableClk,
+            stableRst => stableRst,
             -- PHY Interface
             gmiiRxDv  => gmiiRxDv,
             gmiiRxEr  => gmiiRxEr,
@@ -234,6 +247,13 @@ begin
    --------------
    GEN_XAUI : if (ETH_TYPE_G = "10GBASE-KX4") generate
 
+      --------------------------------------------------------------------------------      
+      --                    10GBASE-KX4 (A.K.A. XAUI)                               --
+      --------------------------------------------------------------------------------    
+      -- This VHDL wrapper is determined by the ZYNQ family type
+      -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce10GbE4lane.vhd
+      -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce10GbE4lane.vhd
+      --------------------------------------------------------------------------------      
       U_Eth : entity work.Rce10GbE4lane
          generic map (
             TPD_G => TPD_G)
@@ -247,6 +267,8 @@ begin
             phyStatus => phyStatus,
             phyDebug  => phyDebug,
             phyConfig => phyConfig,
+            stableClk => stableClk,
+            stableRst => stableRst,
             -- PHY Interface
             xgmiiRxd  => xgmiiRxd,
             xgmiiRxc  => xgmiiRxc,
@@ -266,6 +288,13 @@ begin
    -------------
    GEN_10GBase : if (ETH_TYPE_G = "10GBASE-KR") generate
 
+      --------------------------------------------------------------------------------      
+      --                         10GBASE-KR                                         --
+      --------------------------------------------------------------------------------    
+      -- This VHDL wrapper is determined by the ZYNQ family type
+      -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce10GbE1lane.vhd
+      -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce10GbE1lane.vhd
+      --------------------------------------------------------------------------------      
       U_Eth : entity work.Rce10GbE1lane
          generic map (
             TPD_G => TPD_G)
@@ -280,6 +309,8 @@ begin
             phyStatus => phyStatus,
             phyDebug  => phyDebug,
             phyConfig => phyConfig,
+            stableClk => stableClk,
+            stableRst => stableRst,
             -- PHY Interface
             xgmiiRxd  => xgmiiRxd,
             xgmiiRxc  => xgmiiRxc,
@@ -299,6 +330,13 @@ begin
    --------------
    GEN_40GBase : if (ETH_TYPE_G = "40GBASE-KR4") generate
 
+      --------------------------------------------------------------------------------      
+      --                         40GBASE-KR4                                        --
+      --------------------------------------------------------------------------------    
+      -- This VHDL wrapper is determined by the ZYNQ family type
+      -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce40GbE4lane.vhd
+      -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce40GbE4lane.vhd
+      --------------------------------------------------------------------------------    
       U_Eth : entity work.Rce40GbE4lane
          generic map (
             TPD_G => TPD_G)
@@ -310,6 +348,8 @@ begin
             phyStatus => phyStatus,
             phyDebug  => phyDebug,
             phyConfig => phyConfig,
+            stableClk => stableClk,
+            stableRst => stableRst,
             -- PHY Interface
             xlgmiiRxd => xlgmiiRxd,
             xlgmiiRxc => xlgmiiRxc,
@@ -344,8 +384,8 @@ begin
          VLAN_VID_G         => VLAN_VID_G)
       port map (
          -- DMA Interface
-         dmaClk               => clk200,
-         dmaRst               => rst200,
+         dmaClk               => dmaClock,
+         dmaRst               => dmaReset,
          dmaState             => dmaState,
          dmaIbMaster          => dmaIbMaster,
          dmaIbSlave           => dmaIbSlave,

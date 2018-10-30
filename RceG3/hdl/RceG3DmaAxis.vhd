@@ -121,10 +121,11 @@ begin
    U_DmaChanGen : for i in 0 to 3 generate
       U_RxG3DmaAxiChan: entity work.RceG3DmaAxisChan
          generic map (
-            TPD_G        => TPD_G,
-            AXI_CACHE_G  => AXI_CACHE_C(i),
-            BYP_SHIFT_G  => ite((i=3),false,true),  -- APP DMA driver enforces alignment, which means shift not required
-            AXI_CONFIG_G => ite((i=2),AXI_ACP_INIT_C,AXI_HP_INIT_C))
+            TPD_G             => TPD_G,
+            AXI_CACHE_G       => AXI_CACHE_C(i),
+            BYP_SHIFT_G       => ite((i=3),false,true),  -- APP DMA driver enforces alignment, which means shift not required
+            AXIS_DMA_CONFIG_G => ite((i=2),RCEG3_AXIS_DMA_ACP_CONFIG_C,RCEG3_AXIS_DMA_CONFIG_C),
+            AXI_CONFIG_G      => ite((i=2),AXI_ACP_INIT_C,AXI_HP_INIT_C))
          port map (
             axiDmaClk        => axiDmaClk,
             axiDmaRst        => axiDmaRst,

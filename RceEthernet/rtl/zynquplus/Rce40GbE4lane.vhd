@@ -2,7 +2,7 @@
 -- File       : Rce40GbE4lane.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2018-08-21
--- Last update: 2018-08-21
+-- Last update: 2018-08-29
 -------------------------------------------------------------------------------
 -- Description: 40GBASE-KR4 Wrapper
 -------------------------------------------------------------------------------
@@ -31,6 +31,8 @@ entity Rce40GbE4lane is
       phyStatus : out slv(7 downto 0)   := (others => '0');
       phyDebug  : out slv(5 downto 0)   := (others => '0');
       phyConfig : in  slv(6 downto 0);
+      stableClk : in  sl;               -- free-running clock reference
+      stableRst : in  sl;
       -- PHY Interface
       xlgmiiRxd : out slv(127 downto 0) := (others => '0');
       xlgmiiRxc : out slv(15 downto 0)  := (others => '0');

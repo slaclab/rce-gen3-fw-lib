@@ -53,13 +53,13 @@ entity RceG3PcieRoot is
 
       -- PCIE
       pciRefClkP      : in  sl;
-      pciRefClkM      : in  sl;
+      pciRefClkN      : in  sl;
       pciResetL       : out sl;
       pcieInt         : out sl;
       pcieRxP         : in  sl;
-      pcieRxM         : in  sl;
+      pcieRxN         : in  sl;
       pcieTxP         : out sl;
-      pcieTxM         : out sl
+      pcieTxN         : out sl
    );
 end RceG3PcieRoot;
 
@@ -203,7 +203,7 @@ begin
          O       => intRefClk,
          ODIV2   => open,
          I       => pciRefClkP,
-         IB      => pciRefClkM,
+         IB      => pciRefClkN,
          CEB     => '0'
       );
 
@@ -221,9 +221,9 @@ begin
    -- PCIE Core
    U_PcieRoot : pcie_root
       port map (
-         pcie_mgt_rxn(0)  => pcieRxM,
+         pcie_mgt_rxn(0)  => pcieRxN,
          pcie_mgt_rxp(0)  => pcieRxP,
-         pcie_mgt_txn(0)  => pcieTxM,
+         pcie_mgt_txn(0)  => pcieTxN,
          pcie_mgt_txp(0)  => pcieTxP,
          axi_clk          => axiClk,
          axi_rstn         => axiClkRstN,
