@@ -331,8 +331,8 @@ begin
 
          -- FB Delay configuration, one per FIFO, 0x1xx
          if axiWriteMaster.awaddr(11 downto 8)  = x"1" then
-            v.fbCfgSet(conv_integer(axiWriteMaster.awaddr(5 downto 2)))   := '1';
-            v.fbCfgDelay(conv_integer(axiWriteMaster.awaddr(5 downto 2))) := axiWriteMaster.wdata(4 downto 0);
+            v.fbCfgSet(conv_integer(axiWriteMaster.awaddr(4 downto 2)))   := '1';
+            v.fbCfgDelay(conv_integer(axiWriteMaster.awaddr(4 downto 2))) := axiWriteMaster.wdata(4 downto 0);
 
          -- Feedback status, 0x2xx 
 
@@ -378,12 +378,12 @@ begin
 
          -- FB Delay configuration, one per FIFO, 0x1xx
          if axiReadMaster.araddr(11 downto 8)  = x"1" then
-            v.axiReadSlave.rdata(4 downto 0) := r.fbCfgDelay(conv_integer(axiReadMaster.araddr(5 downto 2)));
+            v.axiReadSlave.rdata(4 downto 0) := r.fbCfgDelay(conv_integer(axiReadMaster.araddr(4 downto 2)));
 
          -- Feedback status, 0x2xx 
          elsif axiReadMaster.araddr(11 downto 8)  = x"2" then
-            v.axiReadSlave.rdata(31 downto 16) := fbStatusErrorCnt(conv_integer(axiReadMaster.araddr(5 downto 2)));
-            v.axiReadSlave.rdata(15 downto  0) := fbStatusIdleCnt(conv_integer(axiReadMaster.araddr(5 downto 2)));
+            v.axiReadSlave.rdata(31 downto 16) := fbStatusErrorCnt(conv_integer(axiReadMaster.araddr(4 downto 2)));
+            v.axiReadSlave.rdata(15 downto  0) := fbStatusIdleCnt(conv_integer(axiReadMaster.araddr(4 downto 2)));
 
          -- FB FIFO read, one per FIFO, 0x300
 
@@ -409,7 +409,7 @@ begin
 
          -- Rx Data Count, 0x5xx
          elsif axiReadMaster.araddr(11 downto 8)  = x"5" then
-            v.axiReadSlave.rdata := rxCountSync(conv_integer(axiReadMaster.araddr(5 downto 2)));
+            v.axiReadSlave.rdata := rxCountSync(conv_integer(axiReadMaster.araddr(4 downto 2)));
 
          end if;
 
