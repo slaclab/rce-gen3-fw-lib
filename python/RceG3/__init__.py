@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from rceg3._DpmTiming import *
-from rceg3._DtmTiming import *
-from rceg3._RceVersion import *
-from rceg3._RceBsi import *
+from RceG3._DpmTiming import *
+from RceG3._DtmTiming import *
+from RceG3._RceVersion import *
+from RceG3._RceBsi import *

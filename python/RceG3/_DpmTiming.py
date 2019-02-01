@@ -24,7 +24,7 @@ class DpmTiming(pr.Device):
         self.add(pr.RemoteCommand(
             name='ClkReset',
             offset=0x0,
-            function=RemoteCommand.touchOne
+            function=pr.RemoteCommand.touchOne
         ))
         self.add(pr.RemoteVariable(
             name='RxDelay0', 
@@ -92,7 +92,7 @@ class DpmTiming(pr.Device):
         self.add(pr.RemoteCommand(
             name='CountReset',
             offset=0x20,
-            function=RemoteCommand.touchOne,
+            function=pr.RemoteCommand.touchOne,
         ))
 
         self.add(pr.RemoteVariable(
@@ -121,8 +121,8 @@ class DpmTiming(pr.Device):
             pollInterval=1,
         ))
 
-        self.hideVariables(hidden=True, variables=[self.enabled])
-        self.enabled.set(True)
+        self.hideVariables(hidden=True, variables=[self.enable])
+        #self.enable.set(True)
 
     def softReset(self):
         self.SoftReset()
