@@ -1,6 +1,6 @@
-import pyrogue as pr
+import pyrogue
 
-class RceBsi(pr.Device):
+class RceBsi(pyrogue.Device):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

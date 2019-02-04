@@ -86,20 +86,20 @@ class DtmTiming(pr.Device):
             description='Transmit Data On Channel 0',
             offset=0x400,
             bitSize=10,
-            function=RemoteCommand.touch))
+            function=pr.RemoteCommand.touch))
 
         self.add(pr.RemoteCommand(
             name='TxCmd1',
             description='Transmit Data On Channel 1',
             offset=0x410,
             bitSize=10,
-            function=RemoteCommand.touch))
+            function=pr.RemoteCommand.touch))
 
         self.add(pr.RemoteCommand(
             name='CountReset',
             offset=0x41C,
             bitSize=1,
-            function=RemoteCommand.touchOne))
+            function=pr.RemoteCommand.touchOne))
 
     def countReset(self):
         self.CountReset()
