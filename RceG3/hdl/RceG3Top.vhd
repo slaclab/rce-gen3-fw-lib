@@ -116,8 +116,8 @@ architecture structure of RceG3Top is
    signal axiDmaClock : sl;
    signal axiDmaReset : sl;
 
-   signal axilClock : sl;
-   signal axilReset : sl;
+   signal iAxilClk : sl;
+   signal iAxilRst : sl;
 
    signal mGpWriteMaster : AxiWriteMasterArray(1 downto 0);
    signal mGpWriteSlave  : AxiWriteSlaveArray(1 downto 0);
@@ -202,14 +202,14 @@ begin
          axiDmaClk  => axiDmaClock,
          axiDmaRst  => axiDmaReset,
          -- AXI-Lite clock and reset
-         axilClk    => axilClock,
-         axilRst    => axilReset);
+         axilClk    => iAxilClk,
+         axilRst    => iAxilRst);
 
    axiDmaClk <= axiDmaClock;
    axiDmaRst <= axiDmaReset;
 
-   axilClk <= axilClock;
-   axilRst <= axilReset;
+   axilClk <= iAxilClk;
+   axilRst <= iAxilRst;
 
    GEN_SYNTH : if (SIMULATION_G = false) generate
       ---------------------------------------------------------------------
@@ -230,7 +230,7 @@ begin
             armInterrupt   => armInterrupt,
             -- AXI GP Master
             mGpAxiClk(0)   => axiDmaClock,
-            mGpAxiClk(1)   => axilClock,
+            mGpAxiClk(1)   => iAxilClk,
             mGpWriteMaster => mGpWriteMaster,
             mGpWriteSlave  => mGpWriteSlave,
             mGpReadMaster  => mGpReadMaster,
@@ -285,8 +285,8 @@ begin
             dmaAxilReadSlave    => dmaAxilReadSlave,
             dmaAxilWriteMaster  => dmaAxilWriteMaster,
             dmaAxilWriteSlave   => dmaAxilWriteSlave,
-            axiClk              => axilClock,
-            axiClkRst           => axilReset,
+            axiClk              => iAxilClk,
+            axiClkRst           => iAxilRst,
             bsiAxilReadMaster   => bsiAxilReadMaster,
             bsiAxilReadSlave    => bsiAxilReadSlave,
             bsiAxilWriteMaster  => bsiAxilWriteMaster,
@@ -329,8 +329,8 @@ begin
          generic map (
             TPD_G => TPD_G)
          port map (
-            axiClk          => axilClock,
-            axiClkRst       => axilReset,
+            axiClk          => iAxilClk,
+            axiClkRst       => iAxilRst,
             axilReadMaster  => bsiAxilReadMaster,
             axilReadSlave   => bsiAxilReadSlave,
             axilWriteMaster => bsiAxilWriteMaster,

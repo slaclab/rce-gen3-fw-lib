@@ -2,7 +2,7 @@
 -- File       : DtmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-09-04
+-- Last update: 2019-02-04
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DTM
 -------------------------------------------------------------------------------
@@ -139,8 +139,8 @@ architecture mapping of DtmCore is
    constant SEL_REFCLK_C  : boolean := ite(XIL_DEVICE_C = "7SERIES", false, true);
    constant MEMORY_TYPE_C : string  := ite(XIL_DEVICE_C = "7SERIES", "block", "ultra");
 
-   signal axilClock : sl;
-   signal axilReset : sl;
+   signal iAxilClk : sl;
+   signal iAxilRst : sl;
 
    signal axiDmaClock : sl;
    signal axiDmaReset : sl;
@@ -207,10 +207,10 @@ begin
    --------------------------------------------------
    -- Inputs/Outputs
    --------------------------------------------------
-   axiClk       <= axilClock;
-   axiClkRst    <= axilReset;
-   sysClk125    <= axilClock;
-   sysClk125Rst <= axilReset;
+   axiClk       <= iAxilClk;
+   axiClkRst    <= iAxilRst;
+   sysClk125    <= iAxilClk;
+   sysClk125Rst <= iAxilRst;
    sysClk200    <= axiDmaClock;
    sysClk200Rst <= axiDmaReset;
 
@@ -262,8 +262,8 @@ begin
          axiDmaClk           => axiDmaClock,
          axiDmaRst           => axiDmaReset,
          -- AXI-Lite clock and reset
-         axilClk             => axilClock,
-         axilRst             => axilReset,
+         axilClk             => iAxilClk,
+         axilRst             => iAxilRst,
          -- External Axi Bus, (axilClk domain)
          -- 0xA0000000 - 0xAFFFFFFF (COB_MIN_C10_G = False)
          -- 0x90000000 - 0x97FFFFFF (COB_MIN_C10_G = True)         
@@ -343,8 +343,8 @@ begin
                      connectivity => x"FFFF")
                ))
          port map (
-            axiClk              => axilClock,
-            axiClkRst           => axilReset,
+            axiClk              => iAxilClk,
+            axiClkRst           => iAxilRst,
             sAxiWriteMasters(0) => coreAxilWriteMaster,
             sAxiWriteSlaves(0)  => coreAxilWriteSlave,
             sAxiReadMasters(0)  => coreAxilReadMaster,
@@ -362,8 +362,8 @@ begin
          generic map (
             HSIO_MODE_G => false)
          port map (
-            axiClk         => axilClock,
-            axiClkRst      => axilReset,
+            axiClk         => iAxilClk,
+            axiClkRst      => iAxilRst,
             axiReadMaster  => pcieAxilReadMaster,
             axiReadSlave   => pcieAxilReadSlave,
             axiWriteMaster => pcieAxilWriteMaster,
@@ -489,8 +489,8 @@ begin
             userEthVlanObMasters => userEthVlanObMasters,
             userEthVlanObSlaves  => userEthVlanObSlaves,
             -- AXI-Lite Buses
-            axilClk              => axilClock,
-            axilRst              => axilReset,
+            axilClk              => iAxilClk,
+            axilRst              => iAxilRst,
             axilWriteMaster      => coreAxilWriteMaster,
             axilWriteSlave       => coreAxilWriteSlave,
             axilReadMaster       => coreAxilReadMaster,
@@ -507,9 +507,9 @@ begin
             ethTxN(0)            => ethTxM,
             ethTxN(3 downto 1)   => open);
 
-      process (axilClock)
+      process (iAxilClk)
       begin
-         if rising_edge(axilClock) then
+         if rising_edge(iAxilClk) then
             case ETH_TYPE_G is
                when "ZYNQ-GEM"    => armEthMode <= x"00000001";
                when "1000BASE-KX" => armEthMode <= x"00000002";

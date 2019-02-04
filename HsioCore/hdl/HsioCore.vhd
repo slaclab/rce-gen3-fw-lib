@@ -2,7 +2,7 @@
 -- File       : HsioCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-08-30
+-- Last update: 2019-02-04
 -------------------------------------------------------------------------------
 -- Description: Common top level module for HSIO
 -------------------------------------------------------------------------------
@@ -86,8 +86,8 @@ end HsioCore;
 
 architecture mapping of HsioCore is
 
-   signal axilClock : sl;
-   signal axilReset : sl;
+   signal iAxilClk : sl;
+   signal iAxilRst : sl;
 
    signal axiDmaClock : sl;
    signal axiDmaReset : sl;
@@ -109,10 +109,10 @@ begin
    --------------------------------------------------
    -- Inputs/Outputs
    --------------------------------------------------
-   axiClk       <= axilClock;
-   axiClkRst    <= axilReset;
-   sysClk125    <= axilClock;
-   sysClk125Rst <= axilReset;
+   axiClk       <= iAxilClk;
+   axiClkRst    <= iAxilRst;
+   sysClk125    <= iAxilClk;
+   sysClk125Rst <= iAxilRst;
    sysClk200    <= axiDmaClock;
    sysClk200Rst <= axiDmaReset;
 
@@ -147,8 +147,8 @@ begin
          axiDmaClk          => axiDmaClock,
          axiDmaRst          => axiDmaReset,
          -- AXI-Lite clock and reset
-         axilClk            => axilClock,
-         axilRst            => axilReset,
+         axilClk            => iAxilClk,
+         axilRst            => iAxilRst,
          -- External Axi Bus, 0xA0000000 - 0xAFFFFFFF  (axilClk domain)
          extAxilReadMaster  => extAxilReadMaster,
          extAxilReadSlave   => extAxilReadSlave,
