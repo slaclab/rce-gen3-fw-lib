@@ -504,6 +504,8 @@ begin
                   v.intReadSlave.rdata := r.scratchPad;
                when X"0008" =>
                   v.intReadSlave.rdata := RCE_G3_VERSION_C;
+               when X"000C" =>
+                  v.intReadSlave.rdata(0) := toSl(PCIE_EN_G);
                when X"0010" =>
                   v.intReadSlave.rdata(0) := r.clkSelA(0);
                   v.intReadSlave.rdata(1) := r.clkSelB(0);
