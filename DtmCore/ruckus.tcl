@@ -23,6 +23,6 @@ loadConstraints -dir  "$::DIR_PATH/xdc/${family}"
 # Check if ZYNQ 7000 series
 if { ${family} eq {zynq} } {
    loadRuckusTcl "$::DIR_PATH/../ZynqPcieMaster"
-   loadIpCore      -dir  "$::DIR_PATH/coregen/GmiiToRgmiiCore"
+   loadIpCore      -path "$::DIR_PATH/coregen/GmiiToRgmiiCore/GmiiToRgmiiCore.xci"
    loadBlockDesign -path "$::DIR_PATH/coregen/pcie_root/pcie_root.bd"
 }
