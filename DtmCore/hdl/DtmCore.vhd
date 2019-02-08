@@ -2,7 +2,7 @@
 -- File       : DtmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2019-02-04
+-- Last update: 2019-02-08
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DTM
 -------------------------------------------------------------------------------
@@ -158,6 +158,26 @@ architecture mapping of DtmCore is
    signal coreAxilWriteMaster : AxiLiteWriteMasterType;
    signal coreAxilWriteSlave  : AxiLiteWriteSlaveType := AXI_LITE_WRITE_SLAVE_EMPTY_OK_C;
 
+   constant AXIL_XBAR_MASTERS_C : integer := 2;
+   constant AXIL_ETH_INDEX_C    : integer := 0;
+   constant AXIL_PCIE_INDEX_C   : integer := 1;
+   constant AXIL_XBAR_CFG_C : AxiLiteCrossbarMasterConfigArray(AXIL_XBAR_MASTERS_C-1 downto 0) := (
+      AXIL_ETH_INDEX_C  => (
+         baseAddr       => X"B0000000",
+         addrBits       => 12,
+         connectivity   => X"FFFF"),
+      -- 0xBC000000 - 0xBC00FFFF : PCI Express Registers
+      AXIL_PCIE_INDEX_C => (
+         baseAddr       => x"BC000000",
+         addrBits       => 16,
+         connectivity   => x"FFFF"));
+
+   signal locAxilReadMasters  : AxiLiteReadMasterArray(AXIL_XBAR_MASTERS_C-1 downto 0)  := (others => AXI_LITE_READ_MASTER_INIT_C);
+   signal locAxilReadSlaves   : AxiLiteReadSlaveArray(AXIL_XBAR_MASTERS_C-1 downto 0)   := (others => AXI_LITE_READ_SLAVE_EMPTY_DECERR_C);
+   signal locAxilWriteMasters : AxiLiteWriteMasterArray(AXIL_XBAR_MASTERS_C-1 downto 0) := (others => AXI_LITE_WRITE_MASTER_INIT_C);
+   signal locAxilWriteSlaves  : AxiLiteWriteSlaveArray(AXIL_XBAR_MASTERS_C-1 downto 0)  := (others => AXI_LITE_WRITE_SLAVE_EMPTY_DECERR_C);
+
+
    signal armEthTx   : ArmEthTxArray(1 downto 0) := (others => ARM_ETH_TX_INIT_C);
    signal armEthRx   : ArmEthRxArray(1 downto 0) := (others => ARM_ETH_RX_INIT_C);
    signal armEthMode : slv(31 downto 0)          := (others => '0');
@@ -186,17 +206,13 @@ architecture mapping of DtmCore is
 
    signal locked : sl;
 
-   signal pcieAxilReadMaster  : AxiLiteReadMasterType  := AXI_LITE_READ_MASTER_INIT_C;
-   signal pcieAxilReadSlave   : AxiLiteReadSlaveType   := AXI_LITE_READ_SLAVE_INIT_C;
-   signal pcieAxilWriteMaster : AxiLiteWriteMasterType := AXI_LITE_WRITE_MASTER_INIT_C;
-   signal pcieAxilWriteSlave  : AxiLiteWriteSlaveType  := AXI_LITE_WRITE_SLAVE_INIT_C;
-   signal ipciRefClkP         : sl                     := '0';
-   signal ipciRefClkM         : sl                     := '1';
-   signal ipciRxP             : sl                     := '0';
-   signal ipciRxM             : sl                     := '1';
-   signal ipciTxP             : sl                     := '0';
-   signal ipciTxM             : sl                     := '1';
-   signal ipciResetL          : sl                     := '1';
+   signal ipciRefClkP : sl := '0';
+   signal ipciRefClkM : sl := '1';
+   signal ipciRxP     : sl := '0';
+   signal ipciRxM     : sl := '1';
+   signal ipciTxP     : sl := '0';
+   signal ipciTxM     : sl := '1';
+   signal ipciResetL  : sl := '1';
 
 begin
 
@@ -308,6 +324,28 @@ begin
    clkSelA <= '1';
    clkSelB <= '1';
 
+   -------------------------------------
+   -- AXI Lite Crossbar
+   -- Base: 0xB0000000 - 0xBFFFFFFF
+   -------------------------------------
+   U_AxiCrossbar : entity work.AxiLiteCrossbar
+      generic map (
+         TPD_G              => TPD_G,
+         NUM_SLAVE_SLOTS_G  => 1,
+         NUM_MASTER_SLOTS_G => AXIL_XBAR_MASTERS_C,
+         MASTERS_CONFIG_G   => AXIL_XBAR_CFG_C)
+      port map (
+         axiClk              => iAxilClk,
+         axiClkRst           => iAxilRst,
+         sAxiWriteMasters(0) => coreAxilWriteMaster,
+         sAxiWriteSlaves(0)  => coreAxilWriteSlave,
+         sAxiReadMasters(0)  => coreAxilReadMaster,
+         sAxiReadSlaves(0)   => coreAxilReadSlave,
+         mAxiWriteMasters    => locAxilWriteMasters,
+         mAxiWriteSlaves     => locAxilWriteSlaves,
+         mAxiReadMasters     => locAxilReadMasters,
+         mAxiReadSlaves      => locAxilReadSlaves);
+
    U_C10_EN_G : if (COB_GTE_C10_G = true) and (XIL_DEVICE_C = "7SERIES") and (SIMULATION_G = false) generate
       ipciRefClkP <= pciRefClkP;
       ipciRefClkM <= pciRefClkM;
@@ -325,34 +363,7 @@ begin
       ipciRxP     <= '0';
       ipciRxM     <= '0';
 
-      -------------------------------------
-      -- AXI Lite Crossbar
-      -- Base: 0xB0000000 - 0xBFFFFFFF
-      -------------------------------------
-      U_AxiCrossbar : entity work.AxiLiteCrossbar
-         generic map (
-            TPD_G              => TPD_G,
-            NUM_SLAVE_SLOTS_G  => 1,
-            NUM_MASTER_SLOTS_G => 1,
-            DEC_ERROR_RESP_G   => AXI_RESP_OK_C,
-            MASTERS_CONFIG_G   => (
 
-               -- Channel 1 = 0xBC000000 - 0xBC00FFFF : PCI Express Registers
-               0                  => (baseAddr => x"BC000000",
-                     addrBits     => 16,
-                     connectivity => x"FFFF")
-               ))
-         port map (
-            axiClk              => iAxilClk,
-            axiClkRst           => iAxilRst,
-            sAxiWriteMasters(0) => coreAxilWriteMaster,
-            sAxiWriteSlaves(0)  => coreAxilWriteSlave,
-            sAxiReadMasters(0)  => coreAxilReadMaster,
-            sAxiReadSlaves(0)   => coreAxilReadSlave,
-            mAxiWriteMasters(0) => pcieAxilWriteMaster,
-            mAxiWriteSlaves(0)  => pcieAxilWriteSlave,
-            mAxiReadMasters(0)  => pcieAxilReadMaster,
-            mAxiReadSlaves(0)   => pcieAxilReadSlave);
 
 
       --------------------------------------------------
@@ -364,10 +375,10 @@ begin
          port map (
             axiClk         => iAxilClk,
             axiClkRst      => iAxilRst,
-            axiReadMaster  => pcieAxilReadMaster,
-            axiReadSlave   => pcieAxilReadSlave,
-            axiWriteMaster => pcieAxilWriteMaster,
-            axiWriteSlave  => pcieAxilWriteSlave,
+            axiReadMaster  => locAxilReadMasters(AXIL_PCIE_INDEX_C),
+            axiReadSlave   => locAxilReadSlaves(AXIL_PCIE_INDEX_C),
+            axiWriteMaster => locAxilWriteMasters(AXIL_PCIE_INDEX_C),
+            axiWriteSlave  => locAxilWriteSlaves(AXIL_PCIE_INDEX_C),
             pciRefClkP     => pciRefClkP,
             pciRefClkM     => pciRefClkM,
             pcieResetL     => pciResetL,
@@ -491,10 +502,10 @@ begin
             -- AXI-Lite Buses
             axilClk              => iAxilClk,
             axilRst              => iAxilRst,
-            axilWriteMaster      => coreAxilWriteMaster,
-            axilWriteSlave       => coreAxilWriteSlave,
-            axilReadMaster       => coreAxilReadMaster,
-            axilReadSlave        => coreAxilReadSlave,
+            axilWriteMaster      => locAxilWriteMasters(AXIL_ETH_INDEX_C),
+            axilWriteSlave       => locAxilWriteSlaves(AXIL_ETH_INDEX_C),
+            axilReadMaster       => locAxilReadMasters(AXIL_ETH_INDEX_C),
+            axilReadSlave        => locAxilReadSlaves(AXIL_ETH_INDEX_C),
             -- Ref Clock
             ethRefClk            => ethRefClk,
             -- Ethernet Lines
