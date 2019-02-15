@@ -34,8 +34,8 @@ use work.AxiLitePkg.all;
 
 entity RceG3Bsi is
    generic (
-      TPD_G : time := 1 ns
-      );
+      TPD_G      : time    := 1 ns;
+      BYP_BSI_G  : boolean := false); -- true for non-COB applications (like DEV boards)
    port (
 
       -- Clock and reset
@@ -129,20 +129,23 @@ begin
             i2co   => i2cOut
             );
 
-   U_I2cScl : IOBUF
-      port map (
-         IO => i2cScl,
-         I  => i2cOut.scl,
-         O  => i2cIn.scl,
-         T  => i2cOut.scloen);
+   GEN_BSI : if (BYP_BSI_G = false) generate         
+   
+      U_I2cScl : IOBUF
+         port map (
+            IO => i2cScl,
+            I  => i2cOut.scl,
+            O  => i2cIn.scl,
+            T  => i2cOut.scloen);
 
-   U_I2cSda : IOBUF
-      port map (
-         IO => i2cSda,
-         I  => i2cOut.sda,
-         O  => i2cIn.sda,
-         T  => i2cOut.sdaoen);
-
+      U_I2cSda : IOBUF
+         port map (
+            IO => i2cSda,
+            I  => i2cOut.sda,
+            O  => i2cIn.sda,
+            T  => i2cOut.sdaoen);
+            
+   end generate;
 
    -------------------------
    -- Dual port ram

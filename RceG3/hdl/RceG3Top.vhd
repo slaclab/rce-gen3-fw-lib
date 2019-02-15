@@ -37,6 +37,7 @@ entity RceG3Top is
       PCIE_EN_G      : boolean                := false;
       SEL_REFCLK_G   : boolean                := true;  -- false = ZYNQ ref, true = ETH ref
       SIM_USER_ID_G  : natural range 0 to 100 := 1;
+      BYP_BSI_G      : boolean                := false; -- true for non-COB applications (like DEV boards)
       SIMULATION_G   : boolean                := false);
    port (
       -- I2C Ports
@@ -327,7 +328,8 @@ begin
       --------------------------------------------
       U_RceG3Bsi : entity work.RceG3Bsi
          generic map (
-            TPD_G => TPD_G)
+            TPD_G     => TPD_G,
+            BYP_BSI_G => BYP_BSI_G)
          port map (
             axiClk          => axilClock,
             axiClkRst       => axilReset,

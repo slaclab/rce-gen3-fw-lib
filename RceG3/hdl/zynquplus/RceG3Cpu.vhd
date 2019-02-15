@@ -444,10 +444,10 @@ architecture mapping of RceG3Cpu is
          emio_enet0_gmii_txd           : out std_logic_vector(7 downto 0);
          emio_enet0_gmii_tx_en         : out std_logic;
          emio_enet0_gmii_tx_er         : out std_logic;
-         emio_enet0_mdio_mdc           : out std_logic;
-         emio_enet0_mdio_i             : in  std_logic;
-         emio_enet0_mdio_o             : out std_logic;
-         emio_enet0_mdio_t             : out std_logic;
+         -- emio_enet0_mdio_mdc           : out std_logic;
+         -- emio_enet0_mdio_i             : in  std_logic;
+         -- emio_enet0_mdio_o             : out std_logic;
+         -- emio_enet0_mdio_t             : out std_logic;
          emio_enet1_gmii_rx_clk        : in  std_logic;
          emio_enet1_speed_mode         : out std_logic_vector(2 downto 0);
          emio_enet1_gmii_crs           : in  std_logic;
@@ -459,10 +459,10 @@ architecture mapping of RceG3Cpu is
          emio_enet1_gmii_txd           : out std_logic_vector(7 downto 0);
          emio_enet1_gmii_tx_en         : out std_logic;
          emio_enet1_gmii_tx_er         : out std_logic;
-         emio_enet1_mdio_mdc           : out std_logic;
-         emio_enet1_mdio_i             : in  std_logic;
-         emio_enet1_mdio_o             : out std_logic;
-         emio_enet1_mdio_t             : out std_logic;
+         -- emio_enet1_mdio_mdc           : out std_logic;
+         -- emio_enet1_mdio_i             : in  std_logic;
+         -- emio_enet1_mdio_o             : out std_logic;
+         -- emio_enet1_mdio_t             : out std_logic;
          emio_enet0_tsu_inc_ctrl       : in  std_logic_vector(1 downto 0);
          emio_enet0_tsu_timer_cmp_val  : out std_logic;
          emio_enet1_tsu_inc_ctrl       : in  std_logic_vector(1 downto 0);
@@ -472,9 +472,9 @@ architecture mapping of RceG3Cpu is
          emio_enet1_ext_int_in         : in  std_logic;
          emio_enet0_dma_bus_width      : out std_logic_vector(1 downto 0);
          emio_enet1_dma_bus_width      : out std_logic_vector(1 downto 0);
-         emio_gpio_i                   : in  std_logic_vector(95 downto 0);
-         emio_gpio_o                   : out std_logic_vector(95 downto 0);
-         emio_gpio_t                   : out std_logic_vector(95 downto 0);
+         -- emio_gpio_i                   : in  std_logic_vector(95 downto 0);
+         -- emio_gpio_o                   : out std_logic_vector(95 downto 0);
+         -- emio_gpio_t                   : out std_logic_vector(95 downto 0);
          pl_ps_irq0                    : in  std_logic_vector(0 downto 0);
          pl_ps_irq1                    : in  std_logic_vector(0 downto 0);
          pl_acpinact                   : in  std_logic;
@@ -903,10 +903,10 @@ begin
          emio_enet0_gmii_txd           => armEthTx(0).enetGmiiTxD,
          emio_enet0_gmii_tx_en         => armEthTx(0).enetGmiiTxEn,
          emio_enet0_gmii_tx_er         => armEthTx(0).enetGmiiTxEr,
-         emio_enet0_mdio_mdc           => armEthTx(0).enetMdioMdc,
-         emio_enet0_mdio_i             => armEthRx(0).enetMdioI,
-         emio_enet0_mdio_o             => armEthTx(0).enetMdioO,
-         emio_enet0_mdio_t             => armEthTx(0).enetMdioT,
+         -- emio_enet0_mdio_mdc           => armEthTx(0).enetMdioMdc,
+         -- emio_enet0_mdio_i             => armEthRx(0).enetMdioI,
+         -- emio_enet0_mdio_o             => armEthTx(0).enetMdioO,
+         -- emio_enet0_mdio_t             => armEthTx(0).enetMdioT,
          -- EMIO ENET1
          emio_enet1_gmii_rx_clk        => armEthRx(1).enetGmiiRxClk,
          emio_enet1_speed_mode         => armEthTx(1).enetGmiispeedMode,
@@ -919,10 +919,10 @@ begin
          emio_enet1_gmii_txd           => armEthTx(1).enetGmiiTxD,
          emio_enet1_gmii_tx_en         => armEthTx(1).enetGmiiTxEn,
          emio_enet1_gmii_tx_er         => armEthTx(1).enetGmiiTxEr,
-         emio_enet1_mdio_mdc           => armEthTx(1).enetMdioMdc,
-         emio_enet1_mdio_i             => armEthRx(1).enetMdioI,
-         emio_enet1_mdio_o             => armEthTx(1).enetMdioO,
-         emio_enet1_mdio_t             => armEthTx(1).enetMdioT,
+         -- emio_enet1_mdio_mdc           => armEthTx(1).enetMdioMdc,
+         -- emio_enet1_mdio_i             => armEthRx(1).enetMdioI,
+         -- emio_enet1_mdio_o             => armEthTx(1).enetMdioO,
+         -- emio_enet1_mdio_t             => armEthTx(1).enetMdioT,
          -- EMIO ENET[1:0] MISC    
          emio_enet0_tsu_inc_ctrl       => (others => '0'),  -- ??? Not sure if I am setting this correctly
          emio_enet0_tsu_timer_cmp_val  => open,
@@ -934,9 +934,9 @@ begin
          emio_enet0_dma_bus_width      => open,
          emio_enet1_dma_bus_width      => open,
          -- FMIO GPIO
-         emio_gpio_i                   => (others => '0'),
-         emio_gpio_o                   => open,
-         emio_gpio_t                   => open,
+         -- emio_gpio_i                   => (others => '0'),
+         -- emio_gpio_o                   => open,
+         -- emio_gpio_t                   => open,
          -- IRQ
          pl_ps_irq0(0)                 => armInterrupt(0),  -- ??? Not sure if I am setting this correctly
          pl_ps_irq1(0)                 => armInterrupt(1),  -- ??? Not sure if I am setting this correctly
