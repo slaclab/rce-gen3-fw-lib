@@ -14,18 +14,13 @@ class RceEthernet(pr.Device):
             offset = 0x000,
             function = pr.RemoteCommand.toggle))
 
-        self.add(pr.RemoteCommand(
-            name = 'PhyReset',
-            offset = 0x004,
-            function = pr.RemoteCommand.toggle))
-
         self.add(pr.RemoteVariable(
             name = 'PhyConfig',
+            mode = 'RO',
             offset = 0x008,
             bitOffset = 0,
             bitSize = 7,
-            base = pr.UInt,
-            mode = 'RW'))
+            base = pr.UInt))
 
         self.add(pr.RemoteVariable(
             name = 'PauseTime',
@@ -33,7 +28,7 @@ class RceEthernet(pr.Device):
             bitOffset = 0,
             bitSize = 16,
             base = pr.UInt,
-            mode = 'RW'))
+            mode = 'RO'))
 
         self.add(pr.RemoteVariable(
             name = 'MacAddressRaw',
@@ -41,22 +36,13 @@ class RceEthernet(pr.Device):
             bitOffset = 0,
             bitSize = 48,
             base = pr.UInt,
-            mode = 'RW'))
+            mode = 'RO'))
 
-        def getMacAddrStr():
-            raw = self.MacAddressRaw.value()
-            return ':'.join(f'{b:02x}' for byte in raw.to_bytes(6, 'little'))
-
-        def setMacAddrStr(value):
-            s = int(''.join(reversed(value.split(':'))), 16)
-            self.MacAddressRaw.set(s, write=True)
-                            
         self.add(pr.LinkVariable(
             name = 'MacAddress',
-            mode = 'RW',
+            mode = 'RO',
             dependencies = [self.MacAddressRaw]
-            linkedGet = lambda: ':'.join(f'{b:02x}' for b in self.MacAddressRaw.value().to_bytes(6, 'little'))
-            linkedSet = lambda value: self.MacAddressRaw.set(int(''.join(reversed(value.split(':'))), 16))
+            linkedGet = lambda: ':'.join(f'{b:02x}' for b in self.MacAddressRaw.value().to_bytes(6, 'little'))))
         
         self.add(pr.RemoteVariable(
             name = 'IpAddressRaw',
@@ -95,7 +81,7 @@ class RceEthernet(pr.Device):
             bitOffset = 0,
             bitSize = 4,
             base = pr.UInt,
-            mode = 'RW'))
+            mode = 'RO'))
         
         self.add(pr.RemoteVariable(
             name = 'RxShift',
@@ -103,7 +89,7 @@ class RceEthernet(pr.Device):
             bitOffset = 4,
             bitSize = 4,
             base = pr.UInt,
-            mode = 'RW'))
+            mode = 'RO'))
         
         self.add(pr.RemoteVariable(
             name = 'FiltEnable',
@@ -111,7 +97,7 @@ class RceEthernet(pr.Device):
             bitOffset = 16,
             bitSize = 1,
             base = pr.Bool,
-            mode = 'RW'))
+            mode = 'RO'))
         
         self.add(pr.RemoteVariable(
             name = 'IpChecksumEnable',
@@ -119,7 +105,7 @@ class RceEthernet(pr.Device):
             bitOffset = 17,
             bitSize = 1,
             base = pr.Bool,
-            mode = 'RW'))
+            mode = 'RO'))
         
         self.add(pr.RemoteVariable(
             name = 'TcpChecksumEnable',
@@ -127,7 +113,7 @@ class RceEthernet(pr.Device):
             bitOffset = 18,
             bitSize = 1,
             base = pr.Bool
-            mode = 'RW'))
+            mode = 'RO'))
         
         self.add(pr.RemoteVariable(
             name = 'UdpChecksumEnable',
@@ -135,7 +121,7 @@ class RceEthernet(pr.Device):
             bitOffset = 19,
             bitSize = 1,
             base = pr.Bool,
-            mode = 'RW'))
+            mode = 'RO'))
         
         self.add(pr.RemoteVariable(
             name = 'DropOnPause',
@@ -143,7 +129,7 @@ class RceEthernet(pr.Device):
             bitOffset = 20,
             bitSize = 1,
             base = pr.Bool,
-            mode = 'RW'))
+            mode = 'RO'))
         
         self.add(pr.RemoteVariable(
             name = 'EthHeaderSize',
@@ -151,7 +137,7 @@ class RceEthernet(pr.Device):
             bitOffset = 0,
             bitSize = 16,
             base = pr.UInt,
-            mode = 'RW'))
+            mode = 'RO'))
         
         self.add(pr.RemoteVariable(
             name = 'RxEnCount',
