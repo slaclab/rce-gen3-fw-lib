@@ -27,6 +27,9 @@ class RceVersion(pr.Device):
 
         self.add(pr.RemoteVariable(name='RceVersion', description='RCE registers version number',
                                    offset=0x8, bitsize=32, bitoffset=0, base=pr.UInt, mode='RO'))
+        
+        self.add(pr.RemoteVariable(name='PcieEnable', description='PCIE_EN_G generic value',
+                                   offset=0xC, bitsize=1, bitoffset=0, base=pr.UInt, mode='RO'))        
 
         self.add(pr.RemoteVariable(name='DeviceDna', description='Xilinx Device DNA Value',
                                    offset=0x20, bitsize=64, bitoffset=0, base=pr.UInt, mode='RO'))
