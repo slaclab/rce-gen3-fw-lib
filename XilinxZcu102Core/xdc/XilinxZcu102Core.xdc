@@ -40,6 +40,7 @@ set_property -dict { PACKAGE_PIN C7 } [get_ports { sfpRefClkN }]
 ####################
 
 create_clock -name sfpRefClkP -period 6.400 [get_ports {sfpRefClkP}]
+create_clock -name fclk0      -period 10.0  [get_pins  {U_Core/U_RceG3Top/GEN_SYNTH.U_RceG3Cpu/U_CPU/U0/PS8_i/PLCLK[0]}]
 
 create_generated_clock -name clk200 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0}]
 create_generated_clock -name clk125 [get_pins {U_Core/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT3}]
