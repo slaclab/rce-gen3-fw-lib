@@ -41,7 +41,7 @@ class RceEthernet(pr.Device):
         self.add(pr.LinkVariable(
             name = 'MacAddress',
             mode = 'RO',
-            dependencies = [self.MacAddressRaw]
+            dependencies = [self.MacAddressRaw],
             linkedGet = lambda: ':'.join(f'{b:02x}' for b in self.MacAddressRaw.value().to_bytes(6, 'little'))))
         
         self.add(pr.RemoteVariable(
@@ -55,9 +55,9 @@ class RceEthernet(pr.Device):
         self.add(pr.LinkVariable(
             name = 'IpAddress',
             mode = 'RW',
-            dependencies = [self.IpAddressRaw]
-            linkedGet = lambda: '.'.join(f'{b:d}' for b in self.IpAddressRaw.value().to_bytes(4, 'little'))
-            linkedSet = lambda value: self.IpAddressRaw.set(int.from_bytes((int(x) for x in value.split('.')), 'little')            
+            dependencies = [self.IpAddressRaw],
+            linkedGet = lambda: '.'.join(f'{b:d}' for b in self.IpAddressRaw.value().to_bytes(4, 'little')),
+            linkedSet = lambda value: self.IpAddressRaw.set(int.from_bytes((int(x) for x in value.split('.')), 'little'))))
         
         self.add(pr.RemoteVariable(
             name = 'PhyStatus',
@@ -76,7 +76,7 @@ class RceEthernet(pr.Device):
             mode = 'RO'))
         
         self.add(pr.RemoteVariable(
-            name = 'TxShift'
+            name = 'TxShift',
             offset = 0x038,
             bitOffset = 0,
             bitSize = 4,
@@ -112,7 +112,7 @@ class RceEthernet(pr.Device):
             offset = 0x038,
             bitOffset = 18,
             bitSize = 1,
-            base = pr.Bool
+            base = pr.Bool,
             mode = 'RO'))
         
         self.add(pr.RemoteVariable(
@@ -145,7 +145,7 @@ class RceEthernet(pr.Device):
             bitOffset = 0,
             bitSize = 32,
             base = pr.UInt,
-            mode = 'R0'))
+            mode = 'RO'))
         
         self.add(pr.RemoteVariable(
             name = 'TxEnCount',
