@@ -35,6 +35,7 @@ entity RceG3Top is
       MEMORY_TYPE_G  : string                 := "block";      
       RCE_DMA_MODE_G : RceDmaModeType         := RCE_DMA_PPI_C;
       PCIE_EN_G      : boolean                := false;
+      USE_DMA_ETH_G  : boolean                := true;  -- true if using DMA[3] for ETH else DMA[3] free for user application
       SEL_REFCLK_G   : boolean                := true;  -- false = ZYNQ ref, true = ETH ref
       SIM_USER_ID_G  : natural range 0 to 100 := 1;
       BYP_BSI_G      : boolean                := false; -- true for non-COB applications (like DEV boards)
@@ -373,6 +374,7 @@ begin
          SYNTH_MODE_G   => SYNTH_MODE_G,
          MEMORY_TYPE_G  => MEMORY_TYPE_G,          
          RCE_DMA_MODE_G => RCE_DMA_MODE_G,
+         USE_DMA_ETH_G  => USE_DMA_ETH_G,
          SIM_USER_ID_G  => SIM_USER_ID_G,
          SIMULATION_G   => SIMULATION_G)
       port map (

@@ -105,6 +105,7 @@ begin
          SIMULATION_G   => SIMULATION_G,
          MEMORY_TYPE_G  => "ultra",
          SEL_REFCLK_G   => false,       -- false = ZYNQ ref
+         USE_DMA_ETH_G  => false,       -- false = using DMA[3] for application space (not ETH)
          BUILD_INFO_G   => BUILD_INFO_G,
          BYP_BSI_G      => true,        -- bypassing BSI I2C interface
          RCE_DMA_MODE_G => RCE_DMA_AXISV2_C)  -- AXIS DMA Version2
