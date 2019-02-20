@@ -39,6 +39,7 @@ entity RceG3Dma is
       SYNTH_MODE_G   : string                 := "xpm";
       MEMORY_TYPE_G  : string                 := "block";
       RCE_DMA_MODE_G : RceDmaModeType         := RCE_DMA_PPI_C;
+      USE_DMA_ETH_G  : boolean                := true;
       SIM_USER_ID_G  : natural range 0 to 100 := 1;
       SIMULATION_G   : boolean                := false);
    port (
@@ -179,9 +180,10 @@ begin
 
          U_RceG3DmaAxisV2 : entity work.RceG3DmaAxisV2
             generic map (
-               TPD_G => TPD_G)
-            -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
-            -- MEMORY_TYPE_G    => MEMORY_TYPE_G)  <--- generic for future XPM FIFO release 
+               TPD_G         => TPD_G,
+               -- SYNTH_MODE_G  => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
+               -- MEMORY_TYPE_G => MEMORY_TYPE_G   <--- generic for future XPM FIFO release 
+               USE_DMA_ETH_G => USE_DMA_ETH_G)
             port map (
                axiDmaClk       => axiDmaClk,
                axiDmaRst       => axiDmaRst,
