@@ -5,7 +5,7 @@
 -- Author     : Larry Ruckman  <ruckman@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2016-10-18
--- Last update: 2019-02-05
+-- Last update: 2019-03-06
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ begin
                      v.cnt := 0;
                   else
                      -- Save the data
-                     v.tData(r.cnt) := obMacPrimMaster.tData;
+                     v.tData(r.cnt) := obMacPrimMaster.tData(127 downto 0);
                      -- Check the counter
                      if (r.cnt = 2) then
                         -- Reset the counter
