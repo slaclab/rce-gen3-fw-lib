@@ -29,15 +29,19 @@ use work.RceG3Pkg.all;
 
 entity RceG3Top is
    generic (
-      TPD_G          : time                   := 1 ns;
-      BUILD_INFO_G   : BuildInfoType;
-      SYNTH_MODE_G   : string                 := "xpm";
-      MEMORY_TYPE_G  : string                 := "block";      
-      RCE_DMA_MODE_G : RceDmaModeType         := RCE_DMA_PPI_C;
-      PCIE_EN_G      : boolean                := false;
-      SEL_REFCLK_G   : boolean                := true;  -- false = ZYNQ ref, true = ETH ref
-      SIM_USER_ID_G  : natural range 0 to 100 := 1;
-      SIMULATION_G   : boolean                := false);
+      TPD_G              : time                     := 1 ns;
+      BUILD_INFO_G       : BuildInfoType;
+      SYNTH_MODE_G       : string                   := "xpm";
+      MEMORY_TYPE_G      : string                   := "block";
+      RCE_DMA_MODE_G     : RceDmaModeType           := RCE_DMA_PPI_C;
+      PCIE_EN_G          : boolean                  := false;
+      SEL_REFCLK_G       : boolean                  := true;  -- false = ZYNQ ref, true = ETH ref
+      SIMULATION_G       : boolean                  := false;
+      SIM_MEM_PORT_NUM_G : natural range 0 to 65535 := 9000;
+      SIM_DMA_PORT_NUM_G : natural range 0 to 65535 := 9100;
+      SIM_DMA_CHANNELS_G : natural range 0 to 4     := 3;
+      SIM_DMA_TDESTS_G   : natural range 0 to 256   := 256);
+
    port (
       -- I2C Ports
       i2cSda              : inout sl;
@@ -73,15 +77,15 @@ entity RceG3Top is
       extAxilWriteSlave   : in    AxiLiteWriteSlaveType;
       -- Core Axi Bus, 0xB0000000 - 0xBFFFFFFF  (axilClk domain)
       coreAxilReadMaster  : out   AxiLiteReadMasterType;
-      coreAxilReadSlave   : in    AxiLiteReadSlaveType;
+      coreAxilReadSlave   : in    AxiLiteReadSlaveType  := AXI_LITE_READ_SLAVE_EMPTY_DECERR_C;
       coreAxilWriteMaster : out   AxiLiteWriteMasterType;
-      coreAxilWriteSlave  : in    AxiLiteWriteSlaveType;
+      coreAxilWriteSlave  : in    AxiLiteWriteSlaveType := AXI_LITE_WRITE_SLAVE_EMPTY_DECERR_C;
       -- PCIE Ports
-      pciRefClkP          : in    sl                 := '0';
-      pciRefClkN          : in    sl                 := '0';
+      pciRefClkP          : in    sl                    := '0';
+      pciRefClkN          : in    sl                    := '0';
       pciResetL           : out   sl;
-      pcieRxP             : in    sl                 := '0';
-      pcieRxN             : in    sl                 := '0';
+      pcieRxP             : in    sl                    := '0';
+      pcieRxN             : in    sl                    := '0';
       pcieTxP             : out   sl;
       pcieTxN             : out   sl;
       -- DMA Interfaces (dmaClk domain)
@@ -96,9 +100,9 @@ entity RceG3Top is
       userInterrupt       : in    slv(USER_INT_COUNT_C-1 downto 0);
       -- User memory access (axiDmaClk domain)
       userWriteSlave      : out   AxiWriteSlaveType;
-      userWriteMaster     : in    AxiWriteMasterType := AXI_WRITE_MASTER_INIT_C;
+      userWriteMaster     : in    AxiWriteMasterType    := AXI_WRITE_MASTER_INIT_C;
       userReadSlave       : out   AxiReadSlaveType;
-      userReadMaster      : in    AxiReadMasterType  := AXI_READ_MASTER_INIT_C;
+      userReadMaster      : in    AxiReadMasterType     := AXI_READ_MASTER_INIT_C;
       -- ZYNQ GEM Interface
       armEthTx            : out   ArmEthTxArray(1 downto 0);
       armEthRx            : in    ArmEthRxArray(1 downto 0);
@@ -362,6 +366,20 @@ begin
 
    end generate;
 
+   SIM_GEN : if (SIMULATION_G = true) generate
+      U_RogueTcpMemoryWrap_1 : entity work.RogueTcpMemoryWrap
+         generic map (
+            TPD_G      => TPD_G,
+            PORT_NUM_G => SIM_MEM_PORT_NUM_G)
+         port map (
+            axilClk         => iAxilClk,            -- [in]
+            axilRst         => iAxilRst,            -- [in]
+            axilReadMaster  => extAxilReadMaster,   -- [out]
+            axilReadSlave   => extAxilReadSlave,    -- [in]
+            axilWriteMaster => extAxilWriteMaster,  -- [out]
+            axilWriteSlave  => extAxilWriteSlave);  -- [in]
+   end generate;
+
    --------------------------------------------
    -- DMA Controller
    --------------------------------------------
@@ -369,10 +387,12 @@ begin
       generic map (
          TPD_G          => TPD_G,
          SYNTH_MODE_G   => SYNTH_MODE_G,
-         MEMORY_TYPE_G  => MEMORY_TYPE_G,          
+         MEMORY_TYPE_G  => MEMORY_TYPE_G,
          RCE_DMA_MODE_G => RCE_DMA_MODE_G,
-         SIM_USER_ID_G  => SIM_USER_ID_G,
-         SIMULATION_G   => SIMULATION_G)
+         SIMULATION_G   => SIMULATION_G,
+         SIM_PORT_NUM_G => SIM_DMA_PORT_NUM_G,
+         SIM_CHANNELS_G => SIM_DMA_CHANNELS_G,
+         SIM_TDESTS_G   => SIM_DMA_TDESTS_G)
       port map (
          axiDmaClk          => axiDmaClock,
          axiDmaRst          => axiDmaReset,

@@ -2,7 +2,7 @@
 -- File       : DtmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2019-02-08
+-- Last update: 2019-03-06
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DTM
 -------------------------------------------------------------------------------
@@ -29,21 +29,24 @@ use unisim.vcomponents.all;
 
 entity DtmCore is
    generic (
-      TPD_G              : time                   := 1 ns;
+      TPD_G              : time                     := 1 ns;
       BUILD_INFO_G       : BuildInfoType;
-      SIM_USER_ID_G      : natural range 0 to 100 := 1;
-      SIMULATION_G       : boolean                := false;
-      COB_GTE_C10_G      : boolean                := false;  -- true = COB with Mellanox ETH SW, false = COB with Fullcrum ETH SW
-      ETH_TYPE_G         : string                 := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
-      RCE_DMA_MODE_G     : RceDmaModeType         := RCE_DMA_PPI_C;
-      UDP_SERVER_EN_G    : boolean                := false;
-      UDP_SERVER_SIZE_G  : positive               := 1;
-      UDP_SERVER_PORTS_G : PositiveArray          := (0 => 8192);
-      BYP_EN_G           : boolean                := false;
-      BYP_ETH_TYPE_G     : slv(15 downto 0)       := x"AAAA";
-      VLAN_EN_G          : boolean                := false;
-      VLAN_SIZE_G        : positive range 1 to 8  := 1;
-      VLAN_VID_G         : Slv12Array             := (0 => x"001"));
+      SIMULATION_G       : boolean                  := false;
+      SIM_MEM_PORT_NUM_G : natural range 0 to 65535 := 9000;
+      SIM_DMA_PORT_NUM_G : natural range 0 to 65535 := 9100;
+      SIM_DMA_CHANNELS_G : natural range 0 to 4     := 3;
+      SIM_DMA_TDESTS_G   : natural range 0 to 256   := 256;
+      COB_GTE_C10_G      : boolean                  := false;  -- true = COB with Mellanox ETH SW, false = COB with Fullcrum ETH SW
+      ETH_TYPE_G         : string                   := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
+      RCE_DMA_MODE_G     : RceDmaModeType           := RCE_DMA_PPI_C;
+      UDP_SERVER_EN_G    : boolean                  := false;
+      UDP_SERVER_SIZE_G  : positive                 := 1;
+      UDP_SERVER_PORTS_G : PositiveArray            := (0 => 8192);
+      BYP_EN_G           : boolean                  := false;
+      BYP_ETH_TYPE_G     : slv(15 downto 0)         := x"AAAA";
+      VLAN_EN_G          : boolean                  := false;
+      VLAN_SIZE_G        : positive range 1 to 8    := 1;
+      VLAN_VID_G         : Slv12Array               := (0 => x"001"));
    port (
       -- I2C
       i2cSda               : inout sl;
@@ -244,14 +247,17 @@ begin
    --------------------------------------------------
    U_RceG3Top : entity work.RceG3Top
       generic map (
-         TPD_G          => TPD_G,
-         SIM_USER_ID_G  => SIM_USER_ID_G,
-         SIMULATION_G   => SIMULATION_G,
-         MEMORY_TYPE_G  => MEMORY_TYPE_C,
-         SEL_REFCLK_G   => SEL_REFCLK_C,
-         BUILD_INFO_G   => BUILD_INFO_G,
-         PCIE_EN_G      => COB_GTE_C10_G,
-         RCE_DMA_MODE_G => RCE_DMA_MODE_G)
+         TPD_G              => TPD_G,
+         SIMULATION_G       => SIMULATION_G,
+         SIM_MEM_PORT_NUM_G => SIM_MEM_PORT_NUM_G,
+         SIM_DMA_PORT_NUM_G => SIM_DMA_PORT_NUM_G,
+         SIM_DMA_CHANNELS_G => SIM_DMA_CHANNELS_G,
+         SIM_DMA_TDESTS_G   => SIM_DMA_TDESTS_G,
+         MEMORY_TYPE_G      => MEMORY_TYPE_C,
+         SEL_REFCLK_G       => SEL_REFCLK_C,
+         BUILD_INFO_G       => BUILD_INFO_G,
+         PCIE_EN_G          => COB_GTE_C10_G,
+         RCE_DMA_MODE_G     => RCE_DMA_MODE_G)
       port map (
          -- I2C Ports
          i2cSda              => i2cSda,
@@ -518,17 +524,10 @@ begin
             ethTxN(0)            => ethTxM,
             ethTxN(3 downto 1)   => open);
 
-      process (iAxilClk)
-      begin
-         if rising_edge(iAxilClk) then
-            case ETH_TYPE_G is
-               when "ZYNQ-GEM"    => armEthMode <= x"00000001";
-               when "1000BASE-KX" => armEthMode <= x"00000002";
-               when "10GBASE-KR"  => armEthMode <= x"0000000A";
-               when others        => armEthMode <= x"00000000";
-            end case;
-         end if;
-      end process;
+      armEthMode <= X"00000001" when ETH_TYPE_G = "ZYNQ-GEM" else
+                    X"00000002" when ETH_TYPE_G = "1000BASE-KX" else
+                    X"03030303" when ETH_TYPE_G = "10GBASE-KX4" else
+                    X"00000000";
 
    end generate;
 
