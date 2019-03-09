@@ -2,7 +2,7 @@
 -- File       : RceG3PcieRoot.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2016-05-16
--- Last update: 2016-07-14
+-- Last update: 2019-03-07
 -------------------------------------------------------------------------------
 -- Description: Wrapper for Xilinx PCIE Root & Axi Interconnect
 -------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ architecture mapping of RceG3PcieRoot is
          pcie_mast_awlen : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_awsize : out STD_LOGIC_VECTOR ( 2 downto 0 );
          pcie_mast_awburst : out STD_LOGIC_VECTOR ( 1 downto 0 );
-         pcie_mast_awlock : out STD_LOGIC_VECTOR ( 1 to 0 );
+         pcie_mast_awlock : out STD_LOGIC_VECTOR ( 1 downto 0 );
          pcie_mast_awcache : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_awprot : out STD_LOGIC_VECTOR ( 2 downto 0 );
          pcie_mast_awvalid : out STD_LOGIC;
@@ -102,7 +102,7 @@ architecture mapping of RceG3PcieRoot is
          pcie_mast_arlen : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_arsize : out STD_LOGIC_VECTOR ( 2 downto 0 );
          pcie_mast_arburst : out STD_LOGIC_VECTOR ( 1 downto 0 );
-         pcie_mast_arlock : out STD_LOGIC_VECTOR ( 1 to 0 );
+         pcie_mast_arlock : out STD_LOGIC_VECTOR ( 1 downto 0 );
          pcie_mast_arcache : out STD_LOGIC_VECTOR ( 3 downto 0 );
          pcie_mast_arprot : out STD_LOGIC_VECTOR ( 2 downto 0 );
          pcie_mast_arvalid : out STD_LOGIC;
@@ -116,7 +116,7 @@ architecture mapping of RceG3PcieRoot is
          local_axi_awlen : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_awsize : out STD_LOGIC_VECTOR ( 2 downto 0 );
          local_axi_awburst : out STD_LOGIC_VECTOR ( 1 downto 0 );
-         local_axi_awlock : out STD_LOGIC_VECTOR ( 1 to 0 );
+         local_axi_awlock : out STD_LOGIC_VECTOR ( 1 downto 0 );
          local_axi_awcache : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_awprot : out STD_LOGIC_VECTOR ( 2 downto 0 );
          local_axi_awqos : out STD_LOGIC_VECTOR ( 3 downto 0 );
@@ -134,7 +134,7 @@ architecture mapping of RceG3PcieRoot is
          local_axi_arlen : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_arsize : out STD_LOGIC_VECTOR ( 2 downto 0 );
          local_axi_arburst : out STD_LOGIC_VECTOR ( 1 downto 0 );
-         local_axi_arlock : out STD_LOGIC_VECTOR ( 1 to 0 );
+         local_axi_arlock : out STD_LOGIC_VECTOR ( 1 downto 0 );
          local_axi_arcache : out STD_LOGIC_VECTOR ( 3 downto 0 );
          local_axi_arprot : out STD_LOGIC_VECTOR ( 2 downto 0 );
          local_axi_arqos : out STD_LOGIC_VECTOR ( 3 downto 0 );
@@ -149,7 +149,7 @@ architecture mapping of RceG3PcieRoot is
          gp_axi_awlen : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_awsize : in STD_LOGIC_VECTOR ( 2 downto 0 );
          gp_axi_awburst : in STD_LOGIC_VECTOR ( 1 downto 0 );
-         gp_axi_awlock : in STD_LOGIC_VECTOR ( 1 to 0 );
+         gp_axi_awlock : in STD_LOGIC_VECTOR ( 1 downto 0 );
          gp_axi_awcache : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_awid : in STD_LOGIC_VECTOR ( 11 downto 0 );
          gp_axi_awprot : in STD_LOGIC_VECTOR ( 2 downto 0 );
@@ -169,7 +169,7 @@ architecture mapping of RceG3PcieRoot is
          gp_axi_arlen : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_arsize : in STD_LOGIC_VECTOR ( 2 downto 0 );
          gp_axi_arburst : in STD_LOGIC_VECTOR ( 1 downto 0 );
-         gp_axi_arlock : in STD_LOGIC_VECTOR ( 1 to 0 );
+         gp_axi_arlock : in STD_LOGIC_VECTOR ( 1 downto 0 );
          gp_axi_arcache : in STD_LOGIC_VECTOR ( 3 downto 0 );
          gp_axi_arid : in STD_LOGIC_VECTOR ( 11 downto 0 );
          gp_axi_arprot : in STD_LOGIC_VECTOR ( 2 downto 0 );
