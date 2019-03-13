@@ -20,14 +20,12 @@ import pyrogue as pr
 
 class RceVersion(pr.Device):
     def __init__(
-            self,       
-            name        = 'RceVersion',
+            self,
             description = 'Container for RceVersion Module',
             offset      = 0x00000000,
             **kwargs):
     
         super().__init__(
-            name        = name,
             description = description,
             offset      = 0x00000000, #This module using absolute address (not offsets)
             **kwargs)
@@ -50,7 +48,7 @@ class RceVersion(pr.Device):
             name        = 'RceVersion', 
             description = 'RCE registers version number',
             offset      = 0x80000008, 
-            mode='RO',
+            mode        = 'RO',
         ))
 
         self.add(pr.RemoteVariable(
