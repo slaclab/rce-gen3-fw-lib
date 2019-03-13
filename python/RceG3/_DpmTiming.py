@@ -121,7 +121,7 @@ class DpmTiming(pr.Device):
             pollInterval=1,
         ))
 
-        self.hideVariables(hidden=True, variables=[self.enable])
+        #self.hideVariables(hidden=True, variables=[self.enable])
         #self.enable.set(True)
 
     def softReset(self):
