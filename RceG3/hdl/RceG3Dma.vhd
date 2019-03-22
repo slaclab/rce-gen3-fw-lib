@@ -38,6 +38,7 @@ entity RceG3Dma is
       TPD_G          : time                        := 1 ns;
       SYNTH_MODE_G   : string                      := "xpm";
       MEMORY_TYPE_G  : string                      := "block";
+      USE_DMA_ETH_G  : boolean                     := true;
       RCE_DMA_MODE_G : RceDmaModeType              := RCE_DMA_PPI_C;
       SIMULATION_G   : boolean                     := false;
       SIM_PORT_NUM_G : natural range 1024 to 49151 := 1;
