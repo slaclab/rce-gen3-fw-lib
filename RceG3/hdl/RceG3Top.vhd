@@ -36,6 +36,7 @@ entity RceG3Top is
       RCE_DMA_MODE_G     : RceDmaModeType              := RCE_DMA_PPI_C;
       PCIE_EN_G          : boolean                     := false;
       USE_DMA_ETH_G      : boolean                     := true;  -- true if using DMA[3] for ETH else DMA[3] free for user application
+      BYP_BSI_G          : boolean                     := false; -- true for non-COB applications (like DEV boards)
       SEL_REFCLK_G       : boolean                     := true;  -- false = ZYNQ ref, true = ETH ref
       SIMULATION_G       : boolean                     := false;
       SIM_MEM_PORT_NUM_G : natural range 1024 to 49151 := 9000;
