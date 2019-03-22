@@ -5,7 +5,7 @@
 -- File       : PpiObPayload.vhd
 -- Author     : Ryan Herbst, rherbst@slac.stanford.edu
 -- Created    : 2014-04-25
--- Last update: 2016-10-07
+-- Last update: 2019-03-07
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -263,7 +263,7 @@ begin
 
             v.obPayloadDebug(3)               := r.sizeMin;
             v.obPayloadDebug(2)               := r.sizeMax;
-            v.obPayloadDebug(1)               := r.dmaReq.address;
+            v.obPayloadDebug(1)               := r.dmaReq.address(31 downto 0);
             v.obPayloadDebug(0)(31 downto 16) := r.dmaReq.size(15 downto 0);
 
          -- Header data, send out

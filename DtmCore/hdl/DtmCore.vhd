@@ -2,7 +2,7 @@
 -- File       : DtmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-09-04
+-- Last update: 2019-03-06
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DTM
 -------------------------------------------------------------------------------
@@ -29,21 +29,24 @@ use unisim.vcomponents.all;
 
 entity DtmCore is
    generic (
-      TPD_G              : time                   := 1 ns;
+      TPD_G              : time                     := 1 ns;
       BUILD_INFO_G       : BuildInfoType;
-      SIM_USER_ID_G      : natural range 0 to 100 := 1;
-      SIMULATION_G       : boolean                := false;
-      COB_GTE_C10_G      : boolean                := false;  -- true = COB with Mellanox ETH SW, false = COB with Fullcrum ETH SW
-      ETH_TYPE_G         : string                 := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
-      RCE_DMA_MODE_G     : RceDmaModeType         := RCE_DMA_PPI_C;
-      UDP_SERVER_EN_G    : boolean                := false;
-      UDP_SERVER_SIZE_G  : positive               := 1;
-      UDP_SERVER_PORTS_G : PositiveArray          := (0 => 8192);
-      BYP_EN_G           : boolean                := false;
-      BYP_ETH_TYPE_G     : slv(15 downto 0)       := x"AAAA";
-      VLAN_EN_G          : boolean                := false;
-      VLAN_SIZE_G        : positive range 1 to 8  := 1;
-      VLAN_VID_G         : Slv12Array             := (0 => x"001"));
+      SIMULATION_G       : boolean                  := false;
+      SIM_MEM_PORT_NUM_G : natural range 0 to 65535 := 9000;
+      SIM_DMA_PORT_NUM_G : natural range 0 to 65535 := 9100;
+      SIM_DMA_CHANNELS_G : natural range 0 to 4     := 3;
+      SIM_DMA_TDESTS_G   : natural range 0 to 256   := 256;
+      COB_GTE_C10_G      : boolean                  := false;  -- true = COB with Mellanox ETH SW, false = COB with Fullcrum ETH SW
+      ETH_TYPE_G         : string                   := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
+      RCE_DMA_MODE_G     : RceDmaModeType           := RCE_DMA_PPI_C;
+      UDP_SERVER_EN_G    : boolean                  := false;
+      UDP_SERVER_SIZE_G  : positive                 := 1;
+      UDP_SERVER_PORTS_G : PositiveArray            := (0 => 8192);
+      BYP_EN_G           : boolean                  := false;
+      BYP_ETH_TYPE_G     : slv(15 downto 0)         := x"AAAA";
+      VLAN_EN_G          : boolean                  := false;
+      VLAN_SIZE_G        : positive range 1 to 8    := 1;
+      VLAN_VID_G         : Slv12Array               := (0 => x"001"));
    port (
       -- I2C
       i2cSda               : inout sl;
@@ -139,8 +142,8 @@ architecture mapping of DtmCore is
    constant SEL_REFCLK_C  : boolean := ite(XIL_DEVICE_C = "7SERIES", false, true);
    constant MEMORY_TYPE_C : string  := ite(XIL_DEVICE_C = "7SERIES", "block", "ultra");
 
-   signal axilClock : sl;
-   signal axilReset : sl;
+   signal iAxilClk : sl;
+   signal iAxilRst : sl;
 
    signal axiDmaClock : sl;
    signal axiDmaReset : sl;
@@ -157,6 +160,26 @@ architecture mapping of DtmCore is
    signal coreAxilReadSlave   : AxiLiteReadSlaveType  := AXI_LITE_READ_SLAVE_EMPTY_OK_C;
    signal coreAxilWriteMaster : AxiLiteWriteMasterType;
    signal coreAxilWriteSlave  : AxiLiteWriteSlaveType := AXI_LITE_WRITE_SLAVE_EMPTY_OK_C;
+
+   constant AXIL_XBAR_MASTERS_C : integer := 2;
+   constant AXIL_ETH_INDEX_C    : integer := 0;
+   constant AXIL_PCIE_INDEX_C   : integer := 1;
+   constant AXIL_XBAR_CFG_C : AxiLiteCrossbarMasterConfigArray(AXIL_XBAR_MASTERS_C-1 downto 0) := (
+      AXIL_ETH_INDEX_C  => (
+         baseAddr       => X"B0000000",
+         addrBits       => 12,
+         connectivity   => X"FFFF"),
+      -- 0xBC000000 - 0xBC00FFFF : PCI Express Registers
+      AXIL_PCIE_INDEX_C => (
+         baseAddr       => x"BC000000",
+         addrBits       => 16,
+         connectivity   => x"FFFF"));
+
+   signal locAxilReadMasters  : AxiLiteReadMasterArray(AXIL_XBAR_MASTERS_C-1 downto 0)  := (others => AXI_LITE_READ_MASTER_INIT_C);
+   signal locAxilReadSlaves   : AxiLiteReadSlaveArray(AXIL_XBAR_MASTERS_C-1 downto 0)   := (others => AXI_LITE_READ_SLAVE_EMPTY_DECERR_C);
+   signal locAxilWriteMasters : AxiLiteWriteMasterArray(AXIL_XBAR_MASTERS_C-1 downto 0) := (others => AXI_LITE_WRITE_MASTER_INIT_C);
+   signal locAxilWriteSlaves  : AxiLiteWriteSlaveArray(AXIL_XBAR_MASTERS_C-1 downto 0)  := (others => AXI_LITE_WRITE_SLAVE_EMPTY_DECERR_C);
+
 
    signal armEthTx   : ArmEthTxArray(1 downto 0) := (others => ARM_ETH_TX_INIT_C);
    signal armEthRx   : ArmEthRxArray(1 downto 0) := (others => ARM_ETH_RX_INIT_C);
@@ -186,17 +209,13 @@ architecture mapping of DtmCore is
 
    signal locked : sl;
 
-   signal pcieAxilReadMaster  : AxiLiteReadMasterType  := AXI_LITE_READ_MASTER_INIT_C;
-   signal pcieAxilReadSlave   : AxiLiteReadSlaveType   := AXI_LITE_READ_SLAVE_INIT_C;
-   signal pcieAxilWriteMaster : AxiLiteWriteMasterType := AXI_LITE_WRITE_MASTER_INIT_C;
-   signal pcieAxilWriteSlave  : AxiLiteWriteSlaveType  := AXI_LITE_WRITE_SLAVE_INIT_C;
-   signal ipciRefClkP         : sl                     := '0';
-   signal ipciRefClkM         : sl                     := '1';
-   signal ipciRxP             : sl                     := '0';
-   signal ipciRxM             : sl                     := '1';
-   signal ipciTxP             : sl                     := '0';
-   signal ipciTxM             : sl                     := '1';
-   signal ipciResetL          : sl                     := '1';
+   signal ipciRefClkP : sl := '0';
+   signal ipciRefClkM : sl := '1';
+   signal ipciRxP     : sl := '0';
+   signal ipciRxM     : sl := '1';
+   signal ipciTxP     : sl := '0';
+   signal ipciTxM     : sl := '1';
+   signal ipciResetL  : sl := '1';
 
 begin
 
@@ -207,10 +226,10 @@ begin
    --------------------------------------------------
    -- Inputs/Outputs
    --------------------------------------------------
-   axiClk       <= axilClock;
-   axiClkRst    <= axilReset;
-   sysClk125    <= axilClock;
-   sysClk125Rst <= axilReset;
+   axiClk       <= iAxilClk;
+   axiClkRst    <= iAxilRst;
+   sysClk125    <= iAxilClk;
+   sysClk125Rst <= iAxilRst;
    sysClk200    <= axiDmaClock;
    sysClk200Rst <= axiDmaReset;
 
@@ -228,14 +247,17 @@ begin
    --------------------------------------------------
    U_RceG3Top : entity work.RceG3Top
       generic map (
-         TPD_G          => TPD_G,
-         SIM_USER_ID_G  => SIM_USER_ID_G,
-         SIMULATION_G   => SIMULATION_G,
-         MEMORY_TYPE_G  => MEMORY_TYPE_C,
-         SEL_REFCLK_G   => SEL_REFCLK_C,
-         BUILD_INFO_G   => BUILD_INFO_G,
-         PCIE_EN_G      => COB_GTE_C10_G,
-         RCE_DMA_MODE_G => RCE_DMA_MODE_G)
+         TPD_G              => TPD_G,
+         SIMULATION_G       => SIMULATION_G,
+         SIM_MEM_PORT_NUM_G => SIM_MEM_PORT_NUM_G,
+         SIM_DMA_PORT_NUM_G => SIM_DMA_PORT_NUM_G,
+         SIM_DMA_CHANNELS_G => SIM_DMA_CHANNELS_G,
+         SIM_DMA_TDESTS_G   => SIM_DMA_TDESTS_G,
+         MEMORY_TYPE_G      => MEMORY_TYPE_C,
+         SEL_REFCLK_G       => SEL_REFCLK_C,
+         BUILD_INFO_G       => BUILD_INFO_G,
+         PCIE_EN_G          => COB_GTE_C10_G,
+         RCE_DMA_MODE_G     => RCE_DMA_MODE_G)
       port map (
          -- I2C Ports
          i2cSda              => i2cSda,
@@ -262,8 +284,8 @@ begin
          axiDmaClk           => axiDmaClock,
          axiDmaRst           => axiDmaReset,
          -- AXI-Lite clock and reset
-         axilClk             => axilClock,
-         axilRst             => axilReset,
+         axilClk             => iAxilClk,
+         axilRst             => iAxilRst,
          -- External Axi Bus, (axilClk domain)
          -- 0xA0000000 - 0xAFFFFFFF (COB_MIN_C10_G = False)
          -- 0x90000000 - 0x97FFFFFF (COB_MIN_C10_G = True)         
@@ -308,6 +330,28 @@ begin
    clkSelA <= '1';
    clkSelB <= '1';
 
+   -------------------------------------
+   -- AXI Lite Crossbar
+   -- Base: 0xB0000000 - 0xBFFFFFFF
+   -------------------------------------
+   U_AxiCrossbar : entity work.AxiLiteCrossbar
+      generic map (
+         TPD_G              => TPD_G,
+         NUM_SLAVE_SLOTS_G  => 1,
+         NUM_MASTER_SLOTS_G => AXIL_XBAR_MASTERS_C,
+         MASTERS_CONFIG_G   => AXIL_XBAR_CFG_C)
+      port map (
+         axiClk              => iAxilClk,
+         axiClkRst           => iAxilRst,
+         sAxiWriteMasters(0) => coreAxilWriteMaster,
+         sAxiWriteSlaves(0)  => coreAxilWriteSlave,
+         sAxiReadMasters(0)  => coreAxilReadMaster,
+         sAxiReadSlaves(0)   => coreAxilReadSlave,
+         mAxiWriteMasters    => locAxilWriteMasters,
+         mAxiWriteSlaves     => locAxilWriteSlaves,
+         mAxiReadMasters     => locAxilReadMasters,
+         mAxiReadSlaves      => locAxilReadSlaves);
+
    U_C10_EN_G : if (COB_GTE_C10_G = true) and (XIL_DEVICE_C = "7SERIES") and (SIMULATION_G = false) generate
       ipciRefClkP <= pciRefClkP;
       ipciRefClkM <= pciRefClkM;
@@ -325,34 +369,7 @@ begin
       ipciRxP     <= '0';
       ipciRxM     <= '0';
 
-      -------------------------------------
-      -- AXI Lite Crossbar
-      -- Base: 0xB0000000 - 0xBFFFFFFF
-      -------------------------------------
-      U_AxiCrossbar : entity work.AxiLiteCrossbar
-         generic map (
-            TPD_G              => TPD_G,
-            NUM_SLAVE_SLOTS_G  => 1,
-            NUM_MASTER_SLOTS_G => 1,
-            DEC_ERROR_RESP_G   => AXI_RESP_OK_C,
-            MASTERS_CONFIG_G   => (
 
-               -- Channel 1 = 0xBC000000 - 0xBC00FFFF : PCI Express Registers
-               0                  => (baseAddr => x"BC000000",
-                     addrBits     => 16,
-                     connectivity => x"FFFF")
-               ))
-         port map (
-            axiClk              => axilClock,
-            axiClkRst           => axilReset,
-            sAxiWriteMasters(0) => coreAxilWriteMaster,
-            sAxiWriteSlaves(0)  => coreAxilWriteSlave,
-            sAxiReadMasters(0)  => coreAxilReadMaster,
-            sAxiReadSlaves(0)   => coreAxilReadSlave,
-            mAxiWriteMasters(0) => pcieAxilWriteMaster,
-            mAxiWriteSlaves(0)  => pcieAxilWriteSlave,
-            mAxiReadMasters(0)  => pcieAxilReadMaster,
-            mAxiReadSlaves(0)   => pcieAxilReadSlave);
 
 
       --------------------------------------------------
@@ -362,12 +379,12 @@ begin
          generic map (
             HSIO_MODE_G => false)
          port map (
-            axiClk         => axilClock,
-            axiClkRst      => axilReset,
-            axiReadMaster  => pcieAxilReadMaster,
-            axiReadSlave   => pcieAxilReadSlave,
-            axiWriteMaster => pcieAxilWriteMaster,
-            axiWriteSlave  => pcieAxilWriteSlave,
+            axiClk         => iAxilClk,
+            axiClkRst      => iAxilRst,
+            axiReadMaster  => locAxilReadMasters(AXIL_PCIE_INDEX_C),
+            axiReadSlave   => locAxilReadSlaves(AXIL_PCIE_INDEX_C),
+            axiWriteMaster => locAxilWriteMasters(AXIL_PCIE_INDEX_C),
+            axiWriteSlave  => locAxilWriteSlaves(AXIL_PCIE_INDEX_C),
             pciRefClkP     => pciRefClkP,
             pciRefClkM     => pciRefClkM,
             pcieResetL     => pciResetL,
@@ -489,12 +506,12 @@ begin
             userEthVlanObMasters => userEthVlanObMasters,
             userEthVlanObSlaves  => userEthVlanObSlaves,
             -- AXI-Lite Buses
-            axilClk              => axilClock,
-            axilRst              => axilReset,
-            axilWriteMaster      => coreAxilWriteMaster,
-            axilWriteSlave       => coreAxilWriteSlave,
-            axilReadMaster       => coreAxilReadMaster,
-            axilReadSlave        => coreAxilReadSlave,
+            axilClk              => iAxilClk,
+            axilRst              => iAxilRst,
+            axilWriteMaster      => locAxilWriteMasters(AXIL_ETH_INDEX_C),
+            axilWriteSlave       => locAxilWriteSlaves(AXIL_ETH_INDEX_C),
+            axilReadMaster       => locAxilReadMasters(AXIL_ETH_INDEX_C),
+            axilReadSlave        => locAxilReadSlaves(AXIL_ETH_INDEX_C),
             -- Ref Clock
             ethRefClk            => ethRefClk,
             -- Ethernet Lines
@@ -507,17 +524,10 @@ begin
             ethTxN(0)            => ethTxM,
             ethTxN(3 downto 1)   => open);
 
-      process (axilClock)
-      begin
-         if rising_edge(axilClock) then
-            case ETH_TYPE_G is
-               when "ZYNQ-GEM"    => armEthMode <= x"00000001";
-               when "1000BASE-KX" => armEthMode <= x"00000002";
-               when "10GBASE-KR"  => armEthMode <= x"0000000A";
-               when others        => armEthMode <= x"00000000";
-            end case;
-         end if;
-      end process;
+      armEthMode <= X"00000001" when ETH_TYPE_G = "ZYNQ-GEM" else
+                    X"00000002" when ETH_TYPE_G = "1000BASE-KX" else
+                    X"03030303" when ETH_TYPE_G = "10GBASE-KX4" else
+                    X"00000000";
 
    end generate;
 

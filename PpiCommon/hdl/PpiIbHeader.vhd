@@ -5,7 +5,7 @@
 -- File       : PpiIbHeader.vhd
 -- Author     : Ryan Herbst, rherbst@slac.stanford.edu
 -- Created    : 2014-04-25
--- Last update: 2016-10-27
+-- Last update: 2019-03-07
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ begin
                end if;
             end if;
 
-            v.ibHeaderDebug(1) := r.dmaReq.address;
+            v.ibHeaderDebug(1) := r.dmaReq.address(31 downto 0);
       end case;
 
       if axiRst = '1' then

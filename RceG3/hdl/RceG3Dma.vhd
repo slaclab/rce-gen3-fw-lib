@@ -35,13 +35,14 @@ use work.AxiPkg.all;
 
 entity RceG3Dma is
    generic (
-      TPD_G          : time                   := 1 ns;
-      SYNTH_MODE_G   : string                 := "xpm";
-      MEMORY_TYPE_G  : string                 := "block";
-      RCE_DMA_MODE_G : RceDmaModeType         := RCE_DMA_PPI_C;
-      USE_DMA_ETH_G  : boolean                := true;
-      SIM_USER_ID_G  : natural range 0 to 100 := 1;
-      SIMULATION_G   : boolean                := false);
+      TPD_G          : time                        := 1 ns;
+      SYNTH_MODE_G   : string                      := "xpm";
+      MEMORY_TYPE_G  : string                      := "block";
+      RCE_DMA_MODE_G : RceDmaModeType              := RCE_DMA_PPI_C;
+      SIMULATION_G   : boolean                     := false;
+      SIM_PORT_NUM_G : natural range 1024 to 49151 := 1;
+      SIM_CHANNELS_G : natural range 0 to 4        := 3;
+      SIM_TDESTS_G   : natural range 0 to 256      := 256);
    port (
 
       -- AXI BUS Clock
@@ -225,7 +226,7 @@ begin
                SYNTH_MODE_G         => SYNTH_MODE_G,
                MEMORY_TYPE_G        => MEMORY_TYPE_G,
                DMA_BUF_START_ADDR_G => x"3C000000",  -- set x"00000000" for simulation and x"3C000000" for implementation
-               DMA_BUF_SIZE_BITS_G  => 24,  -- set 24 for implementation
+               DMA_BUF_SIZE_BITS_G  => 24,           -- set 24 for implementation
                MAX_CSPAD_PKT_SIZE_G => 1150000)
             port map (
                axiDmaClk       => axiDmaClk,
@@ -259,75 +260,28 @@ begin
    end generate;
 
    GEN_SIM : if (SIMULATION_G = true) generate
-
-      process (dmaIbMaster, simIbSlaves) is
-         variable i       : natural;
-         variable j       : natural;
-         variable tDest   : NaturalArray(2 downto 0);
-         variable masters : AxiStreamMasterArray(256*2+255 downto 0);
-         variable slaves  : AxiStreamSlaveArray(2 downto 0);
-      begin
-         for i in 2 downto 0 loop
-            for j in 255 downto 0 loop
-               masters(256*i+j)        := dmaIbMaster(i);
-               masters(256*i+j).tValid := '0';
-            end loop;
-            tDest(i)                       := conv_integer(dmaIbMaster(i).tDest);
-            masters(256*i+tDest(i)).tValid := dmaIbMaster(i).tValid;
-            slaves(i)                      := simIbSlaves(256*i+tDest(i));
-         end loop;
-         simIbMasters <= masters;
-         dmaIbSlave   <= slaves;
-      end process;
-
-      GEN_DMA : for i in 2 downto 0 generate
-
-         GEN_TDEST : for j in 255 downto 0 generate
-
-            U_RogueStreamSimWrap : entity work.RogueStreamSimWrap
-               generic map (
-                  TPD_G               => TPD_G,
-                  DEST_ID_G           => j,
-                  USER_ID_G           => SIM_USER_ID_G,
-                  SYNTH_MODE_G        => SYNTH_MODE_G,
-                  MEMORY_TYPE_G       => MEMORY_TYPE_G,
-                  COMMON_MASTER_CLK_G => true,
-                  COMMON_SLAVE_CLK_G  => true,
-                  AXIS_CONFIG_G       => ite((i = 2), RCEG3_AXIS_DMA_ACP_CONFIG_C, RCEG3_AXIS_DMA_CONFIG_C))
-               port map (
-                  clk         => axiDmaClk,
-                  rst         => axiDmaRst,
-                  sAxisClk    => dmaClk(i),
-                  sAxisRst    => dmaClkRst(i),
-                  sAxisMaster => simIbMasters(256*i+j),
-                  sAxisSlave  => simIbSlaves(256*i+j),
-                  mAxisClk    => dmaClk(i),
-                  mAxisRst    => dmaClkRst(i),
-                  mAxisMaster => simObMasters(256*i+j),
-                  mAxisSlave  => simObSlaves(256*i+j));
-
-         end generate GEN_TDEST;
-
-         U_AxiStreamDeMux : entity work.AxiStreamMux
+      GEN_DMA : for i in SIM_CHANNELS_G-1 downto 0 generate
+         U_TCP_DMA_LANE : entity work.RogueTcpStreamWrap
             generic map (
-               TPD_G        => TPD_G,
-               NUM_SLAVES_G => 256)
+               TPD_G         => TPD_G,
+               PORT_NUM_G    => (SIM_PORT_NUM_G + i*512),
+               SSI_EN_G      => true,
+               CHAN_COUNT_G  => SIM_TDESTS_G,
+               AXIS_CONFIG_G => ite((i = 2), RCEG3_AXIS_DMA_ACP_CONFIG_C, RCEG3_AXIS_DMA_CONFIG_C))
             port map (
-               -- Clock and reset
-               axisClk      => dmaClk(i),
-               axisRst      => dmaClkRst(i),
-               -- Slaves
-               sAxisMasters => simObMasters(256*i+255 downto 256*i),
-               sAxisSlaves  => simObSlaves(256*i+255 downto 256*i),
-               -- Master
-               mAxisMaster  => dmaObMaster(i),
-               mAxisSlave   => dmaObSlave(i));
-
+               axisClk     => dmaClk(i),
+               axisRst     => dmaClkRst(i),
+               sAxisMaster => dmaIbMaster(i),
+               sAxisSlave  => dmaIbSlave(i),
+               mAxisMaster => dmaObMaster(i),
+               mAxisSlave  => dmaObSlave(i));
       end generate GEN_DMA;
 
-      -- Path data through RogueStreamSim (not Ethernet)
-      dmaObMaster(3) <= AXI_STREAM_MASTER_INIT_C;
-      dmaIbSlave(3)  <= AXI_STREAM_SLAVE_FORCE_C;
+      NO_DMA : for i in 3 downto SIM_CHANNELS_G generate
+         -- Path data through RogueStreamSim (not Ethernet)
+         dmaObMaster(i) <= AXI_STREAM_MASTER_INIT_C;
+         dmaIbSlave(i)  <= AXI_STREAM_SLAVE_FORCE_C;
+      end generate;
 
    end generate;
 

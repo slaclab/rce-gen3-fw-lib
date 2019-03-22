@@ -138,14 +138,14 @@ create_clock -name fclk0 -period 10.0 [get_pins {U_DpmCore/U_RceG3Top/GEN_SYNTH.
 
 create_clock -name ethRefClkP -period 6.400 [get_ports {ethRefClkP}]
 
-create_generated_clock -name clk200 [get_pins {U_DpmCore/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0}]
-create_generated_clock -name clk312 [get_pins {U_DpmCore/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT1}]
-create_generated_clock -name clk156 [get_pins {U_DpmCore/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT2}]
-create_generated_clock -name clk125 [get_pins {U_DpmCore/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT3}]
-create_generated_clock -name clk62  [get_pins {U_DpmCore/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT4}]
+create_generated_clock -name clk200 [get_pins -hier -filter {name =~ */U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0}]
+create_generated_clock -name clk312 [get_pins -hier -filter {name =~ */U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT1}]
+create_generated_clock -name clk156 [get_pins -hier -filter {name =~ */U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT2}]
+create_generated_clock -name clk125 [get_pins -hier -filter {name =~ */U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT3}]
+create_generated_clock -name clk62  [get_pins -hier -filter {name =~ */U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT4}]
 
-create_generated_clock -name dnaClk  [get_pins {U_DpmCore/U_RceG3Top/GEN_SYNTH.U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/BUFR_Inst/O}] 
-create_generated_clock -name dnaClkL [get_pins {U_DpmCore/U_RceG3Top/GEN_SYNTH.U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/DNA_CLK_INV_BUFR/O}] 
+create_generated_clock -name dnaClk  [get_pins -hier -filter {name =~ */U_RceG3Top/GEN_SYNTH.U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/BUFR_Inst/O}] 
+create_generated_clock -name dnaClkL [get_pins -hier -filter {name =~ */U_RceG3Top/GEN_SYNTH.U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/DNA_CLK_INV_BUFR/O}] 
 set_clock_groups -asynchronous -group [get_clocks {dnaClk}] -group [get_clocks {dnaClkL}] -group [get_clocks {clk125}] 
 
 # Treat all clocks asynchronous to each-other except for clk62/clk125 (required by GEM/1000BASE-KX)    
@@ -153,9 +153,14 @@ set_clock_groups -asynchronous -group [get_clocks {clk62}]  -group [get_clocks {
 set_clock_groups -asynchronous -group [get_clocks {clk125}] -group [get_clocks {clk156}] -group [get_clocks {clk200}] -group [get_clocks {clk312}]   
 
 # 10GBase-KR timing constraints
-set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethRefClkP}] -group [get_clocks {U_DpmCore/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK}]                               
-set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethRefClkP}] -group [get_clocks {U_DpmCore/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK}]                               
+set_clock_groups -asynchronous \
+    -group [get_clocks -include_generated_clocks {ethRefClkP}] \
+    -group [get_clocks -hier -filter {name =~ */U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK}]
+
+set_clock_groups -asynchronous \
+    -group [get_clocks -include_generated_clocks {ethRefClkP}] \
+    -group [get_clocks -hier -filter {name =~ */U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/RXOUTCLK}]                               
 
 # 10GBase-KX4 timing constraints
-create_clock -name xauiClk  -period  6.400 [get_pins {U_DpmCore/U_Eth10gGen.U_RceEthernet/GEN_XAUI.U_Eth/U_IpCore/U0/gt_wrapper_i/gt0_XauiGtx7Core_gt_wrapper_i/gtxe2_i/TXOUTCLK}]
+create_clock -name xauiClk  -period  6.400 [get_pins -hier -filter {name =~ */U_Eth10gGen.U_RceEthernet/GEN_XAUI.U_Eth/U_IpCore/U0/gt_wrapper_i/gt0_XauiGtx7Core_gt_wrapper_i/gtxe2_i/TXOUTCLK}]
 set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethRefClkP}] -group [get_clocks {xauiClk}]

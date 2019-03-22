@@ -5,7 +5,7 @@
 -- File       : PpiIbPayload.vhd
 -- Author     : Ryan Herbst, rherbst@slac.stanford.edu
 -- Created    : 2014-04-25
--- Last update: 2016-10-27
+-- Last update: 2019-03-07
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -268,11 +268,11 @@ begin
                end if;
             end if;
 
-            v.ibPayloadDebug(2) := r.rdReq.address;
+            v.ibPayloadDebug(2) := r.rdReq.address(31 downto 0);
 
          when WAIT_S =>
 
-            v.ibPayloadDebug(1) := r.wrReq.address;
+            v.ibPayloadDebug(1) := r.wrReq.address(31 downto 0);
 
             if wrAck.done = '1' then
                v.wrReq.request := '0';

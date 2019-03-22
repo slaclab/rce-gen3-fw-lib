@@ -96,8 +96,7 @@ class RceVersion(pr.Device):
             name         = 'GitHashShort',
             mode         = 'RO',
             dependencies = [self.GitHash],
-            disp         = '{:07x}',
-            linkedGet    = lambda: self.GitHash.value() >> 132
+            linkedGet    = lambda: f'{(self.GitHash.value() >> 132):x}'
         ))        
         
         self.add(pr.RemoteVariable(   
@@ -144,38 +143,43 @@ class RceVersion(pr.Device):
             mode        = 'RO',
         ))
         
-        def parseBuildStamp(var, value, disp):
-            p = parse.parse("{ImageName}: {BuildEnv}, {BuildServer}, Built {BuildDate} by {Builder}", value.strip())
-            if p is not None:
-                for k,v in p.named.items():
-                    self.node(k).set(v)
+        def parseBuildStamp(var, read):
+            p = parse.parse("{ImageName}: {BuildEnv}, {BuildServer}, Built {BuildDate} by {Builder}", var.dependencies[0].get(read))
+            if p is None:
+                return ''
+            else:
+                return p[var.name]
         
-        self.add(pr.LocalVariable(
+        self.add(pr.LinkVariable(
             name = 'ImageName',
             mode = 'RO',
-            value = ''))
- 
-        self.add(pr.LocalVariable(
+            linkedGet = parseBuildStamp,
+            variable = self.BuildStamp))
+
+        self.add(pr.LinkVariable(
             name = 'BuildEnv',
             mode = 'RO',
-            value = ''))
+            linkedGet = parseBuildStamp,
+            variable = self.BuildStamp))
 
-        self.add(pr.LocalVariable(
+        self.add(pr.LinkVariable(
             name = 'BuildServer',
             mode = 'RO',
-            value = ''))
+            linkedGet = parseBuildStamp,
+            variable = self.BuildStamp))
        
-        self.add(pr.LocalVariable(
+        self.add(pr.LinkVariable(
             name = 'BuildDate',
             mode = 'RO',
-            value = ''))
+            linkedGet = parseBuildStamp,
+            variable = self.BuildStamp))
        
-        self.add(pr.LocalVariable(
+        self.add(pr.LinkVariable(
             name = 'Builder',
             mode = 'RO',
-            value = ''))
+            linkedGet = parseBuildStamp,
+            variable = self.BuildStamp))
 
-        self.BuildStamp.addListener(parseBuildStamp)      
 
     def hardReset(self):
         print('RceVersion hard reset called')

@@ -5,7 +5,7 @@
 -- Author     : Larry Ruckman  <ruckman@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2016-10-18
--- Last update: 2018-06-27
+-- Last update: 2019-03-06
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -258,7 +258,7 @@ begin
                      v.cnt := 0;
                   else
                      -- Save the data
-                     v.tData(r.cnt) := obMacPrimMaster.tData;
+                     v.tData(r.cnt) := obMacPrimMaster.tData(127 downto 0);
                      -- Check the counter
                      if (r.cnt = 2) then
                         -- Reset the counter
@@ -285,7 +285,7 @@ begin
                   if (r.cnt < 3) then
                      -- Move the data
                      v.txMaster.tValid := '1';
-                     v.txMaster.tData  := r.tData(r.cnt);
+                     v.txMaster.tData(127 downto 0)  := r.tData(r.cnt);
                      -- Check for SOF
                      if (r.cnt = 0) then
                         axiStreamSetUserBit(EMAC_AXIS_CONFIG_C, v.txMaster, EMAC_SOF_BIT_C, '1', 0);
@@ -314,7 +314,7 @@ begin
                   if (r.cnt < 3) then
                      -- Move the data
                      v.ethUdpObMaster.tValid := '1';
-                     v.ethUdpObMaster.tData  := r.tData(r.cnt);
+                     v.ethUdpObMaster.tData(127 downto 0)  := r.tData(r.cnt);
                      -- Check for SOF
                      if (r.cnt = 0) then
                         axiStreamSetUserBit(EMAC_AXIS_CONFIG_C, v.ethUdpObMaster, EMAC_SOF_BIT_C, '1', 0);

@@ -5,7 +5,7 @@
 -- File       : PpiObHeader.vhd
 -- Author     : Ryan Herbst, rherbst@slac.stanford.edu
 -- Created    : 2014-04-25
--- Last update: 2014-05-05
+-- Last update: 2019-03-07
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ begin
             end if;
             v.obHeaderDebug(3)(7 downto 0)   := r.sizeMin;
             v.obHeaderDebug(2)(7 downto 0)   := r.sizeMax;
-            v.obHeaderDebug(1)               := r.dmaReq.address;
+            v.obHeaderDebug(1)               := r.dmaReq.address(31 downto 0);
             v.obHeaderDebug(0)(31 downto 16) := r.dmaReq.size(15 downto 0);
             v.obHeaderDebug(0)(15 downto 14) := r.dmaReq.lastUser(1 downto 0); -- Opcode
 
