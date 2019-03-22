@@ -27,37 +27,40 @@ use unisim.vcomponents.all;
 
 entity XilinxZcu102Core is
    generic (
-      TPD_G         : time                   := 1 ns;
-      BUILD_INFO_G  : BuildInfoType;
-      SIM_USER_ID_G : natural range 0 to 100 := 1;
-      SIMULATION_G  : boolean                := false);
-   port (
-      -- Clocks and Resets
-      sysClk125          : out sl;
-      sysClk125Rst       : out sl;
-      sysClk200          : out sl;
-      sysClk200Rst       : out sl;
-      -- External AXI-Lite Interface [0xA0000000:0xAFFFFFFF]
-      axiClk             : out sl;
-      axiClkRst          : out sl;
-      extAxilReadMaster  : out AxiLiteReadMasterType;
-      extAxilReadSlave   : in  AxiLiteReadSlaveType;
-      extAxilWriteMaster : out AxiLiteWriteMasterType;
-      extAxilWriteSlave  : in  AxiLiteWriteSlaveType;
-      -- DMA Interfaces
-      dmaClk             : in  slv(3 downto 0);
-      dmaClkRst          : in  slv(3 downto 0);
-      dmaObMaster        : out AxiStreamMasterArray(3 downto 0);
-      dmaObSlave         : in  AxiStreamSlaveArray(3 downto 0);
-      dmaIbMaster        : in  AxiStreamMasterArray(3 downto 0);
-      dmaIbSlave         : out AxiStreamSlaveArray(3 downto 0);
-      -- User memory access (sysclk200 domain)
-      userWriteSlave     : out AxiWriteSlaveType;
-      userWriteMaster    : in  AxiWriteMasterType               := AXI_WRITE_MASTER_INIT_C;
-      userReadSlave      : out AxiReadSlaveType;
-      userReadMaster     : in  AxiReadMasterType                := AXI_READ_MASTER_INIT_C;
-      -- User Interrupts
-      userInterrupt      : in  slv(USER_INT_COUNT_C-1 downto 0) := (others => '0'));
+      TPD_G              : time                     := 1 ns;
+      BUILD_INFO_G       : BuildInfoType;
+      SIMULATION_G       : boolean                  := false;
+      SIM_MEM_PORT_NUM_G : natural range 0 to 65535 := 9000;
+      SIM_DMA_PORT_NUM_G : natural range 0 to 65535 := 9002;
+      SIM_DMA_CHANNELS_G : natural range 0 to 4     := 3;
+      SIM_DMA_TDESTS_G   : natural range 0 to 256   := 256)
+      port (
+         -- Clocks and Resets
+         sysClk125          : out sl;
+         sysClk125Rst       : out sl;
+         sysClk200          : out sl;
+         sysClk200Rst       : out sl;
+         -- External AXI-Lite Interface [0xA0000000:0xAFFFFFFF]
+         axiClk             : out sl;
+         axiClkRst          : out sl;
+         extAxilReadMaster  : out AxiLiteReadMasterType;
+         extAxilReadSlave   : in  AxiLiteReadSlaveType;
+         extAxilWriteMaster : out AxiLiteWriteMasterType;
+         extAxilWriteSlave  : in  AxiLiteWriteSlaveType;
+         -- DMA Interfaces
+         dmaClk             : in  slv(3 downto 0);
+         dmaClkRst          : in  slv(3 downto 0);
+         dmaObMaster        : out AxiStreamMasterArray(3 downto 0);
+         dmaObSlave         : in  AxiStreamSlaveArray(3 downto 0);
+         dmaIbMaster        : in  AxiStreamMasterArray(3 downto 0);
+         dmaIbSlave         : out AxiStreamSlaveArray(3 downto 0);
+         -- User memory access (sysclk200 domain)
+         userWriteSlave     : out AxiWriteSlaveType;
+         userWriteMaster    : in  AxiWriteMasterType               := AXI_WRITE_MASTER_INIT_C;
+         userReadSlave      : out AxiReadSlaveType;
+         userReadMaster     : in  AxiReadMasterType                := AXI_READ_MASTER_INIT_C;
+         -- User Interrupts
+         userInterrupt      : in  slv(USER_INT_COUNT_C-1 downto 0) := (others => '0'));
 end XilinxZcu102Core;
 
 architecture mapping of XilinxZcu102Core is
@@ -100,15 +103,18 @@ begin
    -----------
    U_RceG3Top : entity work.RceG3Top
       generic map (
-         TPD_G          => TPD_G,
-         SIM_USER_ID_G  => SIM_USER_ID_G,
-         SIMULATION_G   => SIMULATION_G,
-         MEMORY_TYPE_G  => "ultra",
-         SEL_REFCLK_G   => false,       -- false = ZYNQ ref
-         USE_DMA_ETH_G  => false,       -- false = using DMA[3] for application space (not ETH)
-         BUILD_INFO_G   => BUILD_INFO_G,
-         BYP_BSI_G      => true,        -- bypassing BSI I2C interface
-         RCE_DMA_MODE_G => RCE_DMA_AXISV2_C)  -- AXIS DMA Version2
+         TPD_G              => TPD_G,
+         SIMULATION_G       => SIMULATION_G,
+         SIM_MEM_PORT_NUM_G => SIM_MEM_PORT_NUM_G,
+         SIM_DMA_PORT_NUM_G => SIM_DMA_PORT_NUM_G,
+         SIM_DMA_CHANNELS_G => SIM_DMA_CHANNELS_G,
+         SIM_DMA_TDESTS_G   => SIM_DMA_TDESTS_G,
+         MEMORY_TYPE_G      => "ultra",
+         SEL_REFCLK_G       => false,   -- false = ZYNQ ref
+         USE_DMA_ETH_G      => false,  -- false = using DMA[3] for application space (not ETH)
+         BUILD_INFO_G       => BUILD_INFO_G,
+         BYP_BSI_G          => true,    -- bypassing BSI I2C interface
+         RCE_DMA_MODE_G     => RCE_DMA_AXISV2_C)  -- AXIS DMA Version2
       port map (
          -- I2C Ports
          i2cSda              => open,   -- No BSI interface on ZCU102 board
