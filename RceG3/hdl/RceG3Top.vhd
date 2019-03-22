@@ -35,6 +35,7 @@ entity RceG3Top is
       MEMORY_TYPE_G      : string                      := "block";
       RCE_DMA_MODE_G     : RceDmaModeType              := RCE_DMA_PPI_C;
       PCIE_EN_G          : boolean                     := false;
+      USE_DMA_ETH_G      : boolean                     := true;  -- true if using DMA[3] for ETH else DMA[3] free for user application
       SEL_REFCLK_G       : boolean                     := true;  -- false = ZYNQ ref, true = ETH ref
       SIMULATION_G       : boolean                     := false;
       SIM_MEM_PORT_NUM_G : natural range 1024 to 49151 := 9000;
@@ -389,6 +390,7 @@ begin
          SYNTH_MODE_G   => SYNTH_MODE_G,
          MEMORY_TYPE_G  => MEMORY_TYPE_G,
          RCE_DMA_MODE_G => RCE_DMA_MODE_G,
+         USE_DMA_ETH_G  => USE_DMA_ETH_G,
          SIMULATION_G   => SIMULATION_G,
          SIM_PORT_NUM_G => SIM_DMA_PORT_NUM_G,
          SIM_CHANNELS_G => SIM_DMA_CHANNELS_G,
