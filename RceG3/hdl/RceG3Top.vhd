@@ -29,19 +29,18 @@ use work.RceG3Pkg.all;
 
 entity RceG3Top is
    generic (
-      TPD_G              : time                     := 1 ns;
+      TPD_G              : time                        := 1 ns;
       BUILD_INFO_G       : BuildInfoType;
-      SYNTH_MODE_G       : string                   := "xpm";
-      MEMORY_TYPE_G      : string                   := "block";
-      RCE_DMA_MODE_G     : RceDmaModeType           := RCE_DMA_PPI_C;
-      PCIE_EN_G          : boolean                  := false;
-      SEL_REFCLK_G       : boolean                  := true;  -- false = ZYNQ ref, true = ETH ref
-      SIMULATION_G       : boolean                  := false;
-      SIM_MEM_PORT_NUM_G : natural range 0 to 65535 := 9000;
-      SIM_DMA_PORT_NUM_G : natural range 0 to 65535 := 9100;
-      SIM_DMA_CHANNELS_G : natural range 0 to 4     := 3;
-      SIM_DMA_TDESTS_G   : natural range 0 to 256   := 256);
-
+      SYNTH_MODE_G       : string                      := "xpm";
+      MEMORY_TYPE_G      : string                      := "block";
+      RCE_DMA_MODE_G     : RceDmaModeType              := RCE_DMA_PPI_C;
+      PCIE_EN_G          : boolean                     := false;
+      SEL_REFCLK_G       : boolean                     := true;  -- false = ZYNQ ref, true = ETH ref
+      SIMULATION_G       : boolean                     := false;
+      SIM_MEM_PORT_NUM_G : natural range 1024 to 49151 := 9000;
+      SIM_DMA_PORT_NUM_G : natural range 1024 to 49151 := 9100;
+      SIM_DMA_CHANNELS_G : natural range 0 to 4        := 3;
+      SIM_DMA_TDESTS_G   : natural range 0 to 256      := 256);
    port (
       -- I2C Ports
       i2cSda              : inout sl;
@@ -331,7 +330,8 @@ begin
       --------------------------------------------
       U_RceG3Bsi : entity work.RceG3Bsi
          generic map (
-            TPD_G => TPD_G)
+            TPD_G     => TPD_G,
+            BYP_BSI_G => BYP_BSI_G)
          port map (
             axiClk          => iAxilClk,
             axiClkRst       => iAxilRst,

@@ -35,14 +35,14 @@ use work.AxiPkg.all;
 
 entity RceG3Dma is
    generic (
-      TPD_G          : time                     := 1 ns;
-      SYNTH_MODE_G   : string                   := "xpm";
-      MEMORY_TYPE_G  : string                   := "block";
-      RCE_DMA_MODE_G : RceDmaModeType           := RCE_DMA_PPI_C;
-      SIMULATION_G   : boolean                  := false;
-      SIM_PORT_NUM_G : natural range 0 to 65535 := 1;
-      SIM_CHANNELS_G : natural range 0 to 4     := 3;
-      SIM_TDESTS_G   : natural range 0 to 256   := 256);
+      TPD_G          : time                        := 1 ns;
+      SYNTH_MODE_G   : string                      := "xpm";
+      MEMORY_TYPE_G  : string                      := "block";
+      RCE_DMA_MODE_G : RceDmaModeType              := RCE_DMA_PPI_C;
+      SIMULATION_G   : boolean                     := false;
+      SIM_PORT_NUM_G : natural range 1024 to 49151 := 1;
+      SIM_CHANNELS_G : natural range 0 to 4        := 3;
+      SIM_TDESTS_G   : natural range 0 to 256      := 256);
    port (
 
       -- AXI BUS Clock
@@ -181,9 +181,10 @@ begin
 
          U_RceG3DmaAxisV2 : entity work.RceG3DmaAxisV2
             generic map (
-               TPD_G => TPD_G)
-            -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
-            -- MEMORY_TYPE_G    => MEMORY_TYPE_G)  <--- generic for future XPM FIFO release 
+               TPD_G         => TPD_G,
+               -- SYNTH_MODE_G  => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
+               -- MEMORY_TYPE_G => MEMORY_TYPE_G   <--- generic for future XPM FIFO release 
+               USE_DMA_ETH_G => USE_DMA_ETH_G)
             port map (
                axiDmaClk       => axiDmaClk,
                axiDmaRst       => axiDmaRst,
