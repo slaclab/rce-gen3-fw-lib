@@ -96,8 +96,7 @@ class RceVersion(pr.Device):
             name         = 'GitHashShort',
             mode         = 'RO',
             dependencies = [self.GitHash],
-            disp         = '{:07x}',
-            linkedGet    = lambda: self.GitHash.value() >> 132
+            linkedGet    = lambda: f'{(self.GitHash.value() >> 132):x}'
         ))        
         
         self.add(pr.RemoteVariable(   
