@@ -41,7 +41,7 @@ entity RceG3Dma is
       USE_DMA_ETH_G  : boolean                     := true;
       RCE_DMA_MODE_G : RceDmaModeType              := RCE_DMA_PPI_C;
       SIMULATION_G   : boolean                     := false;
-      SIM_PORT_NUM_G : natural range 1024 to 49151 := 1;
+      SIM_PORT_NUM_G : natural range 1024 to 49151 := 1024;
       SIM_CHANNELS_G : natural range 0 to 4        := 3;
       SIM_TDESTS_G   : natural range 0 to 256      := 256);
    port (
