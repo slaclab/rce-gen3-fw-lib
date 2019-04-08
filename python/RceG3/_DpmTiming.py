@@ -32,7 +32,7 @@ class DpmTiming(pr.Device):
             offset=0x08, 
             bitSize=5, 
             bitOffset=0, 
-            disp='range',
+            disp='{:d}',
             minimum=0,
             maximum=31))
 
@@ -62,7 +62,7 @@ class DpmTiming(pr.Device):
             offset=0x18, 
             bitSize=5, 
             bitOffset=0,
-            disp='range',
+            disp='{:d}',
             minimum=0,
             maximum=31,
         ))

@@ -30,7 +30,7 @@ class DtmTiming(pr.Device):
             bitSize=5,
             bitOffset=0,
             base=pr.UInt,
-            disp='range',
+            disp='{:d}',
             minimum=0,
             maximum=31)
 
