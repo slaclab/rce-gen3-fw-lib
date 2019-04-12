@@ -41,7 +41,7 @@ entity RceG3Dma is
       USE_DMA_ETH_G  : boolean                     := true;
       RCE_DMA_MODE_G : RceDmaModeType              := RCE_DMA_PPI_C;
       SIMULATION_G   : boolean                     := false;
-      SIM_PORT_NUM_G : natural range 1024 to 49151 := 1;
+      SIM_PORT_NUM_G : natural range 1024 to 49151 := 9100;
       SIM_CHANNELS_G : natural range 0 to 4        := 3;
       SIM_TDESTS_G   : natural range 0 to 256      := 256);
    port (
@@ -278,10 +278,12 @@ begin
                mAxisSlave  => dmaObSlave(i));
       end generate GEN_DMA;
 
-      NO_DMA : for i in 3 downto SIM_CHANNELS_G generate
-         -- Path data through RogueStreamSim (not Ethernet)
-         dmaObMaster(i) <= AXI_STREAM_MASTER_INIT_C;
-         dmaIbSlave(i)  <= AXI_STREAM_SLAVE_FORCE_C;
+      TERM_UNUSED : if (SIM_CHANNELS_G /= 4) generate
+         NO_DMA : for i in 3 downto SIM_CHANNELS_G generate
+            -- Path data through RogueStreamSim (not Ethernet)
+            dmaObMaster(i) <= AXI_STREAM_MASTER_INIT_C;
+            dmaIbSlave(i)  <= AXI_STREAM_SLAVE_FORCE_C;
+         end generate;
       end generate;
 
    end generate;

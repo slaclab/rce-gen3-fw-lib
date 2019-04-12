@@ -27,13 +27,13 @@ use unisim.vcomponents.all;
 
 entity XilinxZcu102Core is
    generic (
-      TPD_G              : time                     := 1 ns;
+      TPD_G              : time                        := 1 ns;
       BUILD_INFO_G       : BuildInfoType;
-      SIMULATION_G       : boolean                  := false;
-      SIM_MEM_PORT_NUM_G : natural range 0 to 65535 := 9000;
-      SIM_DMA_PORT_NUM_G : natural range 0 to 65535 := 9002;
-      SIM_DMA_CHANNELS_G : natural range 0 to 4     := 3;
-      SIM_DMA_TDESTS_G   : natural range 0 to 256   := 256);
+      SIMULATION_G       : boolean                     := false;
+      SIM_MEM_PORT_NUM_G : natural range 1024 to 49151 := 9000;
+      SIM_DMA_PORT_NUM_G : natural range 1024 to 49151 := 9100;
+      SIM_DMA_CHANNELS_G : natural range 0 to 4        := 3;
+      SIM_DMA_TDESTS_G   : natural range 1 to 256      := 256);
    port (
       -- Clocks and Resets
       sysClk125          : out sl;
