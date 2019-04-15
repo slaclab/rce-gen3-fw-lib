@@ -2,7 +2,7 @@
 -- File       : HsioCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2018-08-30
+-- Last update: 2019-03-22
 -------------------------------------------------------------------------------
 -- Description: Common top level module for HSIO
 -------------------------------------------------------------------------------
@@ -29,11 +29,14 @@ use unisim.vcomponents.all;
 
 entity HsioCore is
    generic (
-      TPD_G          : time                   := 1 ns;
-      BUILD_INFO_G   : BuildInfoType;
-      SIM_USER_ID_G  : natural range 0 to 100 := 1;
-      SIMULATION_G   : boolean                := false;
-      RCE_DMA_MODE_G : RceDmaModeType         := RCE_DMA_PPI_C);
+      TPD_G              : time                     := 1 ns;
+      BUILD_INFO_G       : BuildInfoType;
+      SIMULATION_G       : boolean                  := false;
+      SIM_MEM_PORT_NUM_G : natural range 0 to 65535 := 9000;
+      SIM_DMA_PORT_NUM_G : natural range 0 to 65535 := 9002;
+      SIM_DMA_CHANNELS_G : natural range 0 to 4     := 3;
+      SIM_DMA_TDESTS_G   : natural range 0 to 256   := 256;
+      RCE_DMA_MODE_G     : RceDmaModeType           := RCE_DMA_PPI_C);
    port (
       -- I2C
       i2cSda             : inout sl;
@@ -86,8 +89,8 @@ end HsioCore;
 
 architecture mapping of HsioCore is
 
-   signal axilClock : sl;
-   signal axilReset : sl;
+   signal iAxilClk : sl;
+   signal iAxilRst : sl;
 
    signal axiDmaClock : sl;
    signal axiDmaReset : sl;
@@ -109,10 +112,10 @@ begin
    --------------------------------------------------
    -- Inputs/Outputs
    --------------------------------------------------
-   axiClk       <= axilClock;
-   axiClkRst    <= axilReset;
-   sysClk125    <= axilClock;
-   sysClk125Rst <= axilReset;
+   axiClk       <= iAxilClk;
+   axiClkRst    <= iAxilRst;
+   sysClk125    <= iAxilClk;
+   sysClk125Rst <= iAxilRst;
    sysClk200    <= axiDmaClock;
    sysClk200Rst <= axiDmaReset;
 
@@ -130,12 +133,15 @@ begin
    --------------------------------------------------
    U_RceG3Top : entity work.RceG3Top
       generic map (
-         TPD_G          => TPD_G,
-         BUILD_INFO_G   => BUILD_INFO_G,
-         SIM_USER_ID_G  => SIM_USER_ID_G,
-         SIMULATION_G   => SIMULATION_G,
-         RCE_DMA_MODE_G => RCE_DMA_MODE_G,
-         SEL_REFCLK_G   => false)       -- false = ZYNQ ref
+         TPD_G              => TPD_G,
+         BUILD_INFO_G       => BUILD_INFO_G,
+         SIMULATION_G       => SIMULATION_G,
+         SIM_MEM_PORT_NUM_G => SIM_MEM_PORT_NUM_G,
+         SIM_DMA_PORT_NUM_G => SIM_DMA_PORT_NUM_G,
+         SIM_DMA_CHANNELS_G => SIM_DMA_CHANNELS_G,
+         SIM_DMA_TDESTS_G   => SIM_DMA_TDESTS_G,
+         RCE_DMA_MODE_G     => RCE_DMA_MODE_G,
+         SEL_REFCLK_G       => false)   -- false = ZYNQ ref
       port map (
          -- I2C Ports
          i2cSda             => i2cSda,
@@ -147,8 +153,8 @@ begin
          axiDmaClk          => axiDmaClock,
          axiDmaRst          => axiDmaReset,
          -- AXI-Lite clock and reset
-         axilClk            => axilClock,
-         axilRst            => axilReset,
+         axilClk            => iAxilClk,
+         axilRst            => iAxilRst,
          -- External Axi Bus, 0xA0000000 - 0xAFFFFFFF  (axilClk domain)
          extAxilReadMaster  => extAxilReadMaster,
          extAxilReadSlave   => extAxilReadSlave,

@@ -6,7 +6,7 @@ set family [getFpgaFamily]
 
 # Check for valid FPGA 
 if { $::env(PRJ_PART) != "XC7Z045FFG900-2" && $::env(PRJ_PART) != "XCZU15EG-FFVC900-1-E" } {
-   puts "\n\nERROR: PRJ_PART must be either XC7Z045FFG900-2 or XCZU15EG-FFVC900-1-E in the Makefile\n\n"; exit -1
+#   puts "\n\nERROR: PRJ_PART must be either XC7Z045FFG900-2 or XCZU15EG-FFVC900-1-E in the Makefile\n\n"; exit -1
 }
 
 # Load the dependent source code

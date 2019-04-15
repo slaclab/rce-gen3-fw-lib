@@ -32,7 +32,7 @@ class DpmTiming(pr.Device):
             offset=0x08, 
             bitSize=5, 
             bitOffset=0, 
-            disp='range',
+            disp='{:d}',
             minimum=0,
             maximum=31))
 
@@ -62,7 +62,7 @@ class DpmTiming(pr.Device):
             offset=0x18, 
             bitSize=5, 
             bitOffset=0,
-            disp='range',
+            disp='{:d}',
             minimum=0,
             maximum=31,
         ))
@@ -121,7 +121,7 @@ class DpmTiming(pr.Device):
             pollInterval=1,
         ))
 
-        self.hideVariables(hidden=True, variables=[self.enable])
+        #self.hideVariables(hidden=True, variables=[self.enable])
         #self.enable.set(True)
 
     def softReset(self):

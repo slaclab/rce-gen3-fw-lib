@@ -14,7 +14,7 @@ if { [VersionCheck 2018.3] < 0 } {exit -1}
 
 # Check for submodule tagging
 if { [SubmoduleCheck {ruckus} {1.7.4} ] < 0 } {exit -1}
-if { [SubmoduleCheck {surf}   {1.9.6} ] < 0 } {exit -1}
+if { [SubmoduleCheck {surf}   {1.9.8} ] < 0 } {exit -1}
 
 # Load local Source Code and constraints
 loadSource      -dir "$::DIR_PATH/hdl"
