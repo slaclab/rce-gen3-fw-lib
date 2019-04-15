@@ -261,15 +261,15 @@ begin
          interrupt       => interrupt,
          online(0)       => online,
          acknowledge(0)  => acknowledge,
-         sAxisMaster(0)  => ibAxisMaster,
-         sAxisSlave(0)   => ibAxisSlave,
-         mAxisMaster(0)  => obAxisMaster,
-         mAxisSlave(0)   => obAxisSlave,
+         sAxisMasters(0) => ibAxisMaster,
+         sAxisSlaves(0)  => ibAxisSlave,
+         mAxisMasters(0) => obAxisMaster,
+         mAxisSlaves(0)  => obAxisSlave,
          mAxisCtrl(0)    => obAxisCtrl,
-         axiReadMaster   => locReadMaster,
-         axiReadSlave    => locReadSlave,
-         axiWriteMaster  => locWriteMaster,
-         axiWriteSlave   => locWriteSlave,
+         axiReadMasters  => locReadMaster,
+         axiReadSlaves   => locReadSlave,
+         axiWriteMasters => locWriteMaster,
+         axiWriteSlaves  => locWriteSlave,
          axiWriteCtrl    => locWriteCtrl);
 
    locReadSlave(0) <= AXI_READ_SLAVE_INIT_C;
