@@ -288,8 +288,8 @@ begin
                end if;
             ----------------------------------------------------------------------
             when PRIM_S =>
-               -- Check if moving data
-               if (obMacPrimMaster.tValid = '1') and (v.txMaster.tValid = '0') then
+               -- Check if able to moving data
+               if (v.txMaster.tValid = '0') then
 
                   -- Check if moving cached data
                   if (r.cnt < r.cacheCnt) then
@@ -300,7 +300,7 @@ begin
                      -- Move the cached data
                      v.txMaster := r.cache(r.cnt);
 
-                  else
+                  elsif (obMacPrimMaster.tValid = '1') then
 
                      -- Accept the streaming data
                      v.obMacPrimSlave.tReady := '1';
@@ -311,7 +311,7 @@ begin
                   end if;
 
                   -- Check for EOF
-                  if (v.txMaster.tLast = '1') then
+                  if (v.txMaster.tLast = '1') and (v.txMaster.tValid = '1') then
                      -- Next state
                      v.state := IDLE_S;
                   end if;
@@ -319,8 +319,8 @@ begin
                end if;
             ----------------------------------------------------------------------
             when USER_S =>
-               -- Check if moving data
-               if (obMacPrimMaster.tValid = '1') and (v.ethUdpObMaster.tValid = '0') then
+               -- Check if able to moving data
+               if (v.ethUdpObMaster.tValid = '0') then
 
                   -- Check if moving cached data
                   if (r.cnt < r.cacheCnt) then
@@ -331,7 +331,7 @@ begin
                      -- Move the cached data
                      v.ethUdpObMaster := r.cache(r.cnt);
 
-                  else
+                  elsif (obMacPrimMaster.tValid = '1') then
 
                      -- Accept the streaming data
                      v.obMacPrimSlave.tReady := '1';
@@ -342,7 +342,7 @@ begin
                   end if;
 
                   -- Check for EOF
-                  if (v.ethUdpObMaster.tLast = '1') then
+                  if (v.ethUdpObMaster.tLast = '1') and (v.ethUdpObMaster.tValid = '1') then
                      -- Next state
                      v.state := IDLE_S;
                   end if;
