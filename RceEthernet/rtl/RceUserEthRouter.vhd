@@ -271,8 +271,8 @@ begin
                      if (r.cnt = 2) then
                         -- Reset the counter
                         v.cnt := 0;
-                        -- Check for CPU ETH data
-                        if (userEthDet = false) then
+                        -- Check for CPU ETH data or fragmentation detected
+                        if (userEthDet = false) or (r.tUserFirst(EMAC_FRAG_BIT_C) = '1') then
                            -- Next state
                            v.state := PRIM_S;
                         else
