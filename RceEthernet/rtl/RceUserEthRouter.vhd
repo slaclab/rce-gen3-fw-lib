@@ -71,6 +71,7 @@ architecture rtl of RceUserEthRouter is
       USER_S);
 
    type RegType is record
+      tUserFirst     : slv(7 downto 0);
       cnt            : natural range 0 to 3;
       tData          : Slv128Array(2 downto 0);
       txMaster       : AxiStreamMasterType;
@@ -79,6 +80,7 @@ architecture rtl of RceUserEthRouter is
       state          : StateType;
    end record RegType;
    constant REG_INIT_C : RegType := (
+      tUserFirst     => (others=>'0'),
       cnt            => 0,
       tData          => (others => (others => '0')),
       txMaster       => AXI_STREAM_MASTER_INIT_C,
@@ -277,6 +279,8 @@ begin
                            -- Next state
                            v.state := USER_S;
                         end if;
+                     elsif (r.cnt = 0) then
+                        v.tUserFirst := obMacPrimMaster.tUser(7 downto 0);
                      else
                         -- Increment the counter
                         v.cnt := r.cnt + 1;
@@ -294,7 +298,7 @@ begin
                      v.txMaster.tData(127 downto 0)  := r.tData(r.cnt);
                      -- Check for SOF
                      if (r.cnt = 0) then
-                        axiStreamSetUserBit(EMAC_AXIS_CONFIG_C, v.txMaster, EMAC_SOF_BIT_C, '1', 0);
+                        v.txMaster.tUser(7 downto 0) := r.tUserFirst;
                      end if;
                      -- Increment the counter
                      v.cnt := r.cnt + 1;
@@ -323,7 +327,7 @@ begin
                      v.ethUdpObMaster.tData(127 downto 0)  := r.tData(r.cnt);
                      -- Check for SOF
                      if (r.cnt = 0) then
-                        axiStreamSetUserBit(EMAC_AXIS_CONFIG_C, v.ethUdpObMaster, EMAC_SOF_BIT_C, '1', 0);
+                        v.ethUdpObMaster.tUser(7 downto 0) := r.tUserFirst;
                      end if;
                      -- Increment the counter
                      v.cnt := r.cnt + 1;
