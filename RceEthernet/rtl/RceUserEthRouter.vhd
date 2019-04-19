@@ -1,15 +1,9 @@
 -------------------------------------------------------------------------------
--- Title      : 
--------------------------------------------------------------------------------
 -- File       : RceUserEthRouter.vhd
 -- Author     : Larry Ruckman  <ruckman@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
--- Created    : 2016-10-18
--- Last update: 2019-03-06
--- Platform   : 
--- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
--- Description: Wrapper file for Zynq Ethernet 10G core
+-- Description: Module to route CPU/User Ethernet data
 -------------------------------------------------------------------------------
 -- This file is part of 'SLAC RCE 10G Ethernet Core'.
 -- It is subject to the license terms in the LICENSE.txt file found in the 
@@ -71,16 +65,18 @@ architecture rtl of RceUserEthRouter is
       USER_S);
 
    type RegType is record
+      cacheCnt       : natural range 0 to 3;
+      cache          : AxiStreamMasterArray(2 downto 0);
       cnt            : natural range 0 to 3;
-      tData          : Slv128Array(2 downto 0);
       txMaster       : AxiStreamMasterType;
       ethUdpObMaster : AxiStreamMasterType;
       obMacPrimSlave : AxiStreamSlaveType;
       state          : StateType;
    end record RegType;
    constant REG_INIT_C : RegType := (
+      cacheCnt       => 0,
+      cache          => (others => AXI_STREAM_MASTER_INIT_C),
       cnt            => 0,
-      tData          => (others => (others => '0')),
       txMaster       => AXI_STREAM_MASTER_INIT_C,
       ethUdpObMaster => AXI_STREAM_MASTER_INIT_C,
       obMacPrimSlave => AXI_STREAM_SLAVE_INIT_C,
@@ -102,15 +98,18 @@ begin
    U_RxFifo : entity work.AxiStreamFifoV2
       generic map (
          -- General Configurations
-         TPD_G               => TPD_G,
-         INT_PIPE_STAGES_G   => 0,
-         PIPE_STAGES_G       => 1,
-         SLAVE_READY_EN_G    => true,
-         VALID_THOLD_G       => 1,
+         TPD_G             => TPD_G,
+         INT_PIPE_STAGES_G => 0,
+         PIPE_STAGES_G     => 1,
+         SLAVE_READY_EN_G  => true,
+         VALID_THOLD_G     => 1,
          -- FIFO configurations
-         SYNTH_MODE_G        => SYNTH_MODE_G,
-         MEMORY_TYPE_G       => "distributed",
-         GEN_SYNC_FIFO_G     => false,
+
+         -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
+         -- MEMORY_TYPE_G       => "distributed", <--- generic for future XPM FIFO release
+         BRAM_EN_G       => false,
+         GEN_SYNC_FIFO_G => false,
+
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => RCEG3_AXIS_DMA_CONFIG_C,
@@ -128,15 +127,18 @@ begin
    U_TxFifo : entity work.AxiStreamFifoV2
       generic map (
          -- General Configurations
-         TPD_G               => TPD_G,
-         INT_PIPE_STAGES_G   => 0,
-         PIPE_STAGES_G       => 1,
-         SLAVE_READY_EN_G    => true,
-         VALID_THOLD_G       => 1,
+         TPD_G             => TPD_G,
+         INT_PIPE_STAGES_G => 0,
+         PIPE_STAGES_G     => 1,
+         SLAVE_READY_EN_G  => true,
+         VALID_THOLD_G     => 1,
          -- FIFO configurations
-         SYNTH_MODE_G        => SYNTH_MODE_G,
-         MEMORY_TYPE_G       => "distributed",
-         GEN_SYNC_FIFO_G     => false,
+
+         -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
+         -- MEMORY_TYPE_G       => "distributed", <--- generic for future XPM FIFO release
+         BRAM_EN_G       => false,
+         GEN_SYNC_FIFO_G => false,
+
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => EMAC_AXIS_CONFIG_C,
@@ -209,17 +211,18 @@ begin
          -------------------------------------------------------------------------------------------------------
          -- IPv4/EtherType/UDP data fields:
          -- https://docs.google.com/spreadsheets/d/1_1M1keasfq8RLmRYHkO0IlRhMq5YZTgJ7OGrWvkib8I/edit?usp=sharing
+         -- Note: Assuming NON-VLAN traffic
          -------------------------------------------------------------------------------------------------------
 
          -- Check for IPv4 EtherType
-         if (r.tData(0)(111 downto 96) = IPV4_TYPE_C) then
+         if (r.cache(0).tData(111 downto 96) = IPV4_TYPE_C) then
             ipv4 := true;
          else
             ipv4 := false;
          end if;
 
          -- Check for UDP Protocol
-         if (r.tData(1)(63 downto 56) = UDP_C) then
+         if (r.cache(1).tData(63 downto 56) = UDP_C) then
             udpType := true;
          else
             udpType := false;
@@ -237,8 +240,8 @@ begin
             end if;
          end loop;
 
-         -- Check if outbound Ethernet frame is a user Ethernet frame
-         if (ipv4 = true) and (udpType = true) and (udpPort = true) then
+         -- Check if outbound Ethernet frame is a user Ethernet frame (non-fragmentation)
+         if (ipv4 = true) and (udpType = true) and (udpPort = true) and (r.cache(0).tUser(EMAC_FRAG_BIT_C) = '0') then
             userEthDet := true;
          else
             userEthDet := false;
@@ -250,93 +253,110 @@ begin
             when IDLE_S =>
                -- Check for data
                if (obMacPrimMaster.tValid = '1') then
-                  -- Accept the data
+
+                  -- Accept the streaming data
                   v.obMacPrimSlave.tReady := '1';
+
+                  -- Cache the data
+                  v.cache(r.cacheCnt) := obMacPrimMaster;
+
+                  -- Increment the counter
+                  v.cacheCnt := r.cacheCnt + 1;
+
                   -- Check for EOF
                   if (obMacPrimMaster.tLast = '1') then
-                     -- Reset the counter
-                     v.cnt := 0;
-                  else
-                     -- Save the data
-                     v.tData(r.cnt) := obMacPrimMaster.tData(127 downto 0);
-                     -- Check the counter
-                     if (r.cnt = 2) then
-                        -- Reset the counter
-                        v.cnt := 0;
-                        -- Check for CPU ETH data
-                        if (userEthDet = false) then
-                           -- Next state
-                           v.state := PRIM_S;
-                        else
-                           -- Next state
-                           v.state := USER_S;
-                        end if;
-                     else
-                        -- Increment the counter
-                        v.cnt := r.cnt + 1;
-                     end if;
+                     -- Next state
+                     v.state := PRIM_S;
                   end if;
+
+                  -- Check the counter
+                  if (r.cacheCnt = 2) then
+
+                     -- Check for CPU ETH data
+                     if (userEthDet = false) then
+                        -- Next state
+                        v.state := PRIM_S;
+
+                     -- Else this is user ETH data
+                     else
+                        -- Next state
+                        v.state := USER_S;
+                     end if;
+
+                  end if;
+
                end if;
             ----------------------------------------------------------------------
             when PRIM_S =>
-               -- Check if moving data
-               if (obMacPrimMaster.tValid = '1') and (v.txMaster.tValid = '0') then
+               -- Check if able to moving data
+               if (v.txMaster.tValid = '0') then
+
                   -- Check if moving cached data
-                  if (r.cnt < 3) then
-                     -- Move the data
-                     v.txMaster.tValid := '1';
-                     v.txMaster.tData(127 downto 0)  := r.tData(r.cnt);
-                     -- Check for SOF
-                     if (r.cnt = 0) then
-                        axiStreamSetUserBit(EMAC_AXIS_CONFIG_C, v.txMaster, EMAC_SOF_BIT_C, '1', 0);
-                     end if;
+                  if (r.cnt < r.cacheCnt) then
+
                      -- Increment the counter
                      v.cnt := r.cnt + 1;
-                  else
-                     -- Accept the data
+
+                     -- Move the cached data
+                     v.txMaster := r.cache(r.cnt);
+
+                  elsif (obMacPrimMaster.tValid = '1') then
+
+                     -- Accept the streaming data
                      v.obMacPrimSlave.tReady := '1';
-                     -- Move the data
-                     v.txMaster              := obMacPrimMaster;
-                     -- Check for EOF
-                     if (obMacPrimMaster.tLast = '1') then
-                        -- Reset the counter
-                        v.cnt   := 0;
-                        -- Next state
-                        v.state := IDLE_S;
-                     end if;
+
+                     -- Move the streaming data
+                     v.txMaster := obMacPrimMaster;
+
                   end if;
+
+                  -- Check for EOF
+                  if (v.txMaster.tLast = '1') and (v.txMaster.tValid = '1') then
+                     -- Next state
+                     v.state := IDLE_S;
+                  end if;
+
                end if;
             ----------------------------------------------------------------------
             when USER_S =>
-               -- Check if moving data
-               if (obMacPrimMaster.tValid = '1') and (v.ethUdpObMaster.tValid = '0') then
+               -- Check if able to moving data
+               if (v.ethUdpObMaster.tValid = '0') then
+
                   -- Check if moving cached data
-                  if (r.cnt < 3) then
-                     -- Move the data
-                     v.ethUdpObMaster.tValid := '1';
-                     v.ethUdpObMaster.tData(127 downto 0)  := r.tData(r.cnt);
-                     -- Check for SOF
-                     if (r.cnt = 0) then
-                        axiStreamSetUserBit(EMAC_AXIS_CONFIG_C, v.ethUdpObMaster, EMAC_SOF_BIT_C, '1', 0);
-                     end if;
+                  if (r.cnt < r.cacheCnt) then
+
                      -- Increment the counter
                      v.cnt := r.cnt + 1;
-                  else
-                     -- Accept the data
+
+                     -- Move the cached data
+                     v.ethUdpObMaster := r.cache(r.cnt);
+
+                  elsif (obMacPrimMaster.tValid = '1') then
+
+                     -- Accept the streaming data
                      v.obMacPrimSlave.tReady := '1';
-                     -- Move the data
-                     v.ethUdpObMaster        := obMacPrimMaster;
-                     -- Check for EOF
-                     if (obMacPrimMaster.tLast = '1') then
-                        -- Reset the counter
-                        v.cnt   := 0;
-                        -- Next state
-                        v.state := IDLE_S;
-                     end if;
+
+                     -- Move the streaming data
+                     v.ethUdpObMaster := obMacPrimMaster;
+
                   end if;
+
+                  -- Check for EOF
+                  if (v.ethUdpObMaster.tLast = '1') and (v.ethUdpObMaster.tValid = '1') then
+                     -- Next state
+                     v.state := IDLE_S;
+                  end if;
+
                end if;
          ----------------------------------------------------------------------
          end case;
+
+         -- Check if need to reset counter
+         if (v.state = IDLE_S) and ((r.state = PRIM_S) or (r.state = USER_S)) then
+            -- Reset the counter
+            v.cacheCnt := 0;
+            v.cnt      := 0;
+         end if;
 
          -- Reset
          if (ethRst = '1') then

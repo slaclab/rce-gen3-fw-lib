@@ -2,7 +2,7 @@
 -- File       : DpmCore.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2013-11-14
--- Last update: 2019-03-06
+-- Last update: 2019-03-26
 -------------------------------------------------------------------------------
 -- Description: Common top level module for DPM
 -------------------------------------------------------------------------------
@@ -29,24 +29,24 @@ use unisim.vcomponents.all;
 
 entity DpmCore is
    generic (
-      TPD_G              : time                     := 1 ns;
+      TPD_G              : time                        := 1 ns;
       BUILD_INFO_G       : BuildInfoType;
-      SIMULATION_G       : boolean                  := false;
-      SIM_MEM_PORT_NUM_G : natural range 0 to 65535 := 9000;
-      SIM_DMA_PORT_NUM_G : natural range 0 to 65535 := 9002;
-      SIM_DMA_CHANNELS_G : natural range 0 to 4     := 3;
-      SIM_DMA_TDESTS_G   : natural range 0 to 256   := 256;
-      ETH_TYPE_G         : string                   := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
-      RCE_DMA_MODE_G     : RceDmaModeType           := RCE_DMA_PPI_C;
-      AXI_ST_COUNT_G     : natural range 3 to 4     := 3;
-      UDP_SERVER_EN_G    : boolean                  := false;
-      UDP_SERVER_SIZE_G  : positive                 := 1;
-      UDP_SERVER_PORTS_G : PositiveArray            := (0 => 8192);
-      BYP_EN_G           : boolean                  := false;
-      BYP_ETH_TYPE_G     : slv(15 downto 0)         := x"AAAA";
-      VLAN_EN_G          : boolean                  := false;
-      VLAN_SIZE_G        : positive range 1 to 8    := 1;
-      VLAN_VID_G         : Slv12Array               := (0 => x"001"));
+      SIMULATION_G       : boolean                     := false;
+      SIM_MEM_PORT_NUM_G : natural range 1024 to 49151 := 9000;
+      SIM_DMA_PORT_NUM_G : natural range 1024 to 49151 := 9002;
+      SIM_DMA_CHANNELS_G : natural range 0 to 4        := 3;
+      SIM_DMA_TDESTS_G   : natural range 0 to 256      := 256;
+      ETH_TYPE_G         : string                      := "ZYNQ-GEM";  -- [ZYNQ-GEM, 1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
+      RCE_DMA_MODE_G     : RceDmaModeType              := RCE_DMA_PPI_C;
+      AXI_ST_COUNT_G     : natural range 3 to 4        := 3;
+      UDP_SERVER_EN_G    : boolean                     := false;
+      UDP_SERVER_SIZE_G  : positive                    := 1;
+      UDP_SERVER_PORTS_G : PositiveArray               := (0 => 8192);
+      BYP_EN_G           : boolean                     := false;
+      BYP_ETH_TYPE_G     : slv(15 downto 0)            := x"AAAA";
+      VLAN_EN_G          : boolean                     := false;
+      VLAN_SIZE_G        : positive range 1 to 8       := 1;
+      VLAN_VID_G         : Slv12Array                  := (0 => x"001"));
    port (
       -- I2C
       i2cSda               : inout sl;
