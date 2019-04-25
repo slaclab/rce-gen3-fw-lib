@@ -7,7 +7,6 @@ set family [getFpgaFamily]
 # Load local Source Code
 loadSource -dir "$::DIR_PATH/hdl"
 loadSource -dir "$::DIR_PATH/hdl/${family}"
-loadIpCore -dir "$::DIR_PATH/coregen"
 loadIpCore -dir "$::DIR_PATH/coregen/${family}"
 
 # Check for submodule tagging

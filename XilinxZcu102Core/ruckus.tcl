@@ -19,8 +19,9 @@ if { [SubmoduleCheck {surf}   {1.9.8} ] < 0 } {exit -1}
 # Load local Source Code and constraints
 loadSource      -dir "$::DIR_PATH/hdl"
 loadConstraints -dir "$::DIR_PATH/xdc"
-loadIpCore      -dir "$::DIR_PATH/ip"
-loadIpCore      -dir "$::DIR_PATH/../RceG3/coregen"
+loadBlockDesign -dir "$::DIR_PATH/ip"
+
+loadBlockDesign -path "$::DIR_PATH/ip/Base_Zynq_MPSoC.bd"
 
 loadSource -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Clocks.vhd"
 loadSource -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Cpu.vhd"
