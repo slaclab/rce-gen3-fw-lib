@@ -56,13 +56,13 @@ package RceG3Pkg is
 
    constant AXI_MAST_GP_INIT_C : AxiConfigType := (
       ADDR_WIDTH_C => 40,
-      DATA_BYTES_C => 4,                -- 32-bit
+      DATA_BYTES_C => 16,                -- 128-bit
       ID_BITS_C    => 16,
       LEN_BITS_C   => 8);
 
    constant AXI_SLAVE_GP_INIT_C : AxiConfigType := (
       ADDR_WIDTH_C => 49,
-      DATA_BYTES_C => 4,                -- 32-bit
+      DATA_BYTES_C => 16,                -- 128-bit
       ID_BITS_C    => 6,
       LEN_BITS_C   => 8);
 

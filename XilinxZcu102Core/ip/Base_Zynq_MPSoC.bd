@@ -5,8 +5,7 @@
       "device": "xczu9eg-ffvb1156-2-e",
       "name": "Base_Zynq_MPSoC",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2018.3",
-      "validated": "true"
+      "tool_version": "2018.3"
     },
     "design_tree": {
       "zynq_ultra_ps_e_0": ""
@@ -27,119 +26,23 @@
           "ADDR_WIDTH": {
             "value": "40"
           },
-          "ARUSER_WIDTH": {
-            "value": "16",
-            "value_src": "auto_prop"
-          },
-          "AWUSER_WIDTH": {
-            "value": "16",
-            "value_src": "auto_prop"
-          },
-          "BUSER_WIDTH": {
-            "value": "0",
-            "value_src": "const_prop"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_maxihpm0_fpd_aclk_0",
-            "value_src": "default"
-          },
           "DATA_WIDTH": {
-            "value": "32"
+            "value": "128"
           },
           "FREQ_HZ": {
             "value": "99990005"
           },
-          "HAS_BRESP": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_BURST": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_CACHE": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_LOCK": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_PROT": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_QOS": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
           "HAS_REGION": {
             "value": "0"
-          },
-          "HAS_RRESP": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_WSTRB": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "ID_WIDTH": {
-            "value": "16",
-            "value_src": "auto_prop"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "MAX_BURST_LENGTH": {
-            "value": "256",
-            "value_src": "default"
           },
           "NUM_READ_OUTSTANDING": {
             "value": "8"
           },
-          "NUM_READ_THREADS": {
-            "value": "4",
-            "value_src": "const_prop"
-          },
           "NUM_WRITE_OUTSTANDING": {
             "value": "8"
           },
-          "NUM_WRITE_THREADS": {
-            "value": "4",
-            "value_src": "const_prop"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
-          },
           "PROTOCOL": {
             "value": "AXI4"
-          },
-          "READ_WRITE_MODE": {
-            "value": "READ_WRITE",
-            "value_src": "auto_prop"
-          },
-          "RUSER_BITS_PER_BYTE": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "RUSER_WIDTH": {
-            "value": "0",
-            "value_src": "const_prop"
-          },
-          "SUPPORTS_NARROW_BURST": {
-            "value": "1",
-            "value_src": "const_prop"
-          },
-          "WUSER_BITS_PER_BYTE": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "WUSER_WIDTH": {
-            "value": "0",
-            "value_src": "const_prop"
           }
         }
       },
@@ -150,119 +53,23 @@
           "ADDR_WIDTH": {
             "value": "40"
           },
-          "ARUSER_WIDTH": {
-            "value": "16",
-            "value_src": "auto_prop"
-          },
-          "AWUSER_WIDTH": {
-            "value": "16",
-            "value_src": "auto_prop"
-          },
-          "BUSER_WIDTH": {
-            "value": "0",
-            "value_src": "const_prop"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_maxihpm1_fpd_aclk_0",
-            "value_src": "default"
-          },
           "DATA_WIDTH": {
-            "value": "32"
+            "value": "128"
           },
           "FREQ_HZ": {
             "value": "99990005"
           },
-          "HAS_BRESP": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_BURST": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_CACHE": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_LOCK": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_PROT": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_QOS": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
           "HAS_REGION": {
             "value": "0"
-          },
-          "HAS_RRESP": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "HAS_WSTRB": {
-            "value": "1",
-            "value_src": "auto_prop"
-          },
-          "ID_WIDTH": {
-            "value": "16",
-            "value_src": "auto_prop"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "MAX_BURST_LENGTH": {
-            "value": "256",
-            "value_src": "default"
           },
           "NUM_READ_OUTSTANDING": {
             "value": "8"
           },
-          "NUM_READ_THREADS": {
-            "value": "4",
-            "value_src": "const_prop"
-          },
           "NUM_WRITE_OUTSTANDING": {
             "value": "8"
           },
-          "NUM_WRITE_THREADS": {
-            "value": "4",
-            "value_src": "const_prop"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
-          },
           "PROTOCOL": {
             "value": "AXI4"
-          },
-          "READ_WRITE_MODE": {
-            "value": "READ_WRITE",
-            "value_src": "auto_prop"
-          },
-          "RUSER_BITS_PER_BYTE": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "RUSER_WIDTH": {
-            "value": "0",
-            "value_src": "const_prop"
-          },
-          "SUPPORTS_NARROW_BURST": {
-            "value": "1",
-            "value_src": "const_prop"
-          },
-          "WUSER_BITS_PER_BYTE": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "WUSER_WIDTH": {
-            "value": "0",
-            "value_src": "const_prop"
           }
         }
       },
@@ -282,16 +89,8 @@
           "BUSER_WIDTH": {
             "value": "0"
           },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxiacp_fpd_aclk_0",
-            "value_src": "default"
-          },
           "DATA_WIDTH": {
             "value": "128"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -323,10 +122,6 @@
           "ID_WIDTH": {
             "value": "5"
           },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "MAX_BURST_LENGTH": {
             "value": "256"
           },
@@ -341,10 +136,6 @@
           },
           "NUM_WRITE_THREADS": {
             "value": "1"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           },
           "PROTOCOL": {
             "value": "AXI4"
@@ -385,16 +176,8 @@
           "BUSER_WIDTH": {
             "value": "0"
           },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihp0_fpd_aclk_0",
-            "value_src": "default"
-          },
           "DATA_WIDTH": {
             "value": "64"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -426,10 +209,6 @@
           "ID_WIDTH": {
             "value": "6"
           },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "MAX_BURST_LENGTH": {
             "value": "256"
           },
@@ -444,10 +223,6 @@
           },
           "NUM_WRITE_THREADS": {
             "value": "1"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           },
           "PROTOCOL": {
             "value": "AXI4"
@@ -488,16 +263,8 @@
           "BUSER_WIDTH": {
             "value": "0"
           },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihp1_fpd_aclk_0",
-            "value_src": "default"
-          },
           "DATA_WIDTH": {
             "value": "64"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -529,10 +296,6 @@
           "ID_WIDTH": {
             "value": "6"
           },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "MAX_BURST_LENGTH": {
             "value": "256"
           },
@@ -547,10 +310,6 @@
           },
           "NUM_WRITE_THREADS": {
             "value": "1"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           },
           "PROTOCOL": {
             "value": "AXI4"
@@ -591,16 +350,8 @@
           "BUSER_WIDTH": {
             "value": "0"
           },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihp2_fpd_aclk_0",
-            "value_src": "default"
-          },
           "DATA_WIDTH": {
             "value": "64"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -632,10 +383,6 @@
           "ID_WIDTH": {
             "value": "6"
           },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "MAX_BURST_LENGTH": {
             "value": "256"
           },
@@ -650,10 +397,6 @@
           },
           "NUM_WRITE_THREADS": {
             "value": "1"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           },
           "PROTOCOL": {
             "value": "AXI4"
@@ -694,16 +437,8 @@
           "BUSER_WIDTH": {
             "value": "0"
           },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihp3_fpd_aclk_0",
-            "value_src": "default"
-          },
           "DATA_WIDTH": {
             "value": "64"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -735,10 +470,6 @@
           "ID_WIDTH": {
             "value": "6"
           },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "MAX_BURST_LENGTH": {
             "value": "256"
           },
@@ -753,10 +484,6 @@
           },
           "NUM_WRITE_THREADS": {
             "value": "1"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           },
           "PROTOCOL": {
             "value": "AXI4"
@@ -797,16 +524,8 @@
           "BUSER_WIDTH": {
             "value": "0"
           },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihpc0_fpd_aclk_0",
-            "value_src": "default"
-          },
           "DATA_WIDTH": {
-            "value": "32"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
+            "value": "128"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -838,10 +557,6 @@
           "ID_WIDTH": {
             "value": "6"
           },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "MAX_BURST_LENGTH": {
             "value": "256"
           },
@@ -856,10 +571,6 @@
           },
           "NUM_WRITE_THREADS": {
             "value": "1"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           },
           "PROTOCOL": {
             "value": "AXI4"
@@ -900,16 +611,8 @@
           "BUSER_WIDTH": {
             "value": "0"
           },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihpc1_fpd_aclk_0",
-            "value_src": "default"
-          },
           "DATA_WIDTH": {
-            "value": "32"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
+            "value": "128"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -941,10 +644,6 @@
           "ID_WIDTH": {
             "value": "6"
           },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "MAX_BURST_LENGTH": {
             "value": "256"
           },
@@ -959,10 +658,6 @@
           },
           "NUM_WRITE_THREADS": {
             "value": "1"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           },
           "PROTOCOL": {
             "value": "AXI4"
@@ -1030,24 +725,8 @@
         "type": "clk",
         "direction": "I",
         "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "M_AXI_HPM0_FPD_0",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_maxihpm0_fpd_aclk_0",
-            "value_src": "default"
-          },
           "FREQ_HZ": {
             "value": "99990005"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           }
         }
       },
@@ -1055,24 +734,8 @@
         "type": "clk",
         "direction": "I",
         "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "M_AXI_HPM1_FPD_0",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_maxihpm1_fpd_aclk_0",
-            "value_src": "default"
-          },
           "FREQ_HZ": {
             "value": "99990005"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           }
         }
       },
@@ -1083,20 +746,8 @@
         "type": "clk",
         "direction": "O",
         "parameters": {
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_zynq_ultra_ps_e_0_0_pl_clk0",
-            "value_src": "default_prop"
-          },
           "FREQ_HZ": {
             "value": "99990005"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           }
         }
       },
@@ -1104,20 +755,8 @@
         "type": "clk",
         "direction": "O",
         "parameters": {
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_zynq_ultra_ps_e_0_0_pl_clk1",
-            "value_src": "default_prop"
-          },
           "FREQ_HZ": {
             "value": "124987503"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           }
         }
       },
@@ -1125,20 +764,8 @@
         "type": "clk",
         "direction": "O",
         "parameters": {
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_zynq_ultra_ps_e_0_0_pl_clk2",
-            "value_src": "default_prop"
-          },
           "FREQ_HZ": {
             "value": "199980011"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           }
         }
       },
@@ -1146,20 +773,8 @@
         "type": "clk",
         "direction": "O",
         "parameters": {
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_zynq_ultra_ps_e_0_0_pl_clk3",
-            "value_src": "default_prop"
-          },
           "FREQ_HZ": {
             "value": "249975006"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           }
         }
       },
@@ -1171,10 +786,6 @@
         "parameters": {
           "PortWidth": {
             "value": "1"
-          },
-          "SENSITIVITY": {
-            "value": "LEVEL_HIGH",
-            "value_src": "default"
           }
         }
       },
@@ -1186,194 +797,36 @@
         "parameters": {
           "PortWidth": {
             "value": "1"
-          },
-          "SENSITIVITY": {
-            "value": "LEVEL_HIGH",
-            "value_src": "default"
           }
         }
       },
       "saxiacp_fpd_aclk_0": {
         "type": "clk",
-        "direction": "I",
-        "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "S_AXI_ACP_FPD_0",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxiacp_fpd_aclk_0",
-            "value_src": "default"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
-          }
-        }
+        "direction": "I"
       },
       "saxihp0_fpd_aclk_0": {
         "type": "clk",
-        "direction": "I",
-        "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "S_AXI_HP0_FPD_0",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihp0_fpd_aclk_0",
-            "value_src": "default"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
-          }
-        }
+        "direction": "I"
       },
       "saxihp1_fpd_aclk_0": {
         "type": "clk",
-        "direction": "I",
-        "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "S_AXI_HP1_FPD_0",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihp1_fpd_aclk_0",
-            "value_src": "default"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
-          }
-        }
+        "direction": "I"
       },
       "saxihp2_fpd_aclk_0": {
         "type": "clk",
-        "direction": "I",
-        "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "S_AXI_HP2_FPD_0",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihp2_fpd_aclk_0",
-            "value_src": "default"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
-          }
-        }
+        "direction": "I"
       },
       "saxihp3_fpd_aclk_0": {
         "type": "clk",
-        "direction": "I",
-        "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "S_AXI_HP3_FPD_0",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihp3_fpd_aclk_0",
-            "value_src": "default"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
-          }
-        }
+        "direction": "I"
       },
       "saxihpc0_fpd_aclk_0": {
         "type": "clk",
-        "direction": "I",
-        "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "S_AXI_HPC0_FPD_0",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihpc0_fpd_aclk_0",
-            "value_src": "default"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
-          }
-        }
+        "direction": "I"
       },
       "saxihpc1_fpd_aclk_0": {
         "type": "clk",
-        "direction": "I",
-        "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "S_AXI_HPC1_FPD_0",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "Base_Zynq_MPSoC_saxihpc1_fpd_aclk_0",
-            "value_src": "default"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
-          }
-        }
+        "direction": "I"
       }
     },
     "components": {
@@ -1626,6 +1079,9 @@
           },
           "PSU__CRL_APB__GEM_TSU_REF_CTRL__ACT_FREQMHZ": {
             "value": "249.975021"
+          },
+          "PSU__CRL_APB__GEM_TSU_REF_CTRL__SRCSEL": {
+            "value": "IOPLL"
           },
           "PSU__CRL_APB__I2C0_REF_CTRL__ACT_FREQMHZ": {
             "value": "99.990005"
@@ -2084,10 +1540,10 @@
             "value": "100.000000"
           },
           "PSU__MAXIGP0__DATA_WIDTH": {
-            "value": "32"
+            "value": "128"
           },
           "PSU__MAXIGP1__DATA_WIDTH": {
-            "value": "32"
+            "value": "128"
           },
           "PSU__OVERRIDE__BASIC_CLOCK": {
             "value": "0"
@@ -2345,10 +1801,10 @@
             "value": "Ref Clk1"
           },
           "PSU__SAXIGP0__DATA_WIDTH": {
-            "value": "32"
+            "value": "128"
           },
           "PSU__SAXIGP1__DATA_WIDTH": {
-            "value": "32"
+            "value": "128"
           },
           "PSU__SAXIGP2__DATA_WIDTH": {
             "value": "64"
@@ -2552,52 +2008,10 @@
       }
     },
     "interface_nets": {
-      "zynq_ultra_ps_e_0_GMII_ENET1": {
-        "interface_ports": [
-          "GMII_ENET1_0",
-          "zynq_ultra_ps_e_0/GMII_ENET1"
-        ]
-      },
-      "zynq_ultra_ps_e_0_GMII_ENET0": {
-        "interface_ports": [
-          "GMII_ENET0_0",
-          "zynq_ultra_ps_e_0/GMII_ENET0"
-        ]
-      },
-      "zynq_ultra_ps_e_0_M_AXI_HPM0_FPD": {
-        "interface_ports": [
-          "M_AXI_HPM0_FPD_0",
-          "zynq_ultra_ps_e_0/M_AXI_HPM0_FPD"
-        ]
-      },
-      "zynq_ultra_ps_e_0_M_AXI_HPM1_FPD": {
-        "interface_ports": [
-          "M_AXI_HPM1_FPD_0",
-          "zynq_ultra_ps_e_0/M_AXI_HPM1_FPD"
-        ]
-      },
       "S_AXI_ACP_FPD_0_1": {
         "interface_ports": [
           "S_AXI_ACP_FPD_0",
           "zynq_ultra_ps_e_0/S_AXI_ACP_FPD"
-        ]
-      },
-      "S_AXI_HP0_FPD_0_1": {
-        "interface_ports": [
-          "S_AXI_HP0_FPD_0",
-          "zynq_ultra_ps_e_0/S_AXI_HP0_FPD"
-        ]
-      },
-      "S_AXI_HP1_FPD_0_1": {
-        "interface_ports": [
-          "S_AXI_HP1_FPD_0",
-          "zynq_ultra_ps_e_0/S_AXI_HP1_FPD"
-        ]
-      },
-      "S_AXI_HP2_FPD_0_1": {
-        "interface_ports": [
-          "S_AXI_HP2_FPD_0",
-          "zynq_ultra_ps_e_0/S_AXI_HP2_FPD"
         ]
       },
       "S_AXI_HP3_FPD_0_1": {
@@ -2612,10 +2026,52 @@
           "zynq_ultra_ps_e_0/S_AXI_HPC0_FPD"
         ]
       },
+      "S_AXI_HP2_FPD_0_1": {
+        "interface_ports": [
+          "S_AXI_HP2_FPD_0",
+          "zynq_ultra_ps_e_0/S_AXI_HP2_FPD"
+        ]
+      },
+      "zynq_ultra_ps_e_0_GMII_ENET1": {
+        "interface_ports": [
+          "GMII_ENET1_0",
+          "zynq_ultra_ps_e_0/GMII_ENET1"
+        ]
+      },
       "S_AXI_HPC1_FPD_0_1": {
         "interface_ports": [
           "S_AXI_HPC1_FPD_0",
           "zynq_ultra_ps_e_0/S_AXI_HPC1_FPD"
+        ]
+      },
+      "zynq_ultra_ps_e_0_GMII_ENET0": {
+        "interface_ports": [
+          "GMII_ENET0_0",
+          "zynq_ultra_ps_e_0/GMII_ENET0"
+        ]
+      },
+      "S_AXI_HP0_FPD_0_1": {
+        "interface_ports": [
+          "S_AXI_HP0_FPD_0",
+          "zynq_ultra_ps_e_0/S_AXI_HP0_FPD"
+        ]
+      },
+      "S_AXI_HP1_FPD_0_1": {
+        "interface_ports": [
+          "S_AXI_HP1_FPD_0",
+          "zynq_ultra_ps_e_0/S_AXI_HP1_FPD"
+        ]
+      },
+      "zynq_ultra_ps_e_0_M_AXI_HPM1_FPD": {
+        "interface_ports": [
+          "M_AXI_HPM1_FPD_0",
+          "zynq_ultra_ps_e_0/M_AXI_HPM1_FPD"
+        ]
+      },
+      "zynq_ultra_ps_e_0_M_AXI_HPM0_FPD": {
+        "interface_ports": [
+          "M_AXI_HPM0_FPD_0",
+          "zynq_ultra_ps_e_0/M_AXI_HPM0_FPD"
         ]
       }
     },
