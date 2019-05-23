@@ -177,7 +177,7 @@
             "value": "0"
           },
           "DATA_WIDTH": {
-            "value": "64"
+            "value": "128"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -264,7 +264,7 @@
             "value": "0"
           },
           "DATA_WIDTH": {
-            "value": "64"
+            "value": "128"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -351,7 +351,7 @@
             "value": "0"
           },
           "DATA_WIDTH": {
-            "value": "64"
+            "value": "128"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -438,7 +438,7 @@
             "value": "0"
           },
           "DATA_WIDTH": {
-            "value": "64"
+            "value": "128"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -1807,16 +1807,16 @@
             "value": "128"
           },
           "PSU__SAXIGP2__DATA_WIDTH": {
-            "value": "64"
+            "value": "128"
           },
           "PSU__SAXIGP3__DATA_WIDTH": {
-            "value": "64"
+            "value": "128"
           },
           "PSU__SAXIGP4__DATA_WIDTH": {
-            "value": "64"
+            "value": "128"
           },
           "PSU__SAXIGP5__DATA_WIDTH": {
-            "value": "64"
+            "value": "128"
           },
           "PSU__SD1_COHERENCY": {
             "value": "0"
@@ -2008,6 +2008,24 @@
       }
     },
     "interface_nets": {
+      "S_AXI_HP1_FPD_0_1": {
+        "interface_ports": [
+          "S_AXI_HP1_FPD_0",
+          "zynq_ultra_ps_e_0/S_AXI_HP1_FPD"
+        ]
+      },
+      "S_AXI_HP0_FPD_0_1": {
+        "interface_ports": [
+          "S_AXI_HP0_FPD_0",
+          "zynq_ultra_ps_e_0/S_AXI_HP0_FPD"
+        ]
+      },
+      "zynq_ultra_ps_e_0_M_AXI_HPM0_FPD": {
+        "interface_ports": [
+          "M_AXI_HPM0_FPD_0",
+          "zynq_ultra_ps_e_0/M_AXI_HPM0_FPD"
+        ]
+      },
       "S_AXI_ACP_FPD_0_1": {
         "interface_ports": [
           "S_AXI_ACP_FPD_0",
@@ -2018,6 +2036,24 @@
         "interface_ports": [
           "S_AXI_HP3_FPD_0",
           "zynq_ultra_ps_e_0/S_AXI_HP3_FPD"
+        ]
+      },
+      "zynq_ultra_ps_e_0_GMII_ENET0": {
+        "interface_ports": [
+          "GMII_ENET0_0",
+          "zynq_ultra_ps_e_0/GMII_ENET0"
+        ]
+      },
+      "S_AXI_HPC1_FPD_0_1": {
+        "interface_ports": [
+          "S_AXI_HPC1_FPD_0",
+          "zynq_ultra_ps_e_0/S_AXI_HPC1_FPD"
+        ]
+      },
+      "zynq_ultra_ps_e_0_GMII_ENET1": {
+        "interface_ports": [
+          "GMII_ENET1_0",
+          "zynq_ultra_ps_e_0/GMII_ENET1"
         ]
       },
       "S_AXI_HPC0_FPD_0_1": {
@@ -2032,46 +2068,10 @@
           "zynq_ultra_ps_e_0/S_AXI_HP2_FPD"
         ]
       },
-      "zynq_ultra_ps_e_0_GMII_ENET1": {
-        "interface_ports": [
-          "GMII_ENET1_0",
-          "zynq_ultra_ps_e_0/GMII_ENET1"
-        ]
-      },
-      "S_AXI_HPC1_FPD_0_1": {
-        "interface_ports": [
-          "S_AXI_HPC1_FPD_0",
-          "zynq_ultra_ps_e_0/S_AXI_HPC1_FPD"
-        ]
-      },
-      "zynq_ultra_ps_e_0_GMII_ENET0": {
-        "interface_ports": [
-          "GMII_ENET0_0",
-          "zynq_ultra_ps_e_0/GMII_ENET0"
-        ]
-      },
-      "S_AXI_HP0_FPD_0_1": {
-        "interface_ports": [
-          "S_AXI_HP0_FPD_0",
-          "zynq_ultra_ps_e_0/S_AXI_HP0_FPD"
-        ]
-      },
-      "S_AXI_HP1_FPD_0_1": {
-        "interface_ports": [
-          "S_AXI_HP1_FPD_0",
-          "zynq_ultra_ps_e_0/S_AXI_HP1_FPD"
-        ]
-      },
       "zynq_ultra_ps_e_0_M_AXI_HPM1_FPD": {
         "interface_ports": [
           "M_AXI_HPM1_FPD_0",
           "zynq_ultra_ps_e_0/M_AXI_HPM1_FPD"
-        ]
-      },
-      "zynq_ultra_ps_e_0_M_AXI_HPM0_FPD": {
-        "interface_ports": [
-          "M_AXI_HPM0_FPD_0",
-          "zynq_ultra_ps_e_0/M_AXI_HPM0_FPD"
         ]
       }
     },

@@ -70,7 +70,7 @@ package RceG3Pkg is
 
    constant AXI_HP_INIT_C : AxiConfigType := (
       ADDR_WIDTH_C => 49,
-      DATA_BYTES_C => 8,                -- 64-bit 
+      DATA_BYTES_C => 16,                -- 128-bit
       ID_BITS_C    => 6,
       LEN_BITS_C   => 8);
 
