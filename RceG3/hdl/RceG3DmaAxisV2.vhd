@@ -82,12 +82,8 @@ architecture mapping of RceG3DmaAxisV2 is
    signal intWriteMaster : AxiWriteMasterArray(3 downto 0);
    signal intReadSlave   : AxiReadSlaveArray(3 downto 0);
    signal intReadMaster  : AxiReadMasterArray(3 downto 0);
-
-   constant DMA_BASE_ADDR_C : Slv32Array(3 downto 0) := (
-      0 => x"60000000",
-      1 => x"60020000",
-      2 => x"60040000",
-      3 => x"60060000");
+   
+   constant AXIL_GP0_CONFIG_C : AxiLiteCrossbarMasterConfigArray(DMA_AXIL_COUNT_C downto 0) := genGp0Config(RCE_DMA_AXISV2_C);
 
 begin
 
@@ -125,7 +121,7 @@ begin
       U_RceG3DmaAxisChan : entity work.RceG3DmaAxisV2Chan
          generic map (
             TPD_G             => TPD_G,
-            AXIL_BASE_ADDR_G  => DMA_BASE_ADDR_C(i),
+            AXIL_BASE_ADDR_G  => AXIL_GP0_CONFIG_C(i*2+1).baseAddr,
             AXIS_DMA_CONFIG_G => ite((i = 2), RCEG3_AXIS_DMA_ACP_CONFIG_C, RCEG3_AXIS_DMA_CONFIG_C),
             AXI_CONFIG_G      => ite((i = 2), AXI_ACP_INIT_C, AXI_HP_INIT_C))
          port map (
