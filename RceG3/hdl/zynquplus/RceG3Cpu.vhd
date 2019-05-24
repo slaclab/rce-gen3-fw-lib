@@ -460,8 +460,8 @@ architecture mapping of RceG3Cpu is
          pl_clk1_0                       : out std_logic;
          pl_clk2_0                       : out std_logic;
          pl_clk3_0                       : out std_logic;
-         pl_ps_irq0_0                    : in  std_logic_vector (0 to 0);
-         pl_ps_irq1_0                    : in  std_logic_vector (0 to 0);
+         pl_ps_irq0_0                    : in  std_logic_vector (7 downto 0);
+         pl_ps_irq1_0                    : in  std_logic_vector (7 downto 0);
          saxiacp_fpd_aclk_0              : in  std_logic;
          saxihp0_fpd_aclk_0              : in  std_logic;
          saxihp1_fpd_aclk_0              : in  std_logic;
@@ -914,8 +914,8 @@ begin
          emio_enet0_dma_bus_width_0      => open,
          emio_enet1_dma_bus_width_0      => open,
          -- IRQ
-         pl_ps_irq0_0(0)                 => armInterrupt(0),  -- ??? Not sure if I am setting this correctly
-         pl_ps_irq1_0(0)                 => armInterrupt(1),  -- ??? Not sure if I am setting this correctly
+         pl_ps_irq0_0                    => armInterrupt(7 downto 0),
+         pl_ps_irq1_0                    => armInterrupt(15 downto 8),
          pl_acpinact_0                   => '0',  -- ??? Not sure if I am setting this correctly
          -- FCLK
          pl_clk0_0                       => fclk(0),
