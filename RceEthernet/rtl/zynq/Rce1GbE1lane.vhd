@@ -2,7 +2,7 @@
 -- File       : Rce1GbE1lane.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2018-06-27
--- Last update: 2018-08-29
+-- Last update: 2019-06-26
 -------------------------------------------------------------------------------
 -- Description: 1 GigE (1 lane)
 -------------------------------------------------------------------------------
@@ -107,6 +107,8 @@ begin
          -- Quad PLL Interface
          gt0_qplloutclk_in      => '0',        -- QPLL not used
          gt0_qplloutrefclk_in   => '0',        -- QPLL not used
+         gt0_txpolarity_in      => '0',
+         gt0_rxpolarity_in      => '0',
          -- Configuration and Status
          an_restart_config      => '0',
          an_adv_config_vector   => GIG_ETH_AN_ADV_CONFIG_INIT_C,
