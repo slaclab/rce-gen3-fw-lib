@@ -31,12 +31,14 @@ use work.RceG3Pkg.all;
 use work.StdRtlPkg.all;
 use work.AxiLitePkg.all;
 use work.AxiPkg.all;
+use work.RceG3Pkg.all;
 use work.RceG3Version.all;
 
 entity RceG3AxiCntl is
    generic (
       TPD_G          : time           := 1 ns;
       BUILD_INFO_G   : BuildInfoType;
+      PCIE_EN_G      : boolean        := false;
       RCE_DMA_MODE_G : RceDmaModeType := RCE_DMA_PPI_C
       );
    port (
@@ -85,10 +87,33 @@ entity RceG3AxiCntl is
       coreAxilWriteMaster : out AxiLiteWriteMasterType;
       coreAxilWriteSlave  : in  AxiLiteWriteSlaveType;
 
+      -- User AXI Interface
+      userReadMaster      : in  AxiReadMasterType;
+      userReadSlave       : out AxiReadSlaveType;
+      userWriteMaster     : in  AxiWriteMasterType;
+      userWriteSlave      : out AxiWriteSlaveType;
+
+      -- AUX AXI Interface
+      auxReadMaster       : out AxiReadMasterType;
+      auxReadSlave        : in  AxiReadSlaveType;
+      auxWriteMaster      : out AxiWriteMasterType;
+      auxWriteSlave       : in  AxiWriteSlaveType;
+      auxAxiClk           : out sl;
+
+      -- PCIE AXI Interface
+      pciRefClkP      : in  sl;
+      pciRefClkN      : in  sl;
+      pciResetL       : out sl;
+      pcieInt         : out sl;
+      pcieRxP         : in  sl;
+      pcieRxN         : in  sl;
+      pcieTxP         : out sl;
+      pcieTxN         : out sl;
+
       -- Ethernet Mode
       armEthMode : in  slv(31 downto 0);
       eFuseValue : out slv(31 downto 0);
-      deviceDna  : out slv(63 downto 0);
+      deviceDna  : out slv(127 downto 0);
 
       -- Clock Select Lines
       clkSelA : out slv(1 downto 0);
@@ -115,6 +140,10 @@ architecture structure of RceG3AxiCntl is
    signal tmpGp0WriteSlaves  : AxiLiteWriteSlaveArray(GP0_MAST_CNT_C-1 downto 0);
 
    -- Gp1 Signals
+   signal gp1AxiReadMaster   : AxiReadMasterType;
+   signal gp1AxiReadSlave    : AxiReadSlaveType;
+   signal gp1AxiWriteMaster  : AxiWriteMasterType;
+   signal gp1AxiWriteSlave   : AxiWriteSlaveType;
    signal midGp1ReadMaster   : AxiLiteReadMasterType;
    signal midGp1ReadSlave    : AxiLiteReadSlaveType;
    signal midGp1WriteMaster  : AxiLiteWriteMasterType;
@@ -130,7 +159,6 @@ architecture structure of RceG3AxiCntl is
    signal intWriteMaster : AxiLiteWriteMasterType;
    signal intWriteSlave  : AxiLiteWriteSlaveType;
    signal dnaValue       : slv(127 downto 0);
-   signal dnaValid       : sl;
    signal eFuseUsr       : slv(31 downto 0);
 
    type RegType is record
@@ -179,6 +207,57 @@ architecture structure of RceG3AxiCntl is
          retConf(i+1).connectivity := x"FFFF";
       end loop;
 
+      return retConf;
+   end function;
+
+   -- GP0 Address Map Generator
+   function genGp1Config return AxiLiteCrossbarMasterConfigArray is
+      variable retConf : AxiLiteCrossbarMasterConfigArray(3 downto 0);
+   begin
+      if PCIE_EN_G then
+          -- 0x80000000 - 0x8000FFFF : Internal registers
+          retConf(0).baseAddr     := x"80000000";
+          retConf(0).addrBits     := 16;
+          retConf(0).connectivity := x"FFFF";
+
+          -- 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
+          retConf(1).baseAddr     := x"84000000";
+          retConf(1).addrBits     := 12;
+          retConf(1).connectivity := x"FFFF";
+
+          -- 0x90000000 - 0x97FFFFFF : External Register Space
+          retConf(2).baseAddr     := x"90000000";
+          retConf(2).addrBits     := 27;
+          retConf(2).connectivity := x"FFFF";
+
+          -- 0x98000000 - 0x9FFFFFFF : Core Register Space
+          retConf(3).baseAddr     := x"98000000";
+          retConf(3).addrBits     := 27;
+          retConf(3).connectivity := x"FFFF";
+
+      else
+
+          -- 0x80000000 - 0x8000FFFF : Internal registers
+          retConf(0).baseAddr     := x"80000000";
+          retConf(0).addrBits     := 16;
+          retConf(0).connectivity := x"FFFF";
+
+          -- 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
+          retConf(1).baseAddr     := x"84000000";
+          retConf(1).addrBits     := 12;
+          retConf(1).connectivity := x"FFFF";
+
+          -- 0xA0000000 - 0xAFFFFFFF : External Register Space
+          retConf(2).baseAddr     := x"A0000000";
+          retConf(2).addrBits     := 28;
+          retConf(2).connectivity := x"FFFF";
+
+          -- 0xB0000000 - 0xBFFFFFFF : Core Register Space
+          retConf(3).baseAddr     := x"B0000000";
+          retConf(3).addrBits     := 28;
+          retConf(3).connectivity := x"FFFF";
+
+      end if;
       return retConf;
    end function;
 
@@ -240,6 +319,77 @@ begin
 
 
    -------------------------------------
+   -- GP1 AXI-4 Interconnect
+   -- 0x80000000 - 0xBFFFFFFF, axiClk
+   -------------------------------------
+   U_ICEN: if PCIE_EN_G generate
+
+      ----------------------------------------------------------------------------      
+      --                         PCIE Root Complex                              --
+      ----------------------------------------------------------------------------      
+      -- This VHDL wrapper is determined by the ZYNQ family type
+      -- Zynq-7000:        rce-gen3-fw-lib/RceG3/hdl/zynq/RceG3PcieRoot.vhd
+      -- Zynq Ultrascale+: rce-gen3-fw-lib/RceG3/hdl/zynquplus/RceG3PcieRoot.vhd
+      ----------------------------------------------------------------------------    
+      -- Local    = 0x80000000 - 9FFFFFFF
+      -- pcie cfg = 0xA0000000 - AFFFFFFF
+      -- pcie bar = 0xB0000000 - BFFFFFFF
+      ----------------------------------------------------------------------------    
+      U_RceG3PcieRoot: entity work.RceG3PcieRoot
+         generic map ( TPD_G  => TPD_G )
+         port map (
+            axiClk           => axiClk,
+            axiRst           => axiClkRst,
+            mGpReadMaster    => mGpReadMaster(1),
+            mGpReadSlave     => mGpReadSlave(1),
+            mGpWriteMaster   => mGpWriteMaster(1),
+            mGpWriteSlave    => mGpWriteSlave(1),
+            locReadMaster    => gp1AxiReadMaster,
+            locReadSlave     => gp1AxiReadSlave,
+            locWriteMaster   => gp1AxiWriteMaster,
+            locWriteSlave    => gp1AxiWriteSlave,
+            pcieReadMaster   => auxReadMaster,
+            pcieReadSlave    => auxReadSlave,
+            pcieWriteMaster  => auxWriteMaster,
+            pcieWriteSlave   => auxWriteSlave,
+            pciRefClkP       => pciRefClkP,
+            pciRefClkN       => pciRefClkN,
+            pciResetL        => pciResetL,
+            pcieInt          => pcieInt,
+            pcieRxP          => pcieRxP,
+            pcieRxN          => pcieRxN,
+            pcieTxP          => pcieTxP,
+            pcieTxN          => pcieTxN
+         );
+
+      userReadSlave  <= AXI_READ_SLAVE_INIT_C;
+      userWriteSlave <= AXI_WRITE_SLAVE_INIT_C;
+      auxAxiClk      <= axiClk;
+
+   end generate;
+
+   U_ICDIS: if not PCIE_EN_G generate
+
+      auxReadMaster  <= userReadMaster;
+      userReadSlave  <= auxReadSlave;
+      auxWriteMaster <= userWriteMaster;
+      userWriteSlave <= auxWriteSlave;
+
+      auxAxiClk <= axiDmaClk;
+
+      pciResetL  <= '0';
+      pcieInt    <= '0';
+      pcieTxP    <= '0';
+      pcieTxN    <= '0';
+
+      gp1AxiReadMaster  <= mGpReadMaster(1);
+      mGpReadSlave(1)   <= gp1AxiReadSlave;
+      gp1AxiWriteMaster <= mGpWriteMaster(1);
+      mGpWriteSlave(1)  <= gp1AxiWriteSlave;
+
+   end generate;
+
+   -------------------------------------
    -- GP1 AXI-4 to AXI Lite Conversion
    -- 0x80000000 - 0xBFFFFFFF, axiClk
    -------------------------------------
@@ -249,16 +399,15 @@ begin
          ) port map (
             axiClk          => axiClk,
             axiClkRst       => axiClkRst,
-            axiReadMaster   => mGpReadMaster(1),
-            axiReadSlave    => mGpReadSlave(1),
-            axiWriteMaster  => mGpWriteMaster(1),
-            axiWriteSlave   => mGpWriteSlave(1),
+            axiReadMaster   => gp1AxiReadMaster,
+            axiReadSlave    => gp1AxiReadSlave,
+            axiWriteMaster  => gp1AxiWriteMaster,
+            axiWriteSlave   => gp1AxiWriteSlave,
             axilReadMaster  => midGp1ReadMaster,
             axilReadSlave   => midGp1ReadSlave,
             axilWriteMaster => midGp1WriteMaster,
             axilWriteSlave  => midGp1WriteSlave
-            );
-
+         );
 
    -------------------------------------
    -- GP1 AXI Lite Crossbar
@@ -270,32 +419,8 @@ begin
          NUM_SLAVE_SLOTS_G  => 1,
          NUM_MASTER_SLOTS_G => GP1_MAST_CNT_C,
          DEC_ERROR_RESP_G   => AXI_RESP_OK_C,
-         MASTERS_CONFIG_G   => (
-
-            -- 0x80000000 - 0x8000FFFF : Internal registers
-            0               => (
-               baseAddr     => x"80000000",
-               addrBits     => 16,
-               connectivity => x"FFFF"),
-
-            -- 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
-            1               => (
-               baseAddr     => x"84000000",
-               addrBits     => 12,
-               connectivity => x"FFFF"),
-
-            -- 0xA0000000 - 0xAFFFFFFF : External Register Space
-            2               => (
-               baseAddr     => x"A0000000",
-               addrBits     => 28,
-               connectivity => x"FFFF"),
-
-            -- 0xB0000000 - 0xBFFFFFFF : Core Register Space
-            3               => (
-               baseAddr     => x"B0000000",
-               addrBits     => 28,
-               connectivity => x"FFFF"))
-         ) port map (
+         MASTERS_CONFIG_G   => genGp1Config)
+      port map (
             axiClk              => axiClk,
             axiClkRst           => axiClkRst,
             sAxiWriteMasters(0) => midGp1WriteMaster,
@@ -342,7 +467,7 @@ begin
    end process;
 
    -- Async
-   process (armEthMode, axiClkRst, dnaValid, dnaValue, eFuseUsr, intReadMaster, intWriteMaster, r) is
+   process (armEthMode, axiClkRst, dnaValue, eFuseUsr, intReadMaster, intWriteMaster, r) is
       variable v         : RegType;
       variable axiStatus : AxiLiteStatusType;
       variable c         : character;
@@ -387,6 +512,8 @@ begin
                   v.intReadSlave.rdata := r.scratchPad;
                when X"0008" =>
                   v.intReadSlave.rdata := RCE_G3_VERSION_C;
+               when X"000C" =>
+                  v.intReadSlave.rdata(0) := toSl(PCIE_EN_G);
                when X"0010" =>
                   v.intReadSlave.rdata(0) := r.clkSelA(0);
                   v.intReadSlave.rdata(1) := r.clkSelB(0);
@@ -394,10 +521,13 @@ begin
                   v.intReadSlave.rdata(0) := r.clkSelA(1);
                   v.intReadSlave.rdata(1) := r.clkSelB(1);
                when X"0020" =>
-                  v.intReadSlave.rdata(31)          := dnaValid;
-                  v.intReadSlave.rdata(24 downto 0) := dnaValue(56 downto 32);
-               when X"0024" =>
                   v.intReadSlave.rdata := dnaValue(31 downto 0);
+               when X"0024" =>
+                  v.intReadSlave.rdata := dnaValue(63 downto 32);
+               when X"0028" =>
+                  v.intReadSlave.rdata := dnaValue(95 downto 64);
+               when X"002C" =>
+                  v.intReadSlave.rdata := dnaValue(127 downto 96);   
                when X"0030" =>
                   v.intReadSlave.rdata := eFuseUsr;
                when X"0034" =>
@@ -440,22 +570,18 @@ begin
       
    end process;
 
-
    -------------------------------------
    -- Device DNA
    -------------------------------------
    U_DeviceDna : entity work.DeviceDna
       generic map (
-         TPD_G           => TPD_G,
-         RST_POLARITY_G  => '1',
-         SIM_DNA_VALUE_G => X"000000000000000"
-         ) port map (
+         TPD_G        => TPD_G,
+         XIL_DEVICE_G => XIL_DEVICE_C) 
+      port map (
             clk      => axiClk,
             rst      => axiClkRst,
-            dnaValue => dnaValue,
-            dnaValid => dnaValid
-            );
-   deviceDna <= dnaValue(63 downto 0);
+            dnaValue => dnaValue);
+   deviceDna <= dnaValue;
 
    -------------------------------------
    -- EFuse

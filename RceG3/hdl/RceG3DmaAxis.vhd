@@ -54,10 +54,10 @@ entity RceG3DmaAxis is
       hpReadSlave     : in  AxiReadSlaveArray(3 downto 0);
       hpReadMaster    : out AxiReadMasterArray(3 downto 0);
       -- User memory access
-      userWriteSlave  : out AxiWriteSlaveType;
-      userWriteMaster : in  AxiWriteMasterType;
-      userReadSlave   : out AxiReadSlaveType;
-      userReadMaster  : in  AxiReadMasterType;
+      auxWriteSlave   : out AxiWriteSlaveType;
+      auxWriteMaster  : in  AxiWriteMasterType;
+      auxReadSlave    : out AxiReadSlaveType;
+      auxReadMaster   : in  AxiReadMasterType;
       -- Local AXI Lite Bus, 0x600n0000
       axilReadMaster  : in  AxiLiteReadMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
       axilReadSlave   : out AxiLiteReadSlaveArray(DMA_AXIL_COUNT_C-1 downto 0) := (others => AXI_LITE_READ_SLAVE_EMPTY_DECERR_C);
@@ -99,11 +99,11 @@ begin
    intReadSlave(2)  <= acpReadSlave;
    acpReadMaster    <= intReadMaster(2);
 
-   -- HP 2 goes to user space
-   userWriteSlave   <= hpWriteSlave(2);
-   hpWriteMaster(2) <= userWriteMaster;
-   userReadSlave    <= hpReadSlave(2);
-   hpReadMaster(2)  <= userReadMaster;
+   -- HP 2 goes to aux space
+   auxWriteSlave    <= hpWriteSlave(2);
+   hpWriteMaster(2) <= auxWriteMaster;
+   auxReadSlave     <= hpReadSlave(2);
+   hpReadMaster(2)  <= auxReadMaster;
 
    -- HP for channel 3
    intWriteSlave(3) <= hpWriteSlave(3);
@@ -115,18 +115,17 @@ begin
    interrupt(DMA_INT_COUNT_C-1 downto 4) <= (others => '0');
 
 
-
-
    ------------------------------------------
    -- DMA Channels
    ------------------------------------------
    U_DmaChanGen : for i in 0 to 3 generate
       U_RxG3DmaAxiChan: entity work.RceG3DmaAxisChan
          generic map (
-            TPD_G        => TPD_G,
-            AXI_CACHE_G  => AXI_CACHE_C(i),
-            BYP_SHIFT_G  => ite((i=3),false,true),  -- APP DMA driver enforces alignment, which means shift not required
-            AXI_CONFIG_G => ite((i=2),AXI_ACP_INIT_C,AXI_HP_INIT_C))
+            TPD_G             => TPD_G,
+            AXI_CACHE_G       => AXI_CACHE_C(i),
+            BYP_SHIFT_G       => ite((i=3),false,true),  -- APP DMA driver enforces alignment, which means shift not required
+            AXIS_DMA_CONFIG_G => ite((i=2),RCEG3_AXIS_DMA_ACP_CONFIG_C,RCEG3_AXIS_DMA_CONFIG_C),
+            AXI_CONFIG_G      => ite((i=2),AXI_ACP_INIT_C,AXI_HP_INIT_C))
          port map (
             axiDmaClk        => axiDmaClk,
             axiDmaRst        => axiDmaRst,

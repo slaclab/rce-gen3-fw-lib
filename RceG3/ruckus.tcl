@@ -1,15 +1,24 @@
 # Load RUCKUS environment and library
 source -quiet $::env(RUCKUS_DIR)/vivado_proc.tcl
 
+# Get the family type
+set family [getFpgaFamily]
+
 # Load local Source Code
-loadSource -dir  "$::DIR_PATH/hdl/"
-loadSource -path "$::DIR_PATH/simlink/rtl/RceG3CpuSim.vhd"
-loadIpCore -dir  "$::DIR_PATH/coregen/processing_system7_0/"
-loadSource -sim_only -path "$::DIR_PATH/tb/rceg3_tb.vhd"
+loadSource -dir "$::DIR_PATH/hdl"
+loadSource -dir "$::DIR_PATH/hdl/${family}"
+loadIpCore -dir "$::DIR_PATH/coregen/${family}"
 
 # Check for submodule tagging
-if { [SubmoduleCheck {ruckus} {1.6.3} ] < 0 } {exit -1}
-if { [SubmoduleCheck {surf}   {1.7.4} ] < 0 } {exit -1}
+if { [info exists ::env(OVERRIDE_SUBMODULE_LOCKS)] != 1 || $::env(OVERRIDE_SUBMODULE_LOCKS) == 0 } {
+   if { [SubmoduleCheck {ruckus} {1.7.8}  ] < 0 } {exit -1}
+   if { [SubmoduleCheck {surf}   {1.9.10} ] < 0 } {exit -1}
+} else {
+   puts "\n\n*********************************************************"
+   puts "OVERRIDE_SUBMODULE_LOCKS != 0"
+   puts "Ignoring the submodule locks in axi-pcie-core/ruckus.tcl"
+   puts "*********************************************************\n\n"
+} 
 
-# Check for version 2016.4 of Vivado (or later)
-if { [VersionCheck 2016.4] < 0 } {exit -1}
+# Check for version 2018.1 of Vivado (or later)
+if { [VersionCheck 2018.1] < 0 } {exit -1}

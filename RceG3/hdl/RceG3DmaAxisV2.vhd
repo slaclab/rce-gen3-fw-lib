@@ -36,7 +36,8 @@ use work.AxiDmaPkg.all;
 
 entity RceG3DmaAxisV2 is
    generic (
-      TPD_G : time := 1 ns);
+      TPD_G         : time    := 1 ns;
+      USE_DMA_ETH_G : boolean := true);
    port (
       -- Clock/Reset
       axiDmaClk       : in  sl;
@@ -52,13 +53,13 @@ entity RceG3DmaAxisV2 is
       hpReadSlave     : in  AxiReadSlaveArray(3 downto 0);
       hpReadMaster    : out AxiReadMasterArray(3 downto 0);
       -- User memory access
-      userWriteSlave  : out AxiWriteSlaveType;
-      userWriteMaster : in  AxiWriteMasterType;
-      userReadSlave   : out AxiReadSlaveType;
-      userReadMaster  : in  AxiReadMasterType;
+      auxWriteSlave   : out AxiWriteSlaveType;
+      auxWriteMaster  : in  AxiWriteMasterType;
+      auxReadSlave    : out AxiReadSlaveType;
+      auxReadMaster   : in  AxiReadMasterType;
       -- Local AXI Lite Bus, 0x600n0000
       axilReadMaster  : in  AxiLiteReadMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
-      axilReadSlave   : out AxiLiteReadSlaveArray(DMA_AXIL_COUNT_C-1 downto 0) := (others => AXI_LITE_READ_SLAVE_EMPTY_DECERR_C);
+      axilReadSlave   : out AxiLiteReadSlaveArray(DMA_AXIL_COUNT_C-1 downto 0)  := (others => AXI_LITE_READ_SLAVE_EMPTY_DECERR_C);
       axilWriteMaster : in  AxiLiteWriteMasterArray(DMA_AXIL_COUNT_C-1 downto 0);
       axilWriteSlave  : out AxiLiteWriteSlaveArray(DMA_AXIL_COUNT_C-1 downto 0) := (others => AXI_LITE_WRITE_SLAVE_EMPTY_DECERR_C);
       -- Interrupts
@@ -75,12 +76,18 @@ end RceG3DmaAxisV2;
 
 architecture mapping of RceG3DmaAxisV2 is
 
+   constant DMA_CH_COUNT_C : positive := ite(USE_DMA_ETH_G, 2, 3);
+
    signal intWriteSlave  : AxiWriteSlaveArray(3 downto 0);
    signal intWriteMaster : AxiWriteMasterArray(3 downto 0);
    signal intReadSlave   : AxiReadSlaveArray(3 downto 0);
    signal intReadMaster  : AxiReadMasterArray(3 downto 0);
 
-   constant DMA_BASE_ADDR_C : Slv32Array(2 downto 0) := (x"60040000", x"60020000", x"60000000");
+   constant DMA_BASE_ADDR_C : Slv32Array(3 downto 0) := (
+      0 => x"60000000",
+      1 => x"60020000",
+      2 => x"60040000",
+      3 => x"60060000");
 
 begin
 
@@ -96,11 +103,11 @@ begin
    intReadSlave(2)  <= acpReadSlave;
    acpReadMaster    <= intReadMaster(2);
 
-   -- HP 2 goes to user space
-   userWriteSlave   <= hpWriteSlave(2);
-   hpWriteMaster(2) <= userWriteMaster;
-   userReadSlave    <= hpReadSlave(2);
-   hpReadMaster(2)  <= userReadMaster;
+   -- HP 2 goes to aux space
+   auxWriteSlave    <= hpWriteSlave(2);
+   hpWriteMaster(2) <= auxWriteMaster;
+   auxReadSlave     <= hpReadSlave(2);
+   hpReadMaster(2)  <= auxReadMaster;
 
    -- HP for channel 3
    intWriteSlave(3) <= hpWriteSlave(3);
@@ -112,63 +119,65 @@ begin
    interrupt(DMA_INT_COUNT_C-1 downto 4) <= (others => '0');
 
    -------------------------------------------
-   -- Version 2 DMA Core For Ethernet
+   -- Version 2 DMA Core 
    -------------------------------------------
-   U_Gen2Dma: for i in 0 to 2 generate
-      U_RceG3DmaAxisChan: entity work.RceG3DmaAxisV2Chan
+   U_Gen2Dma : for i in 0 to DMA_CH_COUNT_C generate
+      U_RceG3DmaAxisChan : entity work.RceG3DmaAxisV2Chan
          generic map (
-            TPD_G            => TPD_G,
-            AXIL_BASE_ADDR_G => DMA_BASE_ADDR_C(i),
-            AXI_CONFIG_G     => ite((i=2),AXI_ACP_INIT_C,AXI_HP_INIT_C))
+            TPD_G             => TPD_G,
+            AXIL_BASE_ADDR_G  => DMA_BASE_ADDR_C(i),
+            AXIS_DMA_CONFIG_G => ite((i = 2), RCEG3_AXIS_DMA_ACP_CONFIG_C, RCEG3_AXIS_DMA_CONFIG_C),
+            AXI_CONFIG_G      => ite((i = 2), AXI_ACP_INIT_C, AXI_HP_INIT_C))
          port map (
-            axiDmaClk        => axiDmaClk,
-            axiDmaRst        => axiDmaRst,
-            axiWriteSlave    => intWriteSlave(i),
-            axiWriteMaster   => intWriteMaster(i),
-            axiReadSlave     => intReadSlave(i),
-            axiReadMaster    => intReadMaster(i),
-            axilReadMaster   => axilReadMaster(i*2),
-            axilReadSlave    => axilReadSlave(i*2),
-            axilWriteMaster  => axilWriteMaster(i*2),
-            axilWriteSlave   => axilWriteSlave(i*2),
-            interrupt        => interrupt(i),
-            dmaClk           => dmaClk(i),
-            dmaClkRst        => dmaClkRst(i),
-            dmaState         => dmaState(i),
-            dmaObMaster      => dmaObMaster(i),
-            dmaObSlave       => dmaObSlave(i),
-            dmaIbMaster      => dmaIbMaster(i),
-            dmaIbSlave       => dmaIbSlave(i));
+            axiDmaClk       => axiDmaClk,
+            axiDmaRst       => axiDmaRst,
+            axiWriteSlave   => intWriteSlave(i),
+            axiWriteMaster  => intWriteMaster(i),
+            axiReadSlave    => intReadSlave(i),
+            axiReadMaster   => intReadMaster(i),
+            axilReadMaster  => axilReadMaster(i*2),
+            axilReadSlave   => axilReadSlave(i*2),
+            axilWriteMaster => axilWriteMaster(i*2),
+            axilWriteSlave  => axilWriteSlave(i*2),
+            interrupt       => interrupt(i),
+            dmaClk          => dmaClk(i),
+            dmaClkRst       => dmaClkRst(i),
+            dmaState        => dmaState(i),
+            dmaObMaster     => dmaObMaster(i),
+            dmaObSlave      => dmaObSlave(i),
+            dmaIbMaster     => dmaIbMaster(i),
+            dmaIbSlave      => dmaIbSlave(i));
    end generate;
 
    -------------------------------------------
    -- Version 1 DMA Core For Ethernet
    -------------------------------------------
-   U_RxG3DmaAxiChan: entity work.RceG3DmaAxisChan
-      generic map (
-         TPD_G            => TPD_G,
-         AXI_CACHE_G      => "0000",
-         BYP_SHIFT_G      => false,
-         AXI_CONFIG_G     => AXI_HP_INIT_C)
-      port map (
-         axiDmaClk        => axiDmaClk,
-         axiDmaRst        => axiDmaRst,
-         axiReadMaster    => intReadMaster(3),
-         axiReadSlave     => intReadSlave(3),
-         axiWriteMaster   => intWriteMaster(3),
-         axiWriteSlave    => intWriteSlave(3),
-         axilReadMaster   => axilReadMaster(7 downto 6),
-         axilReadSlave    => axilReadSlave(7 downto 6),
-         axilWriteMaster  => axilWriteMaster(7 downto 6),
-         axilWriteSlave   => axilWriteSlave(7 downto 6),
-         interrupt        => interrupt(3),
-         dmaClk           => dmaClk(3),
-         dmaClkRst        => dmaClkRst(3),
-         dmaState         => dmaState(3),
-         dmaObMaster      => dmaObMaster(3),
-         dmaObSlave       => dmaObSlave(3),
-         dmaIbMaster      => dmaIbMaster(3),
-         dmaIbSlave       => dmaIbSlave(3));
-
+   USE_DMA_ETH : if (USE_DMA_ETH_G = true) generate
+      U_RxG3DmaAxiChan : entity work.RceG3DmaAxisChan
+         generic map (
+            TPD_G        => TPD_G,
+            AXI_CACHE_G  => "0000",
+            BYP_SHIFT_G  => false,
+            AXI_CONFIG_G => AXI_HP_INIT_C)
+         port map (
+            axiDmaClk       => axiDmaClk,
+            axiDmaRst       => axiDmaRst,
+            axiReadMaster   => intReadMaster(3),
+            axiReadSlave    => intReadSlave(3),
+            axiWriteMaster  => intWriteMaster(3),
+            axiWriteSlave   => intWriteSlave(3),
+            axilReadMaster  => axilReadMaster(7 downto 6),
+            axilReadSlave   => axilReadSlave(7 downto 6),
+            axilWriteMaster => axilWriteMaster(7 downto 6),
+            axilWriteSlave  => axilWriteSlave(7 downto 6),
+            interrupt       => interrupt(3),
+            dmaClk          => dmaClk(3),
+            dmaClkRst       => dmaClkRst(3),
+            dmaState        => dmaState(3),
+            dmaObMaster     => dmaObMaster(3),
+            dmaObSlave      => dmaObSlave(3),
+            dmaIbMaster     => dmaIbMaster(3),
+            dmaIbSlave      => dmaIbSlave(3));
+   end generate;
 end mapping;
 
