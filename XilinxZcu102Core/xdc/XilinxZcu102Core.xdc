@@ -35,6 +35,12 @@ set_property PACKAGE_PIN A3 [get_ports { sfpRxN[3] }]
 set_property PACKAGE_PIN C8 [get_ports { sfpClk156P }]
 set_property PACKAGE_PIN C7 [get_ports { sfpClk156N }]
 
+set_property PACKAGE_PIN A12 [get_ports { sfpEnTx[0] }]
+set_property PACKAGE_PIN A13 [get_ports { sfpEnTx[1] }]
+set_property PACKAGE_PIN B13 [get_ports { sfpEnTx[2] }]
+set_property PACKAGE_PIN C13 [get_ports { sfpEnTx[3] }]
+set_property -dict { IOSTANDARD LVCMOS33 } [get_ports { sfpEnTx[*] }]
+
 ##############################################################################
 
 set_property PACKAGE_PIN Y4   [get_ports { fmcHpc0LaP[0] }]
