@@ -238,7 +238,7 @@ begin
          AXI_READY_EN_G    => false,
          AXIS_READY_EN_G   => false,
          AXIS_CONFIG_G     => AXIS_DMA_CONFIG_G,
-         AXI_DESC_CONFIG_G => AXI_CONFIG_G,
+         -- AXI_DESC_CONFIG_G => AXI_CONFIG_G,
          AXI_DMA_CONFIG_G  => AXI_CONFIG_G,
          CHAN_COUNT_G      => 1,
          RD_PIPE_STAGES_G  => 1,
