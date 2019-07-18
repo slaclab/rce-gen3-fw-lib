@@ -41,6 +41,17 @@ set_property PACKAGE_PIN B13 [get_ports { sfpEnTx[2] }]
 set_property PACKAGE_PIN C13 [get_ports { sfpEnTx[3] }]
 set_property -dict { IOSTANDARD LVCMOS33 } [get_ports { sfpEnTx[*] }]
 
+set_property -dict { PACKAGE_PIN AM13 IOSTANDARD LVCMOS33 } [get_ports { extRst }]
+
+set_property -dict { PACKAGE_PIN AG14 IOSTANDARD LVCMOS33 } [get_ports { led[0] }]
+set_property -dict { PACKAGE_PIN AF13 IOSTANDARD LVCMOS33 } [get_ports { led[1] }]
+set_property -dict { PACKAGE_PIN AE13 IOSTANDARD LVCMOS33 } [get_ports { led[2] }]
+set_property -dict { PACKAGE_PIN AJ14 IOSTANDARD LVCMOS33 } [get_ports { led[3] }]
+set_property -dict { PACKAGE_PIN AJ15 IOSTANDARD LVCMOS33 } [get_ports { led[4] }]
+set_property -dict { PACKAGE_PIN AH13 IOSTANDARD LVCMOS33 } [get_ports { led[5] }]
+set_property -dict { PACKAGE_PIN AH14 IOSTANDARD LVCMOS33 } [get_ports { led[6] }]
+set_property -dict { PACKAGE_PIN AL12 IOSTANDARD LVCMOS33 } [get_ports { led[7] }]
+
 ##############################################################################
 
 set_property PACKAGE_PIN Y4   [get_ports { fmcHpc0LaP[0] }]
