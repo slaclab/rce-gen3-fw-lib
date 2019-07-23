@@ -105,8 +105,8 @@ begin
          VALID_THOLD_G     => 1,
          -- FIFO configurations
 
-         SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
-         MEMORY_TYPE_G       => "distributed", <--- generic for future XPM FIFO release
+         SYNTH_MODE_G        => SYNTH_MODE_G,  --- generic for future XPM FIFO release
+         MEMORY_TYPE_G       => "distributed", --- generic for future XPM FIFO release
          -- BRAM_EN_G       => false,
          -- GEN_SYNC_FIFO_G => false,
 
@@ -134,8 +134,8 @@ begin
          VALID_THOLD_G     => 1,
          -- FIFO configurations
 
-         SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
-         MEMORY_TYPE_G       => "distributed", <--- generic for future XPM FIFO release
+         SYNTH_MODE_G        => SYNTH_MODE_G,  --- generic for future XPM FIFO release
+         MEMORY_TYPE_G       => "distributed", --- generic for future XPM FIFO release
          -- BRAM_EN_G       => false,
          -- GEN_SYNC_FIFO_G => false,
 
