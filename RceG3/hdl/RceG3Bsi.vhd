@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : RCE Generation 3, BSI Controller
 -- File          : RceG3Bsi.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 05/08/2014
 -------------------------------------------------------------------------------
 -- Description:
 -- I2C Slave block for IPMI operations:
@@ -14,9 +12,6 @@
 -- No part of 'SLAC RCE Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 05/08/2014: created.
 -------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;

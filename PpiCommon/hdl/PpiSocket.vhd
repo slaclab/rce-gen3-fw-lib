@@ -3,11 +3,6 @@
 -- Project    : RCE Gen 3
 -------------------------------------------------------------------------------
 -- File       : PpiSocket.vhd
--- Author     : Ryan Herbst, rherbst@slac.stanford.edu
--- Created    : 2014-04-25
--- Last update: 2014-05-05
--- Platform   : 
--- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
 -- Description:
 -- Socket wrapper for protocol plug in.
@@ -42,9 +37,6 @@
 -- No part of 'SLAC RCE PPI Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 05/27/2014: created.
 -------------------------------------------------------------------------------
 
 library ieee;

@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- File       : RceG3PcieRoot.vhd
 -- Company    : SLAC National Accelerator Laboratory
--- Created    : 2016-05-16
--- Last update: 2019-03-07
 -------------------------------------------------------------------------------
 -- Description: Wrapper for Xilinx PCIE Root & Axi Interconnect
 -------------------------------------------------------------------------------

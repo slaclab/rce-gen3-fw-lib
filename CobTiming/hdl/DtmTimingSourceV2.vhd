@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : Clock/Trigger Source Module For DTM, Version 2
 -- File          : DtmTimingSourceV2.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 12/10/2013
 -------------------------------------------------------------------------------
 -- Description:
 -- Clock & Trigger source module for DTM
@@ -14,9 +12,6 @@
 -- No part of 'SLAC RCE Timing Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 12/10/2013: created.
 -------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;

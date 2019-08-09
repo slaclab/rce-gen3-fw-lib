@@ -3,8 +3,6 @@
 -- Project       : COB DPM
 -------------------------------------------------------------------------------
 -- File          : Version.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 04/03/2013
 -------------------------------------------------------------------------------
 -- Description:
 -- Version Constant Module
