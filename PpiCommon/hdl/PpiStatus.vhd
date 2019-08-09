@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : General Purpopse PPI Status Monitoring
 -- File          : PpiStatus.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 03/21/2014
 -------------------------------------------------------------------------------
 -- Description:
 -- PPI block to transmit status messages.
@@ -14,9 +12,6 @@
 -- No part of 'SLAC RCE PPI Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 03/21/2014: created.
 -------------------------------------------------------------------------------
 
 library ieee;

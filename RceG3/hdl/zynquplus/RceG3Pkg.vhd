@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : ARM Based RCE Generation 3, Package File
 -- File          : RceG3Pkg.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 04/02/2013
 -------------------------------------------------------------------------------
 -- Description:
 -- Package file for ARM based rce generation 3 processor core.

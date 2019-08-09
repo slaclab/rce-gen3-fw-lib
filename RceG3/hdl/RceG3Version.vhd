@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : RCE Generation 3, Version File
 -- File          : RceG3Version.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 10/26/2013
 -------------------------------------------------------------------------------
 -- Description:
 -- Version file for ARM based rce generation 3 processor core.
@@ -14,9 +12,6 @@
 -- No part of 'SLAC RCE Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 10/26/2013: created.
 -------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;

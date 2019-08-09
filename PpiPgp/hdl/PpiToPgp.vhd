@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : PPI To PGP Block, Outbound Transmit.
 -- File          : PpiToPgp.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 03/21/2014
 -------------------------------------------------------------------------------
 -- Description:
 -- PPI block to transmit outbound AXI Stream Frames.

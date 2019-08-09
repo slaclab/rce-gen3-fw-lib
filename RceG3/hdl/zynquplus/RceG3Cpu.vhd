@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : RCE Generation 3, CPU Wrapper
 -- File          : RceG3Cpu.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 04/02/2013
 -------------------------------------------------------------------------------
 -- Description: CPU wrapper for ARM based RCE generation 3 processor core.
 --
