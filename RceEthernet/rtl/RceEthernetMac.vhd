@@ -1,13 +1,6 @@
 -------------------------------------------------------------------------------
--- Title      : 
--------------------------------------------------------------------------------
 -- File       : RceEthernetMac.vhd
--- Author     : Ryan Herbst <rherbst@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
--- Created    : 2015-09-03
--- Last update: 2018-07-26
--- Platform   : 
--- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
 -- Description: Wrapper file for Zynq Ethernet 10G core
 -------------------------------------------------------------------------------
@@ -106,6 +99,11 @@ end RceEthernetMac;
 
 architecture mapping of RceEthernetMac is
 
+   -- For 1GbE: 64 clock cycles for 512 bits = one pause "quanta"
+   -- For 10GbE: 8 clock cycles for 512 bits = one pause "quanta"
+   -- For 40GbE: 4 clock cycles for 512 bits = one pause "quanta"
+   constant PAUSE_512BITS_C : positive := ite(PHY_TYPE_G = "GMII", 64, ite(PHY_TYPE_G = "XGMII", 8, 4));
+
    type RegType is record
       sof          : sl;
       wrCnt        : slv(15 downto 0);
@@ -148,36 +146,29 @@ begin
    U_EthMacTop : entity work.EthMacTop
       generic map (
          -- Simulation Generics
-         TPD_G               => TPD_G,
+         TPD_G             => TPD_G,
          -- MAC Configurations
-         PAUSE_EN_G          => true,
-         PAUSE_512BITS_G     => 8,
-         PHY_TYPE_G          => PHY_TYPE_G,
-         DROP_ERR_PKT_G      => true,
-         JUMBO_G             => EN_JUMBO_G,
+         PAUSE_EN_G        => true,
+         PAUSE_512BITS_G   => PAUSE_512BITS_C,
+         PHY_TYPE_G        => PHY_TYPE_G,
+         DROP_ERR_PKT_G    => true,
+         JUMBO_G           => EN_JUMBO_G,
          -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
          -- MEMORY_TYPE_G       => MEMORY_TYPE_G, <--- generic for future XPM FIFO release
-         -- RX FIFO Configurations
-         INT_PIPE_STAGES_G   => 1,
-         PIPE_STAGES_G       => 1,
-         FIFO_ADDR_WIDTH_G   => 10,
-         CASCADE_SIZE_G      => 4,
-         FIFO_PAUSE_THRESH_G => 1000,
-         CASCADE_PAUSE_SEL_G => 0,
          -- Non-VLAN Configurations
-         FILT_EN_G           => true,
-         PRIM_COMMON_CLK_G   => true,
-         PRIM_CONFIG_G       => EMAC_AXIS_CONFIG_C,
-         BYP_EN_G            => BYP_EN_G,
-         BYP_ETH_TYPE_G      => BYP_ETH_TYPE_G,
-         BYP_COMMON_CLK_G    => true,
-         BYP_CONFIG_G        => EMAC_AXIS_CONFIG_C,
+         FILT_EN_G         => true,
+         PRIM_COMMON_CLK_G => true,
+         PRIM_CONFIG_G     => EMAC_AXIS_CONFIG_C,
+         BYP_EN_G          => BYP_EN_G,
+         BYP_ETH_TYPE_G    => BYP_ETH_TYPE_G,
+         BYP_COMMON_CLK_G  => true,
+         BYP_CONFIG_G      => EMAC_AXIS_CONFIG_C,
          -- VLAN Configurations
-         VLAN_EN_G           => VLAN_EN_G,
-         VLAN_SIZE_G         => VLAN_SIZE_G,
-         VLAN_VID_G          => VLAN_VID_G,
-         VLAN_COMMON_CLK_G   => true,
-         VLAN_CONFIG_G       => EMAC_AXIS_CONFIG_C)
+         VLAN_EN_G         => VLAN_EN_G,
+         VLAN_SIZE_G       => VLAN_SIZE_G,
+         VLAN_VID_G        => VLAN_VID_G,
+         VLAN_COMMON_CLK_G => true,
+         VLAN_CONFIG_G     => EMAC_AXIS_CONFIG_C)
       port map (
          -- Core Clock and Reset
          ethClk           => ethClk,
