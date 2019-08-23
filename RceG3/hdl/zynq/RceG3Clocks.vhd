@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : Clock generation block
 -- File          : RceG3Clocks.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 04/02/2013
 -------------------------------------------------------------------------------
 -- Description:
 -- Clock generation block for generation 3 RCE core.
@@ -14,9 +12,6 @@
 -- No part of 'SLAC RCE Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 04/02/2013: created.
 -------------------------------------------------------------------------------
 
 library ieee;

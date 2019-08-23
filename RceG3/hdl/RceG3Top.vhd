@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : ARM Based RCE Generation 3, Top Level
 -- File          : RceG3Top.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 04/02/2013
 -------------------------------------------------------------------------------
 -- Description:
 -- Top level file for ARM based rce generation 3 processor core.

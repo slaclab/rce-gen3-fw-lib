@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : Local AXI Bus Bridge and Registers
 -- File          : RceG3AxiCntl.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 03/06/2014
 -------------------------------------------------------------------------------
 -- Description:
 -- Wrapper for AXI bus converter, crossbar and core registers
@@ -14,9 +12,6 @@
 -- No part of 'SLAC RCE Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 03/06/2014: created.
 -------------------------------------------------------------------------------
 
 library ieee;

@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : PGP to PPI Block, Inbound receiver.
 -- File          : PgpToPpi.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 03/21/2014
 -------------------------------------------------------------------------------
 -- Description:
 -- PPI block to receive inbound AXI Stream Frames.
