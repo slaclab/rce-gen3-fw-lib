@@ -148,8 +148,8 @@ begin
       U_RxG3DmaAxiChan : entity work.RceG3DmaAxisChan
          generic map (
             TPD_G         => TPD_G,
-            SYNTH_MODE_G  => SYNTH_MODE_G,
-            MEMORY_TYPE_G => MEMORY_TYPE_G,
+            --SYNTH_MODE_G  => SYNTH_MODE_G,
+            --MEMORY_TYPE_G => MEMORY_TYPE_G,
             AXI_CACHE_G   => "0000",
             BYP_SHIFT_G   => false,
             AXI_CONFIG_G  => AXI_HP_INIT_C)
