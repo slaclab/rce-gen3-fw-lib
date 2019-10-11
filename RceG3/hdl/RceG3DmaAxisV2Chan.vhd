@@ -29,6 +29,8 @@ use work.AxiDmaPkg.all;
 entity RceG3DmaAxisV2Chan is
    generic (
       TPD_G             : time                := 1 ns;
+      SYNTH_MODE_G      : string              := "xpm";
+      MEMORY_TYPE_G     : string              := "block";      
       AXIL_BASE_ADDR_G  : slv(31 downto 0)    := x"00000000";
       AXIS_DMA_CONFIG_G : AxiStreamConfigType := RCEG3_AXIS_DMA_CONFIG_C;      
       AXI_CONFIG_G      : AxiConfigType       := AXI_CONFIG_INIT_C);
@@ -234,6 +236,8 @@ begin
       generic map (
          TPD_G             => TPD_G,
          DESC_AWIDTH_G     => 12,
+         DESC_SYNTH_MODE_G  => SYNTH_MODE_G,
+         DESC_MEMORY_TYPE_G => MEMORY_TYPE_G,        
          AXIL_BASE_ADDR_G  => AXIL_BASE_ADDR_G,
          AXI_READY_EN_G    => false,
          AXIS_READY_EN_G   => false,

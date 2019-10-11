@@ -178,8 +178,8 @@ begin
          U_RceG3DmaAxisV2 : entity work.RceG3DmaAxisV2
             generic map (
                TPD_G         => TPD_G,
-               -- SYNTH_MODE_G  => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
-               -- MEMORY_TYPE_G => MEMORY_TYPE_G   <--- generic for future XPM FIFO release 
+               SYNTH_MODE_G  => SYNTH_MODE_G,
+               MEMORY_TYPE_G => MEMORY_TYPE_G,
                USE_DMA_ETH_G => USE_DMA_ETH_G)
             port map (
                axiDmaClk       => axiDmaClk,
