@@ -40,7 +40,7 @@ entity XilinxZcu102Core is
       sysClk125Rst       : out sl;
       sysClk200          : out sl;
       sysClk200Rst       : out sl;
-      -- External AXI-Lite Interface [0xA0000000:0xAFFFFFFF]
+      -- External AXI-Lite Interface [0xB4000000:0xB7FFFFFF]
       axiClk             : out sl;
       axiClkRst          : out sl;
       extAxilReadMaster  : out AxiLiteReadMasterType;
@@ -128,12 +128,12 @@ begin
          -- AXI-Lite clock and reset
          axilClk             => axilClock,
          axilRst             => axilReset,
-         -- External Axi Bus, 0xA0000000 - 0xAFFFFFFF  (axilClk domain)
+         -- External Axi Bus, 0xB4000000 - 0xB7FFFFFF  (axilClk domain)
          extAxilReadMaster   => extAxilReadMaster,
          extAxilReadSlave    => extAxilReadSlave,
          extAxilWriteMaster  => extAxilWriteMaster,
          extAxilWriteSlave   => extAxilWriteSlave,
-         -- Core Axi Bus, 0xB0000000 - 0xBFFFFFFF  (axilClk domain)
+         -- Core Axi Bus, 0xB8000000 - 0xBFFFFFFF  (axilClk domain)
          coreAxilReadMaster  => coreAxilReadMaster,
          coreAxilReadSlave   => coreAxilReadSlave,
          coreAxilWriteMaster => coreAxilWriteMaster,
