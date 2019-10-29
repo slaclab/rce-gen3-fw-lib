@@ -109,7 +109,6 @@ begin
          SIM_DMA_PORT_NUM_G => SIM_DMA_PORT_NUM_G,
          SIM_DMA_CHANNELS_G => SIM_DMA_CHANNELS_G,
          SIM_DMA_TDESTS_G   => SIM_DMA_TDESTS_G,
-         MEMORY_TYPE_G      => "ultra",
          SEL_REFCLK_G       => false,   -- false = ZYNQ ref
          USE_DMA_ETH_G      => false,  -- false = using DMA[3] for application space (not ETH)
          BUILD_INFO_G       => BUILD_INFO_G,
