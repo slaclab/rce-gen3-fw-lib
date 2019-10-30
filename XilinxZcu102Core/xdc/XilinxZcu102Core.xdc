@@ -12,6 +12,12 @@
 ## IO Placements
 ################
 
+set_property PACKAGE_PIN A12 [get_ports { sfpEnTx[0] }]
+set_property PACKAGE_PIN A13 [get_ports { sfpEnTx[1] }]
+set_property PACKAGE_PIN B13 [get_ports { sfpEnTx[2] }]
+set_property PACKAGE_PIN C13 [get_ports { sfpEnTx[3] }]
+set_property -dict { IOSTANDARD LVCMOS33 } [get_ports { sfpEnTx[*] }]
+ 
 set_property PACKAGE_PIN E4 [get_ports { sfpTxP[0] }]
 set_property PACKAGE_PIN E3 [get_ports { sfpTxN[0] }]
 set_property PACKAGE_PIN D2 [get_ports { sfpRxP[0] }]
