@@ -8,22 +8,22 @@
 -- the terms contained in the LICENSE.txt file.
 ------------------------------------------------------------------------------
 LIBRARY ieee;
-USE work.ALL;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
+
 Library unisim;
 use unisim.vcomponents.all;
-
-
-library rce_gen3_fw_lib;
-use rce_gen3_fw_lib.RceG3Pkg.all;
 
 library surf;
 use surf.StdRtlPkg.all;
 use surf.AxiLitePkg.all;
 use surf.AxiStreamPkg.all;
 use surf.AxiPkg.all;
+
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
 use rce_gen3_fw_lib.PpiPkg.all;
 
 entity tb is end tb;

@@ -55,6 +55,43 @@ architecture mapping of Rce1GbE1lane is
    signal coreRst : sl;
    signal status  : slv(15 downto 0);
 
+   component GigEthGthUltraScaleCore is
+      port (
+         gtrefclk               : in  std_logic;
+         txp                    : out std_logic;
+         txn                    : out std_logic;
+         rxp                    : in  std_logic;
+         rxn                    : in  std_logic;
+         resetdone              : out std_logic;
+         cplllock               : out std_logic;
+         mmcm_reset             : out std_logic;
+         txoutclk               : out std_logic;
+         rxoutclk               : out std_logic;
+         userclk                : in  std_logic;
+         userclk2               : in  std_logic;
+         rxuserclk              : in  std_logic;
+         rxuserclk2             : in  std_logic;
+         pma_reset              : in  std_logic;
+         mmcm_locked            : in  std_logic;
+         independent_clock_bufg : in  std_logic;
+         gmii_txd               : in  std_logic_vector(7 downto 0);
+         gmii_tx_en             : in  std_logic;
+         gmii_tx_er             : in  std_logic;
+         gmii_rxd               : out std_logic_vector(7 downto 0);
+         gmii_rx_dv             : out std_logic;
+         gmii_rx_er             : out std_logic;
+         gmii_isolate           : out std_logic;
+         configuration_vector   : in  std_logic_vector(4 downto 0);
+         an_interrupt           : out std_logic;
+         an_adv_config_vector   : in  std_logic_vector(15 downto 0);
+         an_restart_config      : in  std_logic;
+         gt0_txpolarity_in      : in  std_logic;
+         gt0_rxpolarity_in      : in  std_logic;
+         status_vector          : out std_logic_vector(15 downto 0);
+         reset                  : in  std_logic;
+         signal_detect          : in  std_logic);
+   end component GigEthGthUltraScaleCore;
+
 begin
 
    phyReady  <= status(1);
@@ -73,7 +110,7 @@ begin
    ------------------
    -- 1000BASE-X core
    ------------------
-   U_IpCore : entity work.GigEthGthUltraScaleCore
+   U_IpCore : GigEthGthUltraScaleCore
       port map (
          -- Clocks and Resets
          gtrefclk               => sysClk125,  -- Used as CPLL clock reference
