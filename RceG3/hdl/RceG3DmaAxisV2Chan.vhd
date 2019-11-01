@@ -19,12 +19,16 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.RceG3Pkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
 
 entity RceG3DmaAxisV2Chan is
    generic (
@@ -78,7 +82,7 @@ architecture mapping of RceG3DmaAxisV2Chan is
 begin
 
    -- Inbound AXI Stream FIFO
-   U_IbFifo : entity work.AxiStreamFifoV2
+   U_IbFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G               => TPD_G,
          INT_PIPE_STAGES_G   => 1,
@@ -108,7 +112,7 @@ begin
          mAxisSlave      => ibAxisSlave);
 
    -- Outbound AXI Stream FIFO
-   U_ObFifo : entity work.AxiStreamFifoV2
+   U_ObFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G               => TPD_G,
          INT_PIPE_STAGES_G   => 1,
@@ -139,7 +143,7 @@ begin
          mAxisSlave      => dmaObSlave);
 
    -- Read Path AXI FIFO
-   U_AxiReadPathFifo : entity work.AxiReadPathFifo
+   U_AxiReadPathFifo : entity surf.AxiReadPathFifo
       generic map (
          TPD_G                  => TPD_G,
          XIL_DEVICE_G           => "7SERIES",
@@ -176,7 +180,7 @@ begin
    U_AxiFifoGen: for i in 0 to 1 generate
 
       -- Write Path AXI FIFO
-      U_AxiWritePathFifo : entity work.AxiWritePathFifo
+      U_AxiWritePathFifo : entity surf.AxiWritePathFifo
          generic map (
             TPD_G                    => TPD_G,
             XIL_DEVICE_G             => "7SERIES",
@@ -217,7 +221,7 @@ begin
    end generate;
 
    -- Write Path MUX
-   U_WritePathMux: entity work.AxiWritePathMux 
+   U_WritePathMux: entity surf.AxiWritePathMux 
       generic map (
          TPD_G        => TPD_G,
          NUM_SLAVES_G => 2)
@@ -230,7 +234,7 @@ begin
          mAxiWriteSlave    => axiWriteSlave);
 
    -- 1 channel version 2 DMA engine
-   U_AxiStreamDmaV2: entity work.AxiStreamDmaV2 
+   U_AxiStreamDmaV2: entity surf.AxiStreamDmaV2 
       generic map (
          TPD_G             => TPD_G,
          DESC_AWIDTH_G     => 12,
@@ -267,7 +271,7 @@ begin
    locReadSlave(0) <= AXI_READ_SLAVE_INIT_C;
 
    -- DMA State synchronization
-   U_OnlineSync: entity work.Synchronizer 
+   U_OnlineSync: entity surf.Synchronizer 
       generic map ( TPD_G => TPD_G )
       port map (
          clk     => dmaClk,
@@ -275,7 +279,7 @@ begin
          dataIn  => online,
          dataOut => dmaState.online);
 
-   U_UserSync: entity work.SynchronizerOneShot
+   U_UserSync: entity surf.SynchronizerOneShot
       generic map (
          TPD_G         => TPD_G,
          PULSE_WIDTH_G => 10)

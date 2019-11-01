@@ -16,8 +16,10 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-use work.StdRtlPkg.all;
-use work.GigEthPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.GigEthPkg.all;
 
 entity Rce1GbE1lane is
    generic (
@@ -59,7 +61,7 @@ begin
    phyStatus <= x"FC"    when(status(1) = '1') else x"00";
    phyDebug  <= "111111" when(status(1) = '1') else "000000";
 
-   U_PwrUpRst : entity work.PwrUpRst
+   U_PwrUpRst : entity surf.PwrUpRst
       generic map (
          TPD_G      => TPD_G,
          DURATION_G => 1000)

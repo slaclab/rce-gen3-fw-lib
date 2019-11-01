@@ -21,10 +21,14 @@ use ieee.std_logic_unsigned.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
-use work.EthMacPkg.all;
-use work.AxiStreamPkg.all;
-use work.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.EthMacPkg.all;
+use surf.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
 
 entity RceUserEthRouter is
    generic (
@@ -94,7 +98,7 @@ architecture rtl of RceUserEthRouter is
 
 begin
 
-   U_RxFifo : entity work.AxiStreamFifoV2
+   U_RxFifo : entity surf.AxiStreamFifoV2
       generic map (
          -- General Configurations
          TPD_G             => TPD_G,
@@ -123,7 +127,7 @@ begin
          mAxisMaster => rxMaster,
          mAxisSlave  => rxSlave);
 
-   U_TxFifo : entity work.AxiStreamFifoV2
+   U_TxFifo : entity surf.AxiStreamFifoV2
       generic map (
          -- General Configurations
          TPD_G             => TPD_G,
@@ -163,7 +167,7 @@ begin
 
    GEN_USER_MUX : if (UDP_SERVER_EN_G = true) generate
 
-      U_AxiStreamMux : entity work.AxiStreamMux
+      U_AxiStreamMux : entity surf.AxiStreamMux
          generic map (
             TPD_G        => TPD_G,
             NUM_SLAVES_G => 2)

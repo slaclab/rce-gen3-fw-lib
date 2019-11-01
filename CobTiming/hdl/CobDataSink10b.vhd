@@ -34,7 +34,9 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
-use work.StdRtlPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
 
 entity CobDataSink10b is
    generic (
@@ -89,7 +91,7 @@ begin
    rxDataEn <= intDataEn;
 
    -- Sync status
-   U_StatusSync : entity work.SynchronizerFifo
+   U_StatusSync : entity surf.SynchronizerFifo
       generic map (
          TPD_G         => 1 ns,
          COMMON_CLK_G  => false,
@@ -157,7 +159,7 @@ begin
       );
 
    -- Reset gen
-   U_LdRstGen : entity work.RstSync
+   U_LdRstGen : entity surf.RstSync
       generic map (
          TPD_G            => TPD_G,
          IN_POLARITY_G    => '1',

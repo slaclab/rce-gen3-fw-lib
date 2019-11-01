@@ -22,8 +22,12 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
 
 entity PpiStateSync is
    generic (
@@ -45,7 +49,7 @@ architecture structure of PpiStateSync is
 
 begin
 
-   U_Sync: entity work.SynchronizerVector
+   U_Sync: entity surf.SynchronizerVector
       generic map (
          TPD_G          => TPD_G,
          RST_POLARITY_G => '1',

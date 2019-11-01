@@ -44,13 +44,17 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
-use work.RceG3Pkg.all;
-use work.AxiPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiDmaPkg.all;
-use work.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.AxiPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiDmaPkg.all;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity PpiSocket is
    generic (
@@ -270,7 +274,7 @@ begin
    ---------------------------------------
    -- Counters
    ---------------------------------------
-   U_Counters : entity work.SynchronizerOneShotCntVector
+   U_Counters : entity surf.SynchronizerOneShotCntVector
       generic map (
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
@@ -304,7 +308,7 @@ begin
    ---------------------------------------
    -- FIFOs
    ---------------------------------------
-   U_Fifos : entity work.AxiLiteFifoPushPop
+   U_Fifos : entity surf.AxiLiteFifoPushPop
       generic map (
          TPD_G              => TPD_G,
          POP_FIFO_COUNT_G   => POP_FIFO_COUNT_C,
@@ -362,7 +366,7 @@ begin
    -- Outbound
    ---------------------------------------
 
-   U_ObHeader : entity work.PpiObHeader 
+   U_ObHeader : entity rce_gen3_fw_lib.PpiObHeader 
       generic map (
          TPD_G        => TPD_G,
          AXI_CONFIG_G => AXI_ACP_INIT_C
@@ -383,7 +387,7 @@ begin
          obHeaderDebug(1 downto 0)  => debug(1 downto 0),
          obHeaderDebug(3 downto 2)  => debug(12 downto 11));         
 
-   U_ObPayload : entity work.PpiObPayload
+   U_ObPayload : entity rce_gen3_fw_lib.PpiObPayload
       generic map (
          TPD_G        => TPD_G,
          AXI_CONFIG_G => AXI_HP_INIT_C,
@@ -412,7 +416,7 @@ begin
    -- Inbound
    ---------------------------------------
 
-   U_IbRoute : entity work.PpiIbRoute 
+   U_IbRoute : entity rce_gen3_fw_lib.PpiIbRoute 
       generic map (
          TPD_G => TPD_G
       ) port map (
@@ -427,7 +431,7 @@ begin
       );
 
 
-   U_IbHeader : entity work.PpiIbHeader
+   U_IbHeader : entity rce_gen3_fw_lib.PpiIbHeader
       generic map (
          TPD_G          => TPD_G,
          AXI_CONFIG_G   => AXI_ACP_INIT_C
@@ -451,7 +455,7 @@ begin
       );
 
 
-   U_IbPayload : entity work.PpiIbPayload
+   U_IbPayload : entity rce_gen3_fw_lib.PpiIbPayload
       generic map (
          TPD_G            => TPD_G,
          AXI_RD_CONFIG_G  => AXI_ACP_INIT_C,

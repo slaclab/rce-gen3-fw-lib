@@ -20,8 +20,12 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 
 library UNISIM;
 use UNISIM.VCOMPONENTS.all;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+
+library rce_gen3_fw_lib; 
 
 entity DtmTimingSourceV2 is
    generic (
@@ -168,7 +172,7 @@ begin
       end process;
 
       -- Module
-      U_CobDataSource : entity work.CobDataSource10b
+      U_CobDataSource : entity rce_gen3_fw_lib.CobDataSource10b
          generic map (
             TPD_G => TPD_G
             ) port map (
@@ -199,7 +203,7 @@ begin
       end process;
 
       -- Tx data count sync
-      U_TxDataCntSync : entity work.SynchronizerFifo
+      U_TxDataCntSync : entity surf.SynchronizerFifo
          generic map (
             TPD_G         => 1 ns,
             COMMON_CLK_G  => false,
@@ -238,7 +242,7 @@ begin
             );
 
       -- Input processor
-      U_CobDataSink : entity work.CobDataSink10b
+      U_CobDataSink : entity rce_gen3_fw_lib.CobDataSink10b
          generic map (
             TPD_G           => TPD_G,
             IODELAY_GROUP_G => IODELAY_GROUP_G
@@ -268,7 +272,7 @@ begin
       end process;
 
       -- Rx data count sync
-      U_RxDataCntSync : entity work.SynchronizerFifo
+      U_RxDataCntSync : entity surf.SynchronizerFifo
          generic map (
             TPD_G         => 1 ns,
             COMMON_CLK_G  => false,
@@ -430,7 +434,7 @@ begin
    end process;
 
 -- Count Reset gen
-   U_CountRstGen : entity work.RstSync
+   U_CountRstGen : entity surf.RstSync
       generic map (
          TPD_G           => TPD_G,
          IN_POLARITY_G   => '1',
@@ -443,7 +447,7 @@ begin
          syncRst  => countReset
          );
 
-   U_SynchronizerFifo_1 : entity work.SynchronizerFifo
+   U_SynchronizerFifo_1 : entity surf.SynchronizerFifo
       generic map (
          TPD_G        => TPD_G,
          DATA_WIDTH_G => 10)
@@ -456,7 +460,7 @@ begin
          valid  => regCodeEn(0),        -- [out]
          dout   => regCode(0));         -- [out]
 
-   U_SynchronizerFifo_2 : entity work.SynchronizerFifo
+   U_SynchronizerFifo_2 : entity surf.SynchronizerFifo
       generic map (
          TPD_G        => TPD_G,
          DATA_WIDTH_G => 10)

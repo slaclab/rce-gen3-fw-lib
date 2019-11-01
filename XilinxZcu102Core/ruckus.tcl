@@ -17,14 +17,14 @@ if { [SubmoduleCheck {ruckus} {1.7.4} ] < 0 } {exit -1}
 if { [SubmoduleCheck {surf}   {1.9.8} ] < 0 } {exit -1}
 
 # Load local Source Code and constraints
-loadSource      -dir "$::DIR_PATH/hdl"
+loadSource -lib rce_gen3_fw_lib      -dir "$::DIR_PATH/hdl"
 loadConstraints -dir "$::DIR_PATH/xdc"
 loadIpCore      -dir "$::DIR_PATH/ip"
 
-loadSource -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Clocks.vhd"
-loadSource -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Cpu.vhd"
-loadSource -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Pkg.vhd"
-loadSource -dir  "$::DIR_PATH/../RceG3/hdl"
+loadSource -lib rce_gen3_fw_lib -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Clocks.vhd"
+loadSource -lib rce_gen3_fw_lib -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Cpu.vhd"
+loadSource -lib rce_gen3_fw_lib -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Pkg.vhd"
+loadSource -lib rce_gen3_fw_lib -dir  "$::DIR_PATH/../RceG3/hdl"
 
 # Load the dependent source code
 loadRuckusTcl "$::DIR_PATH/../PpiCommon"

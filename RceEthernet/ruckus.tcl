@@ -5,5 +5,5 @@ source -quiet $::env(RUCKUS_DIR)/vivado_proc.tcl
 set family [getFpgaFamily]
 
 # Load local Source Code
-loadSource -dir "$::DIR_PATH/rtl"
-loadSource -dir "$::DIR_PATH/rtl/${family}"
+loadSource -lib rce_gen3_fw_lib -dir "$::DIR_PATH/rtl"
+loadSource -lib rce_gen3_fw_lib -dir "$::DIR_PATH/rtl/${family}"

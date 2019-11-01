@@ -16,7 +16,9 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-use work.StdRtlPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
 
 entity Rce10GbE1lane is
    generic (
@@ -181,7 +183,7 @@ begin
    ----------------------
    -- Common Clock Module 
    ----------------------
-   U_QPLL : entity work.GthUltraScaleQuadPll
+   U_QPLL : entity surf.GthUltraScaleQuadPll
       generic map (
          -- Simulation Parameters
          TPD_G              => TPD_G,
@@ -337,7 +339,7 @@ begin
    ---------------------------
    -- 10GBASE-R's Reset Module
    ---------------------------
-   U_TenGigEthRst : entity work.TenGigEthGthUltraScaleRst
+   U_TenGigEthRst : entity surf.TenGigEthGthUltraScaleRst
       generic map (
          TPD_G => TPD_G)
       port map (

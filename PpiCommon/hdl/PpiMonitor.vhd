@@ -21,11 +21,15 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
-use work.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity PpiMonitor is
    generic (

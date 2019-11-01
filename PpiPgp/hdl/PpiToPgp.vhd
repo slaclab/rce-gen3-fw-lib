@@ -27,12 +27,16 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.PpiPkg.all;
-use work.SsiPkg.all;
-use work.Pgp2bPkg.all;
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+
+library surf;
+use surf.SsiPkg.all;
+use surf.Pgp2bPkg.all;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
 
 entity PpiToPgp is
    generic (
@@ -111,7 +115,7 @@ begin
    -------------------------
    -- Input FIFO, SYNC
    -------------------------
-   U_InputFifo : entity work.AxiStreamFifo 
+   U_InputFifo : entity surf.AxiStreamFifo 
       generic map (
          TPD_G               => TPD_G,
          PIPE_STAGES_G       => 1,
@@ -270,7 +274,7 @@ begin
    -------------------------
    -- Output FIFO, ASYNC
    -------------------------
-   U_OutputFifo : entity work.AxiStreamFifo 
+   U_OutputFifo : entity surf.AxiStreamFifo 
       generic map (
          TPD_G               => TPD_G,
          PIPE_STAGES_G       => 1,

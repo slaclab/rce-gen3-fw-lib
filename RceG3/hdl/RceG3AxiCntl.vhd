@@ -22,12 +22,16 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiPkg.all;
-use work.RceG3Pkg.all;
-use work.RceG3Version.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiPkg.all;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use rce_gen3_fw_lib.RceG3Version.all;
 
 entity RceG3AxiCntl is
    generic (
@@ -262,7 +266,7 @@ begin
    -- GP0 AXI-4 to AXI Lite Conversion
    -- 0x40000000 - 0x7FFFFFFF, axiDmaClk
    -------------------------------------
-   U_Gp0AxiLite : entity work.AxiToAxiLite
+   U_Gp0AxiLite : entity surf.AxiToAxiLite
       generic map (
          TPD_G => TPD_G
          ) port map (
@@ -282,7 +286,7 @@ begin
    -- GP0 AXI Lite Crossbar
    -- 0x40000000 - 0x7FFFFFFF, axiDmaClk
    -------------------------------------
-   U_Gp0Crossbar : entity work.AxiLiteCrossbar
+   U_Gp0Crossbar : entity surf.AxiLiteCrossbar
       generic map (
          TPD_G              => TPD_G,
          NUM_SLAVE_SLOTS_G  => 1,
@@ -330,7 +334,7 @@ begin
       -- pcie cfg = 0xA0000000 - AFFFFFFF
       -- pcie bar = 0xB0000000 - BFFFFFFF
       ----------------------------------------------------------------------------    
-      U_RceG3PcieRoot: entity work.RceG3PcieRoot
+      U_RceG3PcieRoot: entity rce_gen3_fw_lib.RceG3PcieRoot
          generic map ( TPD_G  => TPD_G )
          port map (
             axiClk           => axiClk,
@@ -388,7 +392,7 @@ begin
    -- GP1 AXI-4 to AXI Lite Conversion
    -- 0x80000000 - 0xBFFFFFFF, axiClk
    -------------------------------------
-   U_Gp1AxiLite : entity work.AxiToAxiLite
+   U_Gp1AxiLite : entity surf.AxiToAxiLite
       generic map (
          TPD_G => TPD_G
          ) port map (
@@ -408,7 +412,7 @@ begin
    -- GP1 AXI Lite Crossbar
    -- 0x80000000 - 0xBFFFFFFF, axiClk
    -------------------------------------
-   U_Gp1Crossbar : entity work.AxiLiteCrossbar
+   U_Gp1Crossbar : entity surf.AxiLiteCrossbar
       generic map (
          TPD_G              => TPD_G,
          NUM_SLAVE_SLOTS_G  => 1,
@@ -568,7 +572,7 @@ begin
    -------------------------------------
    -- Device DNA
    -------------------------------------
-   U_DeviceDna : entity work.DeviceDna
+   U_DeviceDna : entity surf.DeviceDna
       generic map (
          TPD_G        => TPD_G,
          XIL_DEVICE_G => XIL_DEVICE_C) 

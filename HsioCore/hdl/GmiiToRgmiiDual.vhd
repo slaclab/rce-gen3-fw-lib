@@ -16,8 +16,12 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
 
 library unisim;
 use unisim.vcomponents.all;
@@ -239,7 +243,7 @@ begin
    --ethTxDataD(1)   <= '0';
    --ethMdc(1)       <= '0';
    ----ethResetL(1)    <= '1';
-   --PwrUpRst_Inst : entity work.PwrUpRst
+   --PwrUpRst_Inst : entity surf.PwrUpRst
    --   generic map(
    --      OUT_POLARITY_G => '0')
    --   port map (

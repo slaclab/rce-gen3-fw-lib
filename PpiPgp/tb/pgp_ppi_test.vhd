@@ -15,13 +15,17 @@ use ieee.std_logic_unsigned.all;
 Library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
-use work.Pgp2bPkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiLitePkg.all;
-use work.SsiPkg.all;
-use work.RceG3Pkg.all;
-use work.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.Pgp2bPkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiLitePkg.all;
+use surf.SsiPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity pgp_ppi_test is end pgp_ppi_test;
 
@@ -93,7 +97,7 @@ begin
       end if;
    end process;
 
-   U_SsiPrbsTx : entity work.SsiPrbsTx
+   U_SsiPrbsTx : entity surf.SsiPrbsTx
       generic map (
          TPD_G                      => 1 ns,
          ALTERA_SYN_G               => false,
@@ -123,7 +127,7 @@ begin
          tId          => (others=>'0')
       );
 
-   U_PgpToPpi: entity work.PgpToPpi
+   U_PgpToPpi: entity rce_gen3_fw_lib.PgpToPpi
       generic map (
          TPD_G                 => 1 ns,
          AXIS_ADDR_WIDTH_G     => 9,
@@ -149,7 +153,7 @@ begin
    ppiState.online <= '1';
 
 
-   U_PpiToPgp: entity work.PpiToPgp
+   U_PpiToPgp: entity rce_gen3_fw_lib.PpiToPgp
       generic map (
          TPD_G                 => 1 ns,
          PPI_ADDR_WIDTH_G      => 9,
@@ -169,7 +173,7 @@ begin
       );
 
 
-   U_SsiPrbsRx: entity work.SsiPrbsRx 
+   U_SsiPrbsRx: entity surf.SsiPrbsRx 
       generic map (
          TPD_G                      => 1 ns,
          STATUS_CNT_WIDTH_G         => 32,

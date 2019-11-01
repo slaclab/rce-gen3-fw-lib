@@ -15,12 +15,16 @@ use ieee.std_logic_unsigned.all;
 Library unisim;
 use unisim.vcomponents.all;
 
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiPkg.all;
-use work.PpiPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiPkg.all;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity tb is end tb;
 
@@ -68,7 +72,7 @@ architecture tb of tb is
 begin
 
    -- Core
-   U_RceG3Top: entity work.RceG3Top
+   U_RceG3Top: entity rce_gen3_fw_lib.RceG3Top
       generic map (
          TPD_G                 => 1 ns,
          DMA_CLKDIV_G          => 4.5,

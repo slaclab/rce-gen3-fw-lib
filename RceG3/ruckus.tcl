@@ -5,8 +5,8 @@ source -quiet $::env(RUCKUS_DIR)/vivado_proc.tcl
 set family [getFpgaFamily]
 
 # Load local Source Code
-loadSource -dir "$::DIR_PATH/hdl"
-loadSource -dir "$::DIR_PATH/hdl/${family}"
+loadSource -lib rce_gen3_fw_lib -dir "$::DIR_PATH/hdl"
+loadSource -lib rce_gen3_fw_lib -dir "$::DIR_PATH/hdl/${family}"
 loadIpCore -dir "$::DIR_PATH/coregen/${family}"
 
 # Check for submodule tagging

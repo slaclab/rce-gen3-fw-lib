@@ -21,9 +21,13 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.ArbiterPkg.all;
-use work.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.ArbiterPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity PpiCompCtrl is
    generic (

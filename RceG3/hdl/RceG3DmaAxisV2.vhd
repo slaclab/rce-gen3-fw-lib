@@ -19,12 +19,16 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.RceG3Pkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
 
 entity RceG3DmaAxisV2 is
    generic (
@@ -114,7 +118,7 @@ begin
    -- Version 2 DMA Core 
    -------------------------------------------
    U_Gen2Dma : for i in 0 to DMA_CH_COUNT_C generate
-      U_RceG3DmaAxisChan : entity work.RceG3DmaAxisV2Chan
+      U_RceG3DmaAxisChan : entity rce_gen3_fw_lib.RceG3DmaAxisV2Chan
          generic map (
             TPD_G             => TPD_G,
             AXIL_BASE_ADDR_G  => DMA_BASE_ADDR_C(i),
@@ -145,7 +149,7 @@ begin
    -- Version 1 DMA Core For Ethernet
    -------------------------------------------
    USE_DMA_ETH : if (USE_DMA_ETH_G = true) generate
-      U_RxG3DmaAxiChan : entity work.RceG3DmaAxisChan
+      U_RxG3DmaAxiChan : entity rce_gen3_fw_lib.RceG3DmaAxisChan
          generic map (
             TPD_G        => TPD_G,
             AXI_CACHE_G  => "0000",

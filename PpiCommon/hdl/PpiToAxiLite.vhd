@@ -61,10 +61,14 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.PpiPkg.all;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
 
 entity PpiToAxiLite is
    generic (
@@ -149,7 +153,7 @@ begin
    ------------------------------------
    -- FIFOs
    ------------------------------------
-   U_InFifo : entity work.AxiStreamFifoV2
+   U_InFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G                => TPD_G,
          INT_PIPE_STAGES_G    => 1,
@@ -178,7 +182,7 @@ begin
          mAxisSlave      => intObSlave
       );
 
-   U_OutFifo : entity work.AxiStreamFifoV2 
+   U_OutFifo : entity surf.AxiStreamFifoV2 
       generic map (
          TPD_G                => TPD_G,
          INT_PIPE_STAGES_G    => 1,

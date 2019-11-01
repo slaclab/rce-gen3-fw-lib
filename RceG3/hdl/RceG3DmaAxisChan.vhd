@@ -19,12 +19,16 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.RceG3Pkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
 
 entity RceG3DmaAxisChan is
    generic (
@@ -75,7 +79,7 @@ architecture mapping of RceG3DmaAxisChan is
 begin
 
    -- DMA Core
-   U_AxiStreamDma : entity work.AxiStreamDma
+   U_AxiStreamDma : entity surf.AxiStreamDma
       generic map (
          TPD_G             => TPD_G,
          FREE_ADDR_WIDTH_G => 12,
@@ -111,7 +115,7 @@ begin
          axiWriteCtrl    => intWriteCtrl);
 
    -- Inbound AXI Stream FIFO
-   U_IbFifo : entity work.AxiStreamFifoV2
+   U_IbFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G               => TPD_G,
          INT_PIPE_STAGES_G   => 1,
@@ -141,7 +145,7 @@ begin
          mAxisSlave      => ibAxisSlave);
 
    -- Outbound AXI Stream FIFO
-   U_ObFifo : entity work.AxiStreamFifoV2
+   U_ObFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G               => TPD_G,
          INT_PIPE_STAGES_G   => 1,
@@ -172,7 +176,7 @@ begin
          mAxisSlave      => dmaObSlave);
 
    -- Read Path AXI FIFO
-   U_AxiReadPathFifo : entity work.AxiReadPathFifo
+   U_AxiReadPathFifo : entity surf.AxiReadPathFifo
       generic map (
          TPD_G                  => TPD_G,
          XIL_DEVICE_G           => "7SERIES",
@@ -206,7 +210,7 @@ begin
          mAxiReadSlave  => axiReadSlave);
 
    -- Write Path AXI FIFO
-   U_AxiWritePathFifo : entity work.AxiWritePathFifo
+   U_AxiWritePathFifo : entity surf.AxiWritePathFifo
       generic map (
          TPD_G                    => TPD_G,
          XIL_DEVICE_G             => "7SERIES",

@@ -21,13 +21,17 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.RceG3Pkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
-use work.SsiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
+use surf.SsiPkg.all;
 
 entity RceG3DmaQueue4x2 is
    generic (
@@ -173,7 +177,7 @@ begin
    U_DmaWriteGen : for i in 0 to 3 generate
 
       -- Inbound AXI Stream FIFO
-      U_IbFifo : entity work.AxiStreamFifo
+      U_IbFifo : entity surf.AxiStreamFifo
          generic map (
             TPD_G => TPD_G,
             PIPE_STAGES_G => 1,
@@ -205,7 +209,7 @@ begin
                );
 
       -- DMA writer instance
-      U_WrDMA : entity work.AxiStreamDmaWrite
+      U_WrDMA : entity surf.AxiStreamDmaWrite
          generic map (
             TPD_G => TPD_G,
             AXI_READY_EN_G => false,
@@ -261,7 +265,7 @@ begin
       ibReq(i).maxSize <= conv_std_logic_vector(MAX_CSPAD_PKT_SIZE_G, 32);
 
       -- FIFO to store acknowledged bytes written by the DMA writer
-      U_WrDMA_Acq_FIFO : entity work.Fifo
+      U_WrDMA_Acq_FIFO : entity surf.Fifo
          generic map (
             RST_POLARITY_G => '1',
             DATA_WIDTH_G => DMA_BUF_SIZE_BITS_G,
@@ -293,7 +297,7 @@ begin
             );
 
       -- Write Path AXI FIFO
-      U_AxiWritePathFifo : entity work.AxiWritePathFifo
+      U_AxiWritePathFifo : entity surf.AxiWritePathFifo
          generic map (
             TPD_G => TPD_G,
             XIL_DEVICE_G => "7SERIES",
@@ -339,7 +343,7 @@ begin
    U_DmaReadGen : for i in 0 to 1 generate
 
       -- Outbound AXI Stream FIFO
-      U_ObFifo : entity work.AxiStreamFifo
+      U_ObFifo : entity surf.AxiStreamFifo
          generic map (
             TPD_G => TPD_G,
             PIPE_STAGES_G => 1,
@@ -371,7 +375,7 @@ begin
                );
 
 
-      U_RdDMA : entity work.AxiStreamDmaRead
+      U_RdDMA : entity surf.AxiStreamDmaRead
          generic map (
             TPD_G => TPD_G,
             AXIS_READY_EN_G => false,
@@ -544,7 +548,7 @@ begin
 
 
       -- Read Path AXI FIFO
-      U_AxiReadPathFifo : entity work.AxiReadPathFifo
+      U_AxiReadPathFifo : entity surf.AxiReadPathFifo
          generic map (
             TPD_G => TPD_G,
             XIL_DEVICE_G => "7SERIES",
