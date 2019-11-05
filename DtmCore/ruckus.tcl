@@ -22,7 +22,16 @@ loadConstraints -dir  "$::DIR_PATH/xdc/${family}"
 
 # Check if ZYNQ 7000 series
 if { ${family} eq {zynq} } {
+
+   # Check Vivado 2018.2 (or older)
+   if { $::env(VIVADO_VERSION) <= 2018.2 } {
+      loadBlockDesign -path "$::DIR_PATH/coregen/pcie_root/2018.1/pcie_root.bd"
+   # Else Vivado 2018.3 (or later)
+   } else {
+      loadBlockDesign -path "$::DIR_PATH/coregen/pcie_root/2018.3/pcie_root.bd"
+   }   
+
    loadRuckusTcl "$::DIR_PATH/../ZynqPcieMaster"
-   #loadIpCore      -path "$::DIR_PATH/coregen/GmiiToRgmiiCore/GmiiToRgmiiCore.xci"
-   loadBlockDesign -path "$::DIR_PATH/coregen/pcie_root/pcie_root.bd"
+   #loadIpCore -path "$::DIR_PATH/coregen/GmiiToRgmiiCore/GmiiToRgmiiCore.xci"
+   
 }
