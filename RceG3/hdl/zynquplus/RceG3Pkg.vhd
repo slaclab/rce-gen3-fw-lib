@@ -20,6 +20,7 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 
 use work.StdRtlPkg.all;
 use work.AxiPkg.all;
+use work.AxiLitePkg.all;
 use work.AxiStreamPkg.all;
 
 package RceG3Pkg is
@@ -55,19 +56,19 @@ package RceG3Pkg is
 
    constant AXI_MAST_GP_INIT_C : AxiConfigType := (
       ADDR_WIDTH_C => 40,
-      DATA_BYTES_C => 4,                -- 32-bit
+      DATA_BYTES_C => 16,                -- 128-bit
       ID_BITS_C    => 16,
       LEN_BITS_C   => 8);
 
    constant AXI_SLAVE_GP_INIT_C : AxiConfigType := (
       ADDR_WIDTH_C => 49,
-      DATA_BYTES_C => 4,                -- 32-bit
+      DATA_BYTES_C => 16,                -- 128-bit
       ID_BITS_C    => 6,
       LEN_BITS_C   => 8);
 
    constant AXI_HP_INIT_C : AxiConfigType := (
       ADDR_WIDTH_C => 49,
-      DATA_BYTES_C => 8,                -- 64-bit 
+      DATA_BYTES_C => 16,                -- 128-bit
       ID_BITS_C    => 6,
       LEN_BITS_C   => 8);
 
@@ -177,5 +178,62 @@ package RceG3Pkg is
    -- Array
    type ArmEthRxArray is array (natural range<>) of ArmEthRxType;
 
+   function genGp0Config (RCE_DMA_MODE_G : RceDmaModeType) return AxiLiteCrossbarMasterConfigArray;
+   function genGp1Config (PCIE_EN_G : boolean) return AxiLiteCrossbarMasterConfigArray;
+   
 end RceG3Pkg;
 
+package body RceG3Pkg is
+
+   -- GP0 Address Map Generator (0xA400_0000:0xAFFF_FFFF)
+   function genGp0Config (RCE_DMA_MODE_G : RceDmaModeType) return AxiLiteCrossbarMasterConfigArray is
+      variable retConf : AxiLiteCrossbarMasterConfigArray(DMA_AXIL_COUNT_C downto 0);
+      variable addr    : slv(31 downto 0);
+   begin
+
+      -- Int control record is fixed
+      retConf(0).baseAddr     := x"A400_0000";
+      retConf(0).addrBits     := 16;
+      retConf(0).connectivity := x"FFFF";
+
+      -- Generate DMA records
+      addr := x"A400_0000";
+      for i in 1 to DMA_AXIL_COUNT_C loop
+         addr(23 downto 16)      := toSlv(i, 8);
+         retConf(i).baseAddr     := addr;
+         retConf(i).addrBits     := 16;
+         retConf(i).connectivity := x"FFFF";
+      end loop;
+
+      return retConf;
+   end function;
+
+   -- GP1 Address Map Generator (0xB000_0000:0xBFFF_FFFF)
+   function genGp1Config (PCIE_EN_G : boolean) return AxiLiteCrossbarMasterConfigArray is
+      variable retConf : AxiLiteCrossbarMasterConfigArray(3 downto 0);
+   begin
+
+       -- 0xB0000000 - 0xB000FFFF : Internal registers
+       retConf(0).baseAddr     := x"B000_0000";
+       retConf(0).addrBits     := 16;
+       retConf(0).connectivity := x"FFFF";
+
+       -- 0xB0010000 - 0xB001FFFF : BSI I2C Slave Registers
+       retConf(1).baseAddr     := x"B001_0000";
+       retConf(1).addrBits     := 16;
+       retConf(1).connectivity := x"FFFF";
+
+       -- 0xB4000000 - 0xB7FFFFFF : External Register Space
+       retConf(2).baseAddr     := x"B400_0000";
+       retConf(2).addrBits     := 26;
+       retConf(2).connectivity := x"FFFF";
+
+       -- 0xB8000000 - 0xBFFFFFFF : Core Register Space
+       retConf(3).baseAddr     := x"B800_0000";
+       retConf(3).addrBits     := 26;
+       retConf(3).connectivity := x"FFFF";
+       
+      return retConf;
+   end function;
+
+end package body RceG3Pkg;

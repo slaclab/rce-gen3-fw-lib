@@ -12,6 +12,23 @@
 ## IO Placements
 ################
 
+set_property PACKAGE_PIN M29 [get_ports { smaTxP }]
+set_property PACKAGE_PIN M30 [get_ports { smaTxN }]
+
+set_property PACKAGE_PIN M33 [get_ports { smaRxP }]
+set_property PACKAGE_PIN M34 [get_ports { smaRxN }]
+
+set_property PACKAGE_PIN J27 [get_ports { smaClkP }]
+set_property PACKAGE_PIN J28 [get_ports { smaClkN }]
+
+##############################################################################
+
+set_property PACKAGE_PIN A12 [get_ports { sfpEnTx[0] }]
+set_property PACKAGE_PIN A13 [get_ports { sfpEnTx[1] }]
+set_property PACKAGE_PIN B13 [get_ports { sfpEnTx[2] }]
+set_property PACKAGE_PIN C13 [get_ports { sfpEnTx[3] }]
+set_property -dict { IOSTANDARD LVCMOS33 } [get_ports { sfpEnTx[*] }]
+ 
 set_property PACKAGE_PIN E4 [get_ports { sfpTxP[0] }]
 set_property PACKAGE_PIN E3 [get_ports { sfpTxN[0] }]
 set_property PACKAGE_PIN D2 [get_ports { sfpRxP[0] }]

@@ -29,6 +29,8 @@ use work.AxiDmaPkg.all;
 entity RceG3DmaAxisV2 is
    generic (
       TPD_G         : time    := 1 ns;
+      SYNTH_MODE_G  : string  := "xpm";
+      MEMORY_TYPE_G : string  := "block";
       USE_DMA_ETH_G : boolean := true);
    port (
       -- Clock/Reset
@@ -75,11 +77,7 @@ architecture mapping of RceG3DmaAxisV2 is
    signal intReadSlave   : AxiReadSlaveArray(3 downto 0);
    signal intReadMaster  : AxiReadMasterArray(3 downto 0);
 
-   constant DMA_BASE_ADDR_C : Slv32Array(3 downto 0) := (
-      0 => x"60000000",
-      1 => x"60020000",
-      2 => x"60040000",
-      3 => x"60060000");
+   constant AXIL_GP0_CONFIG_C : AxiLiteCrossbarMasterConfigArray(DMA_AXIL_COUNT_C downto 0) := genGp0Config(RCE_DMA_AXISV2_C);
 
 begin
 
@@ -117,7 +115,9 @@ begin
       U_RceG3DmaAxisChan : entity work.RceG3DmaAxisV2Chan
          generic map (
             TPD_G             => TPD_G,
-            AXIL_BASE_ADDR_G  => DMA_BASE_ADDR_C(i),
+            SYNTH_MODE_G      => SYNTH_MODE_G,
+            MEMORY_TYPE_G     => MEMORY_TYPE_G,
+            AXIL_BASE_ADDR_G  => AXIL_GP0_CONFIG_C(i*2+1).baseAddr,
             AXIS_DMA_CONFIG_G => ite((i = 2), RCEG3_AXIS_DMA_ACP_CONFIG_C, RCEG3_AXIS_DMA_CONFIG_C),
             AXI_CONFIG_G      => ite((i = 2), AXI_ACP_INIT_C, AXI_HP_INIT_C))
          port map (
@@ -147,10 +147,12 @@ begin
    USE_DMA_ETH : if (USE_DMA_ETH_G = true) generate
       U_RxG3DmaAxiChan : entity work.RceG3DmaAxisChan
          generic map (
-            TPD_G        => TPD_G,
-            AXI_CACHE_G  => "0000",
-            BYP_SHIFT_G  => false,
-            AXI_CONFIG_G => AXI_HP_INIT_C)
+            TPD_G         => TPD_G,
+            --SYNTH_MODE_G  => SYNTH_MODE_G,
+            --MEMORY_TYPE_G => MEMORY_TYPE_G,
+            AXI_CACHE_G   => "0000",
+            BYP_SHIFT_G   => false,
+            AXI_CONFIG_G  => AXI_HP_INIT_C)
          port map (
             axiDmaClk       => axiDmaClk,
             axiDmaRst       => axiDmaRst,
