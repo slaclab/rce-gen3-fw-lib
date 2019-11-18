@@ -12,6 +12,19 @@
 ## IO Placements
 ################
 
+set_property -dict { PACKAGE_PIN AM13 IOSTANDARD LVCMOS33 } [get_ports { extRst }]
+
+set_property -dict { PACKAGE_PIN AG14 IOSTANDARD LVCMOS33 } [get_ports { led[0] }]
+set_property -dict { PACKAGE_PIN AF13 IOSTANDARD LVCMOS33 } [get_ports { led[1] }]
+set_property -dict { PACKAGE_PIN AE13 IOSTANDARD LVCMOS33 } [get_ports { led[2] }]
+set_property -dict { PACKAGE_PIN AJ14 IOSTANDARD LVCMOS33 } [get_ports { led[3] }]
+set_property -dict { PACKAGE_PIN AJ15 IOSTANDARD LVCMOS33 } [get_ports { led[4] }]
+set_property -dict { PACKAGE_PIN AH13 IOSTANDARD LVCMOS33 } [get_ports { led[5] }]
+set_property -dict { PACKAGE_PIN AH14 IOSTANDARD LVCMOS33 } [get_ports { led[6] }]
+set_property -dict { PACKAGE_PIN AL12 IOSTANDARD LVCMOS33 } [get_ports { led[7] }]
+
+##############################################################################
+
 set_property PACKAGE_PIN M29 [get_ports { smaTxP }]
 set_property PACKAGE_PIN M30 [get_ports { smaTxN }]
 
