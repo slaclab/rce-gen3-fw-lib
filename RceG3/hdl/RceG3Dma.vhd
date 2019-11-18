@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : RCE Generation 3, DMA Controllers
 -- File          : RceG3Dma.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 04/02/2013
 -------------------------------------------------------------------------------
 -- Description:
 -- Top level Wrapper for DMA controllers
@@ -14,9 +12,6 @@
 -- No part of 'SLAC RCE Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 04/02/2013: created.
 -------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
@@ -183,8 +178,8 @@ begin
          U_RceG3DmaAxisV2 : entity work.RceG3DmaAxisV2
             generic map (
                TPD_G         => TPD_G,
-               -- SYNTH_MODE_G  => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
-               -- MEMORY_TYPE_G => MEMORY_TYPE_G   <--- generic for future XPM FIFO release 
+               SYNTH_MODE_G  => SYNTH_MODE_G,
+               MEMORY_TYPE_G => MEMORY_TYPE_G,
                USE_DMA_ETH_G => USE_DMA_ETH_G)
             port map (
                axiDmaClk       => axiDmaClk,

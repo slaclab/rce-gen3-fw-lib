@@ -1,13 +1,7 @@
 -------------------------------------------------------------------------------
 -- Title      : AXI Streaming DMA Core
 -- Project    : CSPAD Concentrator Core
--------------------------------------------------------------------------------
 -- File       : RceG3DmaQueue4x2.vhd
--- Author     : M. Kwiatkowski, mkwiatko@slac.stanford.edu
--- Created    : 2015-05-22
--- Last update: 2018-03-08
--- Platform   : 
--- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
 -- Description:
 -- 4 AXI Stream DMA channels for the cspad concentrator.
@@ -20,9 +14,6 @@
 -- No part of 'SLAC RCE Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 05/22/2015: created.
 -------------------------------------------------------------------------------
 
 library ieee;

@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : Clock/Trigger Sink Module For DPM, Version 2
 -- File          : DpmTimingSinkV2.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 12/10/2013
 -------------------------------------------------------------------------------
 -- Description:
 -- Clock & Trigger sink module for COB
@@ -14,9 +12,6 @@
 -- No part of 'SLAC RCE Timing Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 12/10/2013: created.
 -------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;

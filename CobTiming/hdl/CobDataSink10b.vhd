@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title         : Trigger Sink Module For COB, 10-bit data version
 -- File          : CobDataSink10b.vhd
--- Author        : Ryan Herbst, rherbst@slac.stanford.edu
--- Created       : 08/28/2014
 -------------------------------------------------------------------------------
 -- Description:
 -- Serial data sink module for COB
@@ -28,9 +26,6 @@
 -- No part of 'SLAC RCE Timing Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 08/29/2014: created.
 -------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;

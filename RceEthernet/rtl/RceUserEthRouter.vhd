@@ -1,6 +1,5 @@
 -------------------------------------------------------------------------------
 -- File       : RceUserEthRouter.vhd
--- Author     : Larry Ruckman  <ruckman@slac.stanford.edu>
 -- Company    : SLAC National Accelerator Laboratory
 -------------------------------------------------------------------------------
 -- Description: Module to route CPU/User Ethernet data

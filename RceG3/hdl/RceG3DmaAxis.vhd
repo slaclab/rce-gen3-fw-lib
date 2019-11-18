@@ -1,13 +1,6 @@
 -------------------------------------------------------------------------------
 -- Title      : RCE Generation 3 DMA, AXI Streaming
--- Project    : General Purpose Core
--------------------------------------------------------------------------------
 -- File       : RceG3DmaAxis.vhd
--- Author     : Ryan Herbst, rherbst@slac.stanford.edu
--- Created    : 2014-04-25
--- Last update: 2016-10-27
--- Platform   : 
--- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
 -- Description:
 -- AXI Stream DMA based channel for RCE core DMA. AXI streaming.
@@ -19,9 +12,6 @@
 -- No part of 'SLAC RCE Core', including this file, 
 -- may be copied, modified, propagated, or distributed except according to 
 -- the terms contained in the LICENSE.txt file.
--------------------------------------------------------------------------------
--- Modification history:
--- 04/25/2014: created.
 -------------------------------------------------------------------------------
 
 library ieee;
