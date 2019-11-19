@@ -44,7 +44,7 @@ entity XilinxZcu102Core is
       sysClk125Rst       : out sl;
       sysClk200          : out sl;
       sysClk200Rst       : out sl;
-      -- External AXI-Lite Interface [0xA0000000:0xAFFFFFFF]
+      -- External AXI-Lite Interface [0xB4000000:0xB7FFFFFF]
       axiClk             : out sl;
       axiClkRst          : out sl;
       extAxilReadMaster  : out AxiLiteReadMasterType;
@@ -113,7 +113,6 @@ begin
          SIM_DMA_PORT_NUM_G => SIM_DMA_PORT_NUM_G,
          SIM_DMA_CHANNELS_G => SIM_DMA_CHANNELS_G,
          SIM_DMA_TDESTS_G   => SIM_DMA_TDESTS_G,
-         MEMORY_TYPE_G      => "ultra",
          SEL_REFCLK_G       => false,   -- false = ZYNQ ref
          USE_DMA_ETH_G      => false,  -- false = using DMA[3] for application space (not ETH)
          BUILD_INFO_G       => BUILD_INFO_G,
@@ -132,12 +131,12 @@ begin
          -- AXI-Lite clock and reset
          axilClk             => axilClock,
          axilRst             => axilReset,
-         -- External Axi Bus, 0xA0000000 - 0xAFFFFFFF  (axilClk domain)
+         -- External Axi Bus, 0xB4000000 - 0xB7FFFFFF  (axilClk domain)
          extAxilReadMaster   => extAxilReadMaster,
          extAxilReadSlave    => extAxilReadSlave,
          extAxilWriteMaster  => extAxilWriteMaster,
          extAxilWriteSlave   => extAxilWriteSlave,
-         -- Core Axi Bus, 0xB0000000 - 0xBFFFFFFF  (axilClk domain)
+         -- Core Axi Bus, 0xB8000000 - 0xBFFFFFFF  (axilClk domain)
          coreAxilReadMaster  => coreAxilReadMaster,
          coreAxilReadSlave   => coreAxilReadSlave,
          coreAxilWriteMaster => coreAxilWriteMaster,

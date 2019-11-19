@@ -162,3 +162,6 @@ set_property IDELAY_VALUE  "16"   [get_cells -hier -filter {name =~ *GmiiToRgmii
 set_property IDELAY_VALUE  "16"   [get_cells -hier -filter {name =~ *GmiiToRgmiiSlave_Inst/*delay_rgmii_rxd*            }]
 set_property IODELAY_GROUP "GmiiToRgmiiGrpA" [get_cells -hier -filter {name =~ *GmiiToRgmiiSlave_Inst/*delay_rgmii_rx_ctl          }]
 set_property IODELAY_GROUP "GmiiToRgmiiGrpA" [get_cells -hier -filter {name =~ *GmiiToRgmiiSlave_Inst/*delay_rgmii_rxd*            }]
+
+set_clock_groups -asynchronous -group [get_clocks -of_objects [get_pins U_HsioCore/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0]] -group [get_clocks ethRxClk0]
+set_clock_groups -asynchronous -group [get_clocks -of_objects [get_pins U_HsioCore/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0]] -group [get_clocks ethRxClk1]

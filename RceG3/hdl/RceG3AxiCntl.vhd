@@ -181,85 +181,6 @@ architecture structure of RceG3AxiCntl is
    signal r   : RegType := REG_INIT_C;
    signal rin : RegType;
 
-   -- GP0 Address Map Generator
-   function genGp0Config return AxiLiteCrossbarMasterConfigArray is
-      variable retConf : AxiLiteCrossbarMasterConfigArray(DMA_AXIL_COUNT_C downto 0);
-      variable addr    : slv(31 downto 0);
-   begin
-
-      -- Int control record is fixed
-      retConf(0).baseAddr     := x"40000000";
-      retConf(0).addrBits     := 16;
-      retConf(0).connectivity := x"FFFF";
-
-      -- Generate dma records
-      if RCE_DMA_MODE_G = RCE_DMA_PPI_C then
-         addr := x"50000000";
-      else
-         addr := x"60000000";
-      end if;
-
-      for i in 0 to DMA_AXIL_COUNT_C-1 loop
-         addr(23 downto 16)        := toSlv(i, 8);
-         retConf(i+1).baseAddr     := addr;
-         retConf(i+1).addrBits     := 16;
-         retConf(i+1).connectivity := x"FFFF";
-      end loop;
-
-      return retConf;
-   end function;
-
-   -- GP0 Address Map Generator
-   function genGp1Config return AxiLiteCrossbarMasterConfigArray is
-      variable retConf : AxiLiteCrossbarMasterConfigArray(3 downto 0);
-   begin
-      if PCIE_EN_G then
-          -- 0x80000000 - 0x8000FFFF : Internal registers
-          retConf(0).baseAddr     := x"80000000";
-          retConf(0).addrBits     := 16;
-          retConf(0).connectivity := x"FFFF";
-
-          -- 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
-          retConf(1).baseAddr     := x"84000000";
-          retConf(1).addrBits     := 12;
-          retConf(1).connectivity := x"FFFF";
-
-          -- 0x90000000 - 0x97FFFFFF : External Register Space
-          retConf(2).baseAddr     := x"90000000";
-          retConf(2).addrBits     := 27;
-          retConf(2).connectivity := x"FFFF";
-
-          -- 0x98000000 - 0x9FFFFFFF : Core Register Space
-          retConf(3).baseAddr     := x"98000000";
-          retConf(3).addrBits     := 27;
-          retConf(3).connectivity := x"FFFF";
-
-      else
-
-          -- 0x80000000 - 0x8000FFFF : Internal registers
-          retConf(0).baseAddr     := x"80000000";
-          retConf(0).addrBits     := 16;
-          retConf(0).connectivity := x"FFFF";
-
-          -- 0x84000000 - 0x84000FFF : BSI I2C Slave Registers
-          retConf(1).baseAddr     := x"84000000";
-          retConf(1).addrBits     := 12;
-          retConf(1).connectivity := x"FFFF";
-
-          -- 0xA0000000 - 0xAFFFFFFF : External Register Space
-          retConf(2).baseAddr     := x"A0000000";
-          retConf(2).addrBits     := 28;
-          retConf(2).connectivity := x"FFFF";
-
-          -- 0xB0000000 - 0xBFFFFFFF : Core Register Space
-          retConf(3).baseAddr     := x"B0000000";
-          retConf(3).addrBits     := 28;
-          retConf(3).connectivity := x"FFFF";
-
-      end if;
-      return retConf;
-   end function;
-
 begin
 
    -------------------------------------
@@ -268,7 +189,8 @@ begin
    -------------------------------------
    U_Gp0AxiLite : entity surf.AxiToAxiLite
       generic map (
-         TPD_G => TPD_G
+         TPD_G           => TPD_G,
+         EN_SLAVE_RESP_G => false
          ) port map (
             axiClk          => axiDmaClk,
             axiClkRst       => axiDmaRst,
@@ -292,7 +214,7 @@ begin
          NUM_SLAVE_SLOTS_G  => 1,
          NUM_MASTER_SLOTS_G => GP0_MAST_CNT_C,
          DEC_ERROR_RESP_G   => AXI_RESP_OK_C,
-         MASTERS_CONFIG_G   => genGp0Config
+         MASTERS_CONFIG_G   => genGp0Config(RCE_DMA_MODE_G)
          ) port map (
             axiClk              => axiDmaClk,
             axiClkRst           => axiDmaRst,
@@ -394,7 +316,8 @@ begin
    -------------------------------------
    U_Gp1AxiLite : entity surf.AxiToAxiLite
       generic map (
-         TPD_G => TPD_G
+         TPD_G           => TPD_G,
+         EN_SLAVE_RESP_G => false
          ) port map (
             axiClk          => axiClk,
             axiClkRst       => axiClkRst,
@@ -418,7 +341,7 @@ begin
          NUM_SLAVE_SLOTS_G  => 1,
          NUM_MASTER_SLOTS_G => GP1_MAST_CNT_C,
          DEC_ERROR_RESP_G   => AXI_RESP_OK_C,
-         MASTERS_CONFIG_G   => genGp1Config)
+         MASTERS_CONFIG_G   => genGp1Config(PCIE_EN_G))
       port map (
             axiClk              => axiClk,
             axiClkRst           => axiClkRst,

@@ -6,20 +6,43 @@ if { $::env(PRJ_PART) != "XCZU9EG-FFVB1156-2-E" } {
    puts "\n\nERROR: PRJ_PART must be either XCZU9EG-FFVB1156-2-E in the Makefile\n\n"; exit -1
 }
 
-# Set the board part
-set_property board_part xilinx.com:zcu102:part0:3.2 [current_project]
-
 # Check for version 2018.3 of Vivado (or later)
 if { [VersionCheck 2018.3] < 0 } {exit -1}
 
 # Check for submodule tagging
-if { [SubmoduleCheck {ruckus} {1.7.4} ] < 0 } {exit -1}
-if { [SubmoduleCheck {surf}   {1.9.8} ] < 0 } {exit -1}
+if { [info exists ::env(OVERRIDE_SUBMODULE_LOCKS)] != 1 || $::env(OVERRIDE_SUBMODULE_LOCKS) == 0 } {
+   if { [SubmoduleCheck {ruckus} {1.7.9}  ] < 0 } {exit -1}
+   if { [SubmoduleCheck {surf}   {1.10.1} ] < 0 } {exit -1}
+} else {
+   puts "\n\n*********************************************************"
+   puts "OVERRIDE_SUBMODULE_LOCKS != 0"
+   puts "Ignoring the submodule locks in XilinxZcu102Core/ruckus.tcl"
+   puts "*********************************************************\n\n"
+} 
+
+# Check for Vivado 2018.3
+if { $::env(VIVADO_VERSION) == 2018.3 } {
+
+   # Set the board part
+   set_property board_part xilinx.com:zcu102:part0:3.2 [current_project]
+   
+   # Load the IPI design
+   loadBlockDesign -path "$::DIR_PATH/ip/2018.3/Base_Zynq_MPSoC.bd"
+   
+# Check for Vivado 2019.1 (or later)
+} else {
+
+   # Set the board part
+   set_property board_part xilinx.com:zcu102:part0:3.3 [current_project]
+   
+   # Load the IPI design
+   loadBlockDesign -path "$::DIR_PATH/ip/2019.1/Base_Zynq_MPSoC.bd"
+   
+}
 
 # Load local Source Code and constraints
 loadSource -lib rce_gen3_fw_lib      -dir "$::DIR_PATH/hdl"
 loadConstraints -dir "$::DIR_PATH/xdc"
-loadIpCore      -dir "$::DIR_PATH/ip"
 
 loadSource -lib rce_gen3_fw_lib -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Clocks.vhd"
 loadSource -lib rce_gen3_fw_lib -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Cpu.vhd"

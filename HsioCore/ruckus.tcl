@@ -15,6 +15,22 @@ loadRuckusTcl "$::DIR_PATH/../PpiCommon"
 loadRuckusTcl "$::DIR_PATH/../PpiPgp"
 
 # Load local Source Code and constraints
-loadSource -lib rce_gen3_fw_lib      -dir "$::DIR_PATH/hdl"
-loadIpCore      -dir "$::DIR_PATH/coregen/GmiiToRgmiiCore"
-loadConstraints -dir "$::DIR_PATH/hdl"
+loadSource -lib rce_gen3_fw_lib -dir "$::DIR_PATH/rtl"
+loadIpCore      -dir "$::DIR_PATH/ip"
+loadConstraints -dir "$::DIR_PATH/xdc"
+
+set_property PROCESSING_ORDER {EARLY}           [get_files {GmiiToRgmiiCore.xdc}]
+set_property SCOPED_TO_REF    {GmiiToRgmiiCore} [get_files {GmiiToRgmiiCore.xdc}]
+set_property SCOPED_TO_CELLS  {U0}              [get_files {GmiiToRgmiiCore.xdc}]
+
+set_property PROCESSING_ORDER {LATE}            [get_files {GmiiToRgmiiCore_clocks.xdc}]
+set_property SCOPED_TO_REF    {GmiiToRgmiiCore} [get_files {GmiiToRgmiiCore_clocks.xdc}]
+set_property SCOPED_TO_CELLS  {U0}              [get_files {GmiiToRgmiiCore_clocks.xdc}]
+
+set_property PROCESSING_ORDER {EARLY}            [get_files {GmiiToRgmiiSlave.xdc}]
+set_property SCOPED_TO_REF    {GmiiToRgmiiSlave} [get_files {GmiiToRgmiiSlave.xdc}]
+set_property SCOPED_TO_CELLS  {U0}               [get_files {GmiiToRgmiiSlave.xdc}]
+
+set_property PROCESSING_ORDER {LATE}             [get_files {GmiiToRgmiiSlave_clocks.xdc}]
+set_property SCOPED_TO_REF    {GmiiToRgmiiSlave} [get_files {GmiiToRgmiiSlave_clocks.xdc}]
+set_property SCOPED_TO_CELLS  {U0}               [get_files {GmiiToRgmiiSlave_clocks.xdc}]
