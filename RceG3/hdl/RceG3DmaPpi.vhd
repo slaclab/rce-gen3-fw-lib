@@ -21,13 +21,17 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
-use work.RceG3Pkg.all;
-use work.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity RceG3DmaPpi is
    generic (
@@ -118,7 +122,7 @@ begin
 
    -- Sockets
    U_PpiGen : for i in 0 to 3 generate
-      U_PpiSocket : entity work.PpiSocket
+      U_PpiSocket : entity rce_gen3_fw_lib.PpiSocket
          generic map (
             TPD_G     => TPD_G,
             CHAN_ID_G => i
@@ -158,7 +162,7 @@ begin
 
    -- Completion Routers
    U_CompGen: for i in 0 to PPI_COMP_CNT_C-1 generate
-      U_PpiCompCtrl : entity work.PpiCompCtrl
+      U_PpiCompCtrl : entity rce_gen3_fw_lib.PpiCompCtrl
          generic map (
             TPD_G      => TPD_G,
             CHAN_ID_G  => i
@@ -190,7 +194,7 @@ begin
 
 
    -- Completion FIFOs & Utility FIFOs
-   U_AxiLiteFifoPop : entity work.AxiLiteFifoPop 
+   U_AxiLiteFifoPop : entity surf.AxiLiteFifoPop 
       generic map (
          TPD_G              => TPD_G,
          POP_FIFO_COUNT_G   => PPI_COMP_CNT_C,
@@ -232,7 +236,7 @@ begin
 
 
    -- ACP Write Mux
-   U_AxiWritePathMux : entity work.AxiWritePathMux
+   U_AxiWritePathMux : entity surf.AxiWritePathMux
       generic map (
          TPD_G        => TPD_G,
          NUM_SLAVES_G => 4
@@ -247,7 +251,7 @@ begin
 
 
    -- ACP Write FIFO
-   U_AxiWritePathFifo : entity work.AxiWritePathFifo
+   U_AxiWritePathFifo : entity surf.AxiWritePathFifo
       generic map (
          TPD_G                    => TPD_G,
          XIL_DEVICE_G             => "7SERIES",
@@ -288,7 +292,7 @@ begin
 
 
    -- ACP Read Mux
-   U_AxiReadPathMux : entity work.AxiReadPathMux
+   U_AxiReadPathMux : entity surf.AxiReadPathMux
       generic map (
          TPD_G        => TPD_G,
          NUM_SLAVES_G => 8
@@ -303,7 +307,7 @@ begin
 
 
    -- ACP Read FIFO
-   U_AxiReadPathFifo : entity work.AxiReadPathFifo 
+   U_AxiReadPathFifo : entity surf.AxiReadPathFifo 
       generic map (
          TPD_G                    => TPD_G,
          XIL_DEVICE_G             => "7SERIES",

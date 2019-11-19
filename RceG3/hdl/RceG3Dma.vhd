@@ -22,11 +22,15 @@ use IEEE.numeric_std.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
-use work.RceG3Pkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiPkg.all;
 
 entity RceG3Dma is
    generic (
@@ -99,7 +103,7 @@ begin
       ------------------------------------
       U_PpiDmaGen : if RCE_DMA_MODE_G = RCE_DMA_PPI_C generate
 
-         U_RceG3DmaPpi : entity work.RceG3DmaPpi
+         U_RceG3DmaPpi : entity rce_gen3_fw_lib.RceG3DmaPpi
             generic map (
                TPD_G => TPD_G)
             -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
@@ -139,7 +143,7 @@ begin
       ------------------------------------
       U_AxisDmaGen : if RCE_DMA_MODE_G = RCE_DMA_AXIS_C generate
 
-         U_RceG3DmaAxis : entity work.RceG3DmaAxis
+         U_RceG3DmaAxis : entity rce_gen3_fw_lib.RceG3DmaAxis
             generic map (
                TPD_G => TPD_G)
             -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
@@ -175,7 +179,7 @@ begin
 
       U_AxisV2DmaGen : if RCE_DMA_MODE_G = RCE_DMA_AXISV2_C generate
 
-         U_RceG3DmaAxisV2 : entity work.RceG3DmaAxisV2
+         U_RceG3DmaAxisV2 : entity rce_gen3_fw_lib.RceG3DmaAxisV2
             generic map (
                TPD_G         => TPD_G,
                SYNTH_MODE_G  => SYNTH_MODE_G,
@@ -216,7 +220,7 @@ begin
       ------------------------------------
       U_Queue4x2DmaGen : if RCE_DMA_MODE_G = RCE_DMA_Q4X2_C generate
 
-         U_RceG3DmaQueue4x2 : entity work.RceG3DmaQueue4x2
+         U_RceG3DmaQueue4x2 : entity rce_gen3_fw_lib.RceG3DmaQueue4x2
             generic map (
                TPD_G                => TPD_G,
                -- SYNTH_MODE_G     => SYNTH_MODE_G,   <--- generic for future XPM FIFO release
@@ -257,7 +261,7 @@ begin
 
    GEN_SIM : if (SIMULATION_G = true) generate
       GEN_DMA : for i in SIM_CHANNELS_G-1 downto 0 generate
-         U_TCP_DMA_LANE : entity work.RogueTcpStreamWrap
+         U_TCP_DMA_LANE : entity surf.RogueTcpStreamWrap
             generic map (
                TPD_G         => TPD_G,
                PORT_NUM_G    => (SIM_PORT_NUM_G + i*512),

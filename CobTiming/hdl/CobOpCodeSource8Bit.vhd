@@ -31,7 +31,9 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
-use work.StdRtlPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
 
 entity CobOpCodeSource8Bit is
    generic (

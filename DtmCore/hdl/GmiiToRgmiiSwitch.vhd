@@ -16,8 +16,12 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
 
 library unisim;
 use unisim.vcomponents.all;

@@ -21,11 +21,15 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
-use work.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity PpiIbRoute is
    generic (
@@ -67,7 +71,7 @@ architecture rtl of PpiIbRoute is
 begin
 
    -- Sync incoming stream for timing
-   U_StreamSync : entity work.AxiStreamPipeline
+   U_StreamSync : entity surf.AxiStreamPipeline
       generic map (
          TPD_G         => TPD_G,
          PIPE_STAGES_G => 1) 
@@ -134,7 +138,7 @@ begin
    end process;
 
    -- Sync outgoing stream for timing
-   U_PaySync : entity work.AxiStreamPipeline
+   U_PaySync : entity surf.AxiStreamPipeline
       generic map (
          TPD_G         => TPD_G,
          PIPE_STAGES_G => 1) 
@@ -147,7 +151,7 @@ begin
          mAxisSlave  => payIbSlave);
 
    -- Sync outgoing stream for timing
-   U_HeadSync : entity work.AxiStreamPipeline
+   U_HeadSync : entity surf.AxiStreamPipeline
       generic map (
          TPD_G         => TPD_G,
          PIPE_STAGES_G => 1) 

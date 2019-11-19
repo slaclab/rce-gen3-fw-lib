@@ -21,12 +21,16 @@ use ieee.std_logic_unsigned.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
-use work.EthMacPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.PpiPkg.all;
-use work.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.EthMacPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+use rce_gen3_fw_lib.RceG3Pkg.all;
 
 entity RceEthernetMac is
    generic (
@@ -143,7 +147,7 @@ begin
    ---------------
    -- ETH MAC Core
    ---------------
-   U_EthMacTop : entity work.EthMacTop
+   U_EthMacTop : entity surf.EthMacTop
       generic map (
          -- Simulation Generics
          TPD_G             => TPD_G,
@@ -219,7 +223,7 @@ begin
    ------------------
    -- ETH USER Router
    ------------------
-   U_UserEthRouter : entity work.RceUserEthRouter
+   U_UserEthRouter : entity rce_gen3_fw_lib.RceUserEthRouter
       generic map (
          TPD_G              => TPD_G,
          SYNTH_MODE_G       => SYNTH_MODE_G,
@@ -260,7 +264,7 @@ begin
       -- Shift inbound data n bytes to the left.
       -- This adds bytes of data at start of the packet
       -------------------------------------------------
-      U_RxShift : entity work.AxiStreamShift
+      U_RxShift : entity surf.AxiStreamShift
          generic map (
             TPD_G          => TPD_G,
             PIPE_STAGES_G  => 1,
@@ -284,7 +288,7 @@ begin
       -- to create a software friendly alignment of 
       -- outbound data.
       ----------------------------------------------
-      U_TxShift : entity work.AxiStreamShift
+      U_TxShift : entity surf.AxiStreamShift
          generic map (
             TPD_G         => TPD_G,
             PIPE_STAGES_G => 1,

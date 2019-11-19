@@ -17,7 +17,7 @@ loadRuckusTcl "$::DIR_PATH/../PpiCommon"
 loadRuckusTcl "$::DIR_PATH/../PpiPgp"
 
 # Load local Source Code and constraints
-loadSource      -dir  "$::DIR_PATH/hdl"
+loadSource -lib rce_gen3_fw_lib      -dir  "$::DIR_PATH/hdl"
 loadConstraints -dir  "$::DIR_PATH/xdc/${family}"
 
 # Check if ZYNQ 7000 series

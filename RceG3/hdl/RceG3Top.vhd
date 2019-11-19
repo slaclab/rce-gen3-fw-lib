@@ -19,11 +19,15 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiPkg.all;
-use work.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
 
 entity RceG3Top is
    generic (
@@ -174,7 +178,7 @@ begin
    -- Zynq-7000:        rce-gen3-fw-lib/RceG3/hdl/zynq/RceG3Clocks.vhd
    -- Zynq Ultrascale+: rce-gen3-fw-lib/RceG3/hdl/zynquplus/RceG3Clocks.vhd
    ------------------------------------------------------------------------   
-   U_RceG3Clocks : entity work.RceG3Clocks
+   U_RceG3Clocks : entity rce_gen3_fw_lib.RceG3Clocks
       generic map (
          TPD_G        => TPD_G,
          SEL_REFCLK_G => SEL_REFCLK_G,
@@ -222,7 +226,7 @@ begin
       -- Zynq-7000:        rce-gen3-fw-lib/RceG3/hdl/zynq/RceG3Cpu.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceG3/hdl/zynquplus/RceG3Cpu.vhd
       ---------------------------------------------------------------------
-      U_RceG3Cpu : entity work.RceG3Cpu
+      U_RceG3Cpu : entity rce_gen3_fw_lib.RceG3Cpu
          generic map (
             TPD_G => TPD_G)
          port map (
@@ -267,7 +271,7 @@ begin
       --------------------------------------------
       -- AXI Lite Bus
       --------------------------------------------
-      U_RceG3AxiCntl : entity work.RceG3AxiCntl
+      U_RceG3AxiCntl : entity rce_gen3_fw_lib.RceG3AxiCntl
          generic map (
             TPD_G          => TPD_G,
             BUILD_INFO_G   => BUILD_INFO_G,
@@ -328,7 +332,7 @@ begin
       --------------------------------------------
       -- BSI Controller
       --------------------------------------------
-      U_RceG3Bsi : entity work.RceG3Bsi
+      U_RceG3Bsi : entity rce_gen3_fw_lib.RceG3Bsi
          generic map (
             TPD_G     => TPD_G,
             BYP_BSI_G => BYP_BSI_G)
@@ -348,7 +352,7 @@ begin
       --------------------------------------------
       -- Interrupt Controller
       --------------------------------------------
-      U_RceG3IntCntl : entity work.RceG3IntCntl
+      U_RceG3IntCntl : entity rce_gen3_fw_lib.RceG3IntCntl
          generic map (
             TPD_G          => TPD_G,
             RCE_DMA_MODE_G => RCE_DMA_MODE_G)
@@ -367,7 +371,7 @@ begin
    end generate;
 
    SIM_GEN : if (SIMULATION_G = true) generate
-      U_RogueTcpMemoryWrap_1 : entity work.RogueTcpMemoryWrap
+      U_RogueTcpMemoryWrap_1 : entity surf.RogueTcpMemoryWrap
          generic map (
             TPD_G      => TPD_G,
             PORT_NUM_G => SIM_MEM_PORT_NUM_G)
@@ -383,7 +387,7 @@ begin
    --------------------------------------------
    -- DMA Controller
    --------------------------------------------
-   U_RceG3Dma : entity work.RceG3Dma
+   U_RceG3Dma : entity rce_gen3_fw_lib.RceG3Dma
       generic map (
          TPD_G          => TPD_G,
          SYNTH_MODE_G   => SYNTH_MODE_G,

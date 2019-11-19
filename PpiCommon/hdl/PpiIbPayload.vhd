@@ -21,11 +21,15 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
-use work.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity PpiIbPayload is
    generic (
@@ -360,7 +364,7 @@ begin
 
 
    -- DMA Engine
-   U_RdDma : entity work.AxiStreamDmaRead
+   U_RdDma : entity surf.AxiStreamDmaRead
       generic map (
          TPD_G           => TPD_G,
          AXIS_READY_EN_G => false,
@@ -385,7 +389,7 @@ begin
 
 
    -- Read Path AXI FIFO
-   U_AxiReadPathFifo : entity work.AxiReadPathFifo
+   U_AxiReadPathFifo : entity surf.AxiReadPathFifo
       generic map (
          TPD_G                  => TPD_G,
          XIL_DEVICE_G           => "7SERIES",
@@ -421,7 +425,7 @@ begin
 
 
    -- Inbound FIFO
-   U_IbFifo : entity work.AxiStreamFifoV2
+   U_IbFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G               => TPD_G,
          INT_PIPE_STAGES_G   => 1,
@@ -453,7 +457,7 @@ begin
 
 
    -- Write DMA Engine
-   U_WrDma : entity work.AxiStreamDmaWrite
+   U_WrDma : entity surf.AxiStreamDmaWrite
       generic map (
          TPD_G          => TPD_G,
          AXI_READY_EN_G => false,
@@ -475,7 +479,7 @@ begin
 
 
    -- Write Path AXI FIFO
-   U_AxiWritePathFifo : entity work.AxiWritePathFifo
+   U_AxiWritePathFifo : entity surf.AxiWritePathFifo
       generic map (
          TPD_G                    => TPD_G,
          XIL_DEVICE_G             => "7SERIES",
@@ -516,7 +520,7 @@ begin
 
 
    -- Completion FIFO
-   U_CompFifo : entity work.Fifo
+   U_CompFifo : entity surf.Fifo
       generic map (
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',

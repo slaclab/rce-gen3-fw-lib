@@ -21,8 +21,12 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+
+library rce_gen3_fw_lib; 
 
 entity DpmTimingSink is
    generic (
@@ -155,7 +159,7 @@ begin
    intReset <= axiClkRst or r.cfgReset;
 
    -- Reset gen
-   U_RstGen : entity work.RstSync
+   U_RstGen : entity surf.RstSync
       generic map (
          TPD_G            => TPD_G,
          IN_POLARITY_G    => '1',
@@ -183,7 +187,7 @@ begin
       );
 
    -- Input processor
-   U_OpCodeSink : entity work.CobOpCodeSink8Bit 
+   U_OpCodeSink : entity rce_gen3_fw_lib.CobOpCodeSink8Bit 
       generic map (
          TPD_G           => TPD_G,
          IODELAY_GROUP_G => IODELAY_GROUP_G
@@ -202,7 +206,7 @@ begin
       );
 
    -- Input FIFO
-   U_OcFifo : entity work.Fifo
+   U_OcFifo : entity surf.Fifo
       generic map (
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
@@ -246,7 +250,7 @@ begin
    ocFifoWr <= ocFifoWrEn and intCodeEn;
 
    -- Sync write enable
-   U_WrEnSync : entity work.Synchronizer
+   U_WrEnSync : entity surf.Synchronizer
       generic map (
          TPD_G          => 1 ns,
          RST_POLARITY_G => '1',
@@ -268,7 +272,7 @@ begin
    ----------------------------------------
 
    -- Module
-   U_FbSource : entity work.CobOpCodeSource8Bit
+   U_FbSource : entity rce_gen3_fw_lib.CobOpCodeSource8Bit
       generic map (
          TPD_G => TPD_G
       ) port map (
@@ -407,7 +411,7 @@ begin
    led(1) <= ledCountB(15);
 
    -- Sync Led Count
-   U_LedCntSync : entity work.SynchronizerFifo
+   U_LedCntSync : entity surf.SynchronizerFifo
       generic map (
          TPD_G         => 1 ns,
          COMMON_CLK_G  => false,

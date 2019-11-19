@@ -16,11 +16,15 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiPkg.all;
 
 library unisim;
 use unisim.vcomponents.all;
@@ -243,7 +247,7 @@ begin
    --------------------------------------------------
    -- RCE Core
    --------------------------------------------------
-   U_RceG3Top : entity work.RceG3Top
+   U_RceG3Top : entity rce_gen3_fw_lib.RceG3Top
       generic map (
          TPD_G              => TPD_G,
          SIMULATION_G       => SIMULATION_G,
@@ -332,7 +336,7 @@ begin
    -- AXI Lite Crossbar
    -- Base: 0xB0000000 - 0xBFFFFFFF
    -------------------------------------
-   U_AxiCrossbar : entity work.AxiLiteCrossbar
+   U_AxiCrossbar : entity surf.AxiLiteCrossbar
       generic map (
          TPD_G              => TPD_G,
          NUM_SLAVE_SLOTS_G  => 1,
@@ -373,7 +377,7 @@ begin
       --------------------------------------------------
       -- PCI Express : 0xBC00_0000 - 0xBC00_FFFF
       --------------------------------------------------
-      U_ZynqPcieMaster : entity work.ZynqPcieMaster
+      U_ZynqPcieMaster : entity rce_gen3_fw_lib.ZynqPcieMaster
          generic map (
             HSIO_MODE_G => false)
          port map (
@@ -405,7 +409,7 @@ begin
       -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/RceEthGem.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/RceEthGem.vhd
       -----------------------------------------------------------------------------     
-      U_RceEthGem : entity work.RceEthGem
+      U_RceEthGem : entity rce_gen3_fw_lib.RceEthGem
          generic map (
             TPD_G => TPD_G)
          port map (
@@ -447,7 +451,7 @@ begin
 
    U_Eth10gGen : if (ETH_TYPE_G /= "ZYNQ-GEM") and (SIMULATION_G = false) generate
 
-      U_RceEthernet : entity work.RceEthernet
+      U_RceEthernet : entity rce_gen3_fw_lib.RceEthernet
          generic map (
             -- Generic Configurations
             TPD_G              => TPD_G,

@@ -22,10 +22,14 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
 
 entity PpiInterconnect is
    generic (
@@ -88,7 +92,7 @@ begin
    end generate;
 
    -- Outbound DeMux
-   U_ObDeMux : entity work.AxiStreamDeMux
+   U_ObDeMux : entity surf.AxiStreamDeMux
       generic map (
          TPD_G         => TPD_G,
          NUM_MASTERS_G => NUM_INT_SLOTS_C
@@ -102,7 +106,7 @@ begin
       );
 
    -- Inbound Mux
-   U_IbMux : entity work.AxiStreamMux
+   U_IbMux : entity surf.AxiStreamMux
       generic map (
          TPD_G        => TPD_G,
          NUM_SLAVES_G => NUM_INT_SLOTS_C
@@ -117,7 +121,7 @@ begin
       );
 
    -- Status Bridge
-   U_PpiStatus : entity work.PpiStatus
+   U_PpiStatus : entity rce_gen3_fw_lib.PpiStatus
       generic map (
          TPD_G               => TPD_G,
          NUM_STATUS_WORDS_G  => NUM_STATUS_WORDS_G,

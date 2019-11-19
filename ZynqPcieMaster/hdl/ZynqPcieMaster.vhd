@@ -22,9 +22,13 @@ use IEEE.numeric_std.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
 
 entity ZynqPcieMaster is
    generic (
@@ -212,7 +216,7 @@ begin
    -------------------------------------------------------------------------------------------------
    -- Sync signals to pciClk
    -------------------------------------------------------------------------------------------------
-   RstSync_1 : entity work.RstSync
+   RstSync_1 : entity surf.RstSync
       generic map (
          TPD_G          => TPD_G,
          IN_POLARITY_G  => '0',
@@ -222,7 +226,7 @@ begin
          asyncRst => r.pcieEnable,
          syncRst  => intResetL);
 
-   SynchronizerFifo_2 : entity work.SynchronizerFifo
+   SynchronizerFifo_2 : entity surf.SynchronizerFifo
       generic map (
          TPD_G        => TPD_G,
          DATA_WIDTH_G => 16)
@@ -241,7 +245,7 @@ begin
    -- Some signals need to be sync'd to AxiClk
    -------------------------------------------------------------------------------------------------
    -- pcieClk125
-   Synchronizer_1 : entity work.Synchronizer
+   Synchronizer_1 : entity surf.Synchronizer
       generic map (
          TPD_G => TPD_G)
       port map (
@@ -251,7 +255,7 @@ begin
          dataOut => phyLinkUpSync);
 
    -- pcieUserClk2
-   SynchronizerVector_1 : entity work.SynchronizerVector
+   SynchronizerVector_1 : entity surf.SynchronizerVector
       generic map (
          TPD_G   => TPD_G,
          WIDTH_G => 2)
@@ -263,7 +267,7 @@ begin
          dataOut(0) => linkUpSync,
          dataOut(1) => pciClkRstSync);  
 
-   SynchronizerFifo_1 : entity work.SynchronizerFifo
+   SynchronizerFifo_1 : entity surf.SynchronizerFifo
       generic map (
          TPD_G        => TPD_G,
          DATA_WIDTH_G => PCIE_CFG_OUT_SIZE_C)
@@ -447,7 +451,7 @@ begin
    -----------------------------------------
    -- FIFOs, Dist Ram
    -----------------------------------------
-   U_WriteFifo : entity work.Fifo
+   U_WriteFifo : entity surf.Fifo
       generic map (
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
@@ -492,7 +496,7 @@ begin
    wrFifoRdEn <= txReady and txValid;
    txValid    <= wrFifoValid when txBufAv > 1 else '0';
 
-   U_ReadFifo : entity work.Fifo
+   U_ReadFifo : entity surf.Fifo
       generic map (
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',

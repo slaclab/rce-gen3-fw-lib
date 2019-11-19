@@ -21,12 +21,16 @@ use ieee.std_logic_unsigned.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.PpiPkg.all;
-use work.RceG3Pkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.StdRtlPkg.all;
-use work.EthMacPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+
+library surf;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+use surf.StdRtlPkg.all;
+use surf.EthMacPkg.all;
 
 entity RceEthernetReg is
    generic (
@@ -106,7 +110,7 @@ architecture structure of RceEthernetReg is
 begin
 
    -- 32 bit status counters
-   U_RxStatus32Bit : entity work.SyncStatusVector
+   U_RxStatus32Bit : entity surf.SyncStatusVector
       generic map (
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
@@ -224,7 +228,7 @@ begin
 
    macConfig.pauseEnable <= '1';
 
-   U_SyncMAC : entity work.SynchronizerVector
+   U_SyncMAC : entity surf.SynchronizerVector
       generic map (
          TPD_G    => TPD_G,
          STAGES_G => 2,
@@ -237,7 +241,7 @@ begin
          -- Output Data
          dataOut => macConfig.macAddress);
 
-   U_SyncIP : entity work.SynchronizerVector
+   U_SyncIP : entity surf.SynchronizerVector
       generic map (
          TPD_G    => TPD_G,
          STAGES_G => 2,
@@ -250,7 +254,7 @@ begin
          -- Output Data
          dataOut => ipAddr);
 
-   U_SyncPause : entity work.SynchronizerVector
+   U_SyncPause : entity surf.SynchronizerVector
       generic map (
          TPD_G    => TPD_G,
          STAGES_G => 2,
@@ -263,7 +267,7 @@ begin
          -- Output Data
          dataOut => macConfig.pauseTime);
 
-   U_SyncConfig : entity work.SynchronizerVector
+   U_SyncConfig : entity surf.SynchronizerVector
       generic map (
          TPD_G    => TPD_G,
          STAGES_G => 2,
@@ -276,7 +280,7 @@ begin
          -- Output Data
          dataOut => phyConfig);
 
-   U_SyncETH : entity work.SynchronizerVector
+   U_SyncETH : entity surf.SynchronizerVector
       generic map (
          TPD_G    => TPD_G,
          STAGES_G => 2,
@@ -299,7 +303,7 @@ begin
          dataOut(4) => macConfig.tcpCsumEn,
          dataOut(5) => macConfig.udpCsumEn);
 
-   U_SyncPPI : entity work.SynchronizerVector
+   U_SyncPPI : entity surf.SynchronizerVector
       generic map (
          TPD_G    => TPD_G,
          STAGES_G => 2,

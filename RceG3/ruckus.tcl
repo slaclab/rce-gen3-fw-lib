@@ -19,6 +19,6 @@ if { [info exists ::env(OVERRIDE_SUBMODULE_LOCKS)] != 1 || $::env(OVERRIDE_SUBMO
 } 
 
 # Load local Source Code
-loadSource -dir "$::DIR_PATH/hdl"
-loadSource -dir "$::DIR_PATH/hdl/${family}"
+loadSource -lib rce_gen3_fw_lib -dir "$::DIR_PATH/hdl"
+loadSource -lib rce_gen3_fw_lib -dir "$::DIR_PATH/hdl/${family}"
 loadIpCore -dir "$::DIR_PATH/coregen/${family}"

@@ -32,12 +32,16 @@ use IEEE.numeric_std.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.PpiPkg.all;
-use work.Pgp2bPkg.all;
-use work.SsiPkg.all;
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+
+library surf;
+use surf.Pgp2bPkg.all;
+use surf.SsiPkg.all;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
 
 entity PgpToPpi is
    generic (
@@ -193,7 +197,7 @@ begin
    -------------------------
    -- Input FIFO, ASYNC
    -------------------------
-   U_InputFifo : entity work.AxiStreamFifo 
+   U_InputFifo : entity surf.AxiStreamFifo 
       generic map (
          TPD_G               => TPD_G,
          PIPE_STAGES_G       => 0,
@@ -221,7 +225,7 @@ begin
       );
 
    -- Generate overflow pulse in ppi clock domain
-   U_SyncOverflow : entity work.SynchronizerOneShot 
+   U_SyncOverflow : entity surf.SynchronizerOneShot 
       generic map (
          RELEASE_DELAY_G => 3,
          BYPASS_SYNC_G   => false,
@@ -238,7 +242,7 @@ begin
       );
 
    -- Generate pause pulse in ppi clock domain
-   U_SyncPause : entity work.SynchronizerOneShot 
+   U_SyncPause : entity surf.SynchronizerOneShot 
       generic map (
          RELEASE_DELAY_G => 3,
          BYPASS_SYNC_G   => false,
@@ -358,7 +362,7 @@ begin
    ------------------------------------
 
    -- Header FIFO
-   U_HeadFifo : entity work.Fifo
+   U_HeadFifo : entity surf.Fifo
       generic map (
          TPD_G              => TPD_G,
          RST_POLARITY_G     => '1',
@@ -417,7 +421,7 @@ begin
    end process;
 
    -- Data FIFO
-   U_DataFifo : entity work.Fifo
+   U_DataFifo : entity surf.Fifo
       generic map (
          TPD_G              => TPD_G,
          RST_POLARITY_G     => '1',
@@ -565,7 +569,7 @@ begin
    ---------------------------------
    -- PPI Output Pipeline
    ---------------------------------
-   U_Pipe : entity work.AxiStreamPipeline
+   U_Pipe : entity surf.AxiStreamPipeline
       generic map (
          TPD_G          => TPD_G,
          PIPE_STAGES_G  => 2

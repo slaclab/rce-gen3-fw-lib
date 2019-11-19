@@ -22,12 +22,16 @@ use IEEE.STD_LOGIC_ARITH.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.Pgp2bPkg.all;
-use work.RceG3Pkg.all;
-use work.Gtx7CfgPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+use surf.Pgp2bPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.Gtx7CfgPkg.all;
 
 entity PpiPgpArray is
    generic (
@@ -105,7 +109,7 @@ begin
    -------------------------------------------------------------------------------------------------
    -- Route AXI-Lite bus to each PpiPgpLane, which contains a Pgp2bAxi instance
    -------------------------------------------------------------------------------------------------
-   AxiLiteCrossbar_1 : entity work.AxiLiteCrossbar
+   AxiLiteCrossbar_1 : entity surf.AxiLiteCrossbar
       generic map (
          TPD_G              => TPD_G,
          NUM_SLAVE_SLOTS_G  => 1,
@@ -125,7 +129,7 @@ begin
          mAxiReadSlaves      => intAxilReadSlaves);
 
    -- Outbound DeMux
-   U_ObDeMux : entity work.AxiStreamDeMux
+   U_ObDeMux : entity surf.AxiStreamDeMux
       generic map (
          TPD_G         => TPD_G,
          NUM_MASTERS_G => NUM_LANES_G
@@ -139,7 +143,7 @@ begin
             );
 
    -- Inbound Mux
-   U_IbMux : entity work.AxiStreamMux
+   U_IbMux : entity surf.AxiStreamMux
       generic map (
          TPD_G        => TPD_G,
          NUM_SLAVES_G => NUM_LANES_G
@@ -156,7 +160,7 @@ begin
    ppiIbMaster <= intIbMaster;
 
    -- Error checking
-   U_PpiMonitor: entity work.PpiMonitor
+   U_PpiMonitor: entity rce_gen3_fw_lib.PpiMonitor
       generic map (
          TPD_G        => TPD_G,
          DEST_CNT_G   => NUM_LANES_G,
@@ -172,7 +176,7 @@ begin
 
    -- PGP Lane Controllers
    U_LaneGen : for i in 0 to NUM_LANES_G-1 generate
-      U_PpiPgpLane : entity work.PpiPgpLane
+      U_PpiPgpLane : entity rce_gen3_fw_lib.PpiPgpLane
          generic map (
             TPD_G                   => TPD_G,
             AXI_CLK_FREQ_G          => AXIL_CLK_FREQ_G,
