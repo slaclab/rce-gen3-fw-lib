@@ -544,7 +544,7 @@ begin
       pciExpRxP(0) <= pcieRxP;
       pciExpRxN(0) <= pcieRxM;
 
-      U_Pcie : entity work.pcie_7x_v1_9
+      U_Pcie : entity rce_gen3_fw_lib.pcie_7x_v1_9
          generic map (
             PCIE_EXT_CLK => "FALSE"
             )

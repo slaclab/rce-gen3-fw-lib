@@ -141,6 +141,8 @@ begin
          rxp                    => gtRxP,
          rxn                    => gtRxN,
          -- Configuration and Status
+         gt0_txpolarity_in      => '0',
+         gt0_rxpolarity_in      => '0',
          an_restart_config      => '0',
          an_adv_config_vector   => GIG_ETH_AN_ADV_CONFIG_INIT_C,
          an_interrupt           => open,
