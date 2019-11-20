@@ -205,15 +205,8 @@ begin
       -- Tx data count sync
       U_TxDataCntSync : entity surf.SynchronizerFifo
          generic map (
-            TPD_G         => 1 ns,
-            COMMON_CLK_G  => false,
-            BRAM_EN_G     => false,
-            ALTERA_SYN_G  => false,
-            ALTERA_RAM_G  => "M9K",
-            SYNC_STAGES_G => 3,
-            DATA_WIDTH_G  => 32,
-            ADDR_WIDTH_G  => 4,
-            INIT_G        => "0"
+            TPD_G         => TPD_G,
+            DATA_WIDTH_G  => 32
             ) port map (
                rst    => axiClkRst,
                wr_clk => distClk,
@@ -274,15 +267,8 @@ begin
       -- Rx data count sync
       U_RxDataCntSync : entity surf.SynchronizerFifo
          generic map (
-            TPD_G         => 1 ns,
-            COMMON_CLK_G  => false,
-            BRAM_EN_G     => false,
-            ALTERA_SYN_G  => false,
-            ALTERA_RAM_G  => "M9K",
-            SYNC_STAGES_G => 3,
-            DATA_WIDTH_G  => 32,
-            ADDR_WIDTH_G  => 4,
-            INIT_G        => "0"
+            TPD_G         => TPD_G,
+            DATA_WIDTH_G  => 32
             ) port map (
                rst    => axiClkRst,
                wr_clk => distClk,

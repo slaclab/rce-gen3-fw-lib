@@ -118,7 +118,6 @@ begin
          RELEASE_DELAY_G => 3,
          IN_POLARITY_G   => "1",
          OUT_POLARITY_G  => '1',
-         USE_DSP48_G     => "no",
          SYNTH_CNT_G     => "1",
          CNT_RST_EDGE_G  => false,
          CNT_WIDTH_G     => 32,

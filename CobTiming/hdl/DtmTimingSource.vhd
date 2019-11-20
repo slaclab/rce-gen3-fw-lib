@@ -211,11 +211,8 @@ begin
          RST_POLARITY_G  => '1',
          RST_ASYNC_G     => false,
          GEN_SYNC_FIFO_G => false, -- Async
-         BRAM_EN_G       => false, -- Use dist ram
+         MEMORY_TYPE_G   => "distributed",
          FWFT_EN_G       => true,
-         USE_DSP48_G     => "no",
-         USE_BUILT_IN_G  => false,
-         XIL_DEVICE_G    => "7SERIES",
          SYNC_STAGES_G   => 3,
          DATA_WIDTH_G    => 8,
          ADDR_WIDTH_G    => 6,
@@ -305,11 +302,8 @@ begin
             RST_POLARITY_G  => '1',
             RST_ASYNC_G     => false,
             GEN_SYNC_FIFO_G => false, -- Async
-            BRAM_EN_G       => false, -- Use Dist Ram
+            MEMORY_TYPE_G   => "distributed",
             FWFT_EN_G       => true,
-            USE_DSP48_G     => "no",
-            USE_BUILT_IN_G  => false,
-            XIL_DEVICE_G    => "7SERIES",
             SYNC_STAGES_G   => 3,
             DATA_WIDTH_G    => 8,
             ADDR_WIDTH_G    => 6,
@@ -534,15 +528,8 @@ begin
    -- Sync Led Count
    U_LedCntSync : entity surf.SynchronizerFifo
       generic map (
-         TPD_G         => 1 ns,
-         COMMON_CLK_G  => false,
-         BRAM_EN_G     => false,
-         ALTERA_SYN_G  => false,
-         ALTERA_RAM_G  => "M9K",
-         SYNC_STAGES_G => 3,
-         DATA_WIDTH_G  => 32,
-         ADDR_WIDTH_G  => 4,
-         INIT_G        => "0"
+         TPD_G         => TPD_G,
+         DATA_WIDTH_G  => 32
       ) port map (
          rst                => axiClkRst,
          wr_clk             => distClk,
