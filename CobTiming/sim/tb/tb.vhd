@@ -8,14 +8,18 @@
 -- the terms contained in the LICENSE.txt file.
 ------------------------------------------------------------------------------
 LIBRARY ieee;
-USE work.ALL;
+
 use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
+
 Library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
+library surf;
+use surf.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
 
 entity tb is end tb;
 
@@ -68,7 +72,7 @@ begin
    end process;
 
 
-   U_Source : entity work.CobOpCodeSource
+   U_Source : entity rce_gen3_fw_lib.CobOpCodeSource
       generic map (
          TPD_G => 1 ns
       ) port map (
@@ -79,7 +83,7 @@ begin
          dpmClk                    => dpmClk
       );
 
-   U_Sink : entity work.CobOpCodeSink 
+   U_Sink : entity rce_gen3_fw_lib.CobOpCodeSink 
       generic map (
          TPD_G => 1 ns
       ) port map (

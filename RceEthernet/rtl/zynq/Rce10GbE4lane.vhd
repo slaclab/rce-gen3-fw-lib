@@ -16,7 +16,9 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-use work.StdRtlPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
 
 entity Rce10GbE4lane is
    generic (
@@ -63,7 +65,7 @@ begin
    --------------------
    -- 10 GigE XAUI Core
    --------------------
-   U_IpCore : entity work.XauiGtx7Core
+   U_IpCore : entity surf.XauiGtx7Core
       port map (
          -- Clocks and Resets
          dclk                 => dclk,
@@ -99,7 +101,7 @@ begin
          configuration_vector => phyConfig,
          status_vector        => status);
 
-   U_EthClkRst : entity work.RstSync
+   U_EthClkRst : entity surf.RstSync
       generic map (
          TPD_G           => TPD_G,
          IN_POLARITY_G   => '0',

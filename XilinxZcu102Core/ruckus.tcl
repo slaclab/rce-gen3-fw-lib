@@ -11,8 +11,8 @@ if { [VersionCheck 2018.3] < 0 } {exit -1}
 
 # Check for submodule tagging
 if { [info exists ::env(OVERRIDE_SUBMODULE_LOCKS)] != 1 || $::env(OVERRIDE_SUBMODULE_LOCKS) == 0 } {
-   if { [SubmoduleCheck {ruckus} {1.7.9}  ] < 0 } {exit -1}
-   if { [SubmoduleCheck {surf}   {1.10.1} ] < 0 } {exit -1}
+   if { [SubmoduleCheck {ruckus} {2.0.1}  ] < 0 } {exit -1}
+   if { [SubmoduleCheck {surf}   {2.0.0}  ] < 0 } {exit -1}
 } else {
    puts "\n\n*********************************************************"
    puts "OVERRIDE_SUBMODULE_LOCKS != 0"
@@ -41,13 +41,13 @@ if { $::env(VIVADO_VERSION) == 2018.3 } {
 }
 
 # Load local Source Code and constraints
-loadSource      -dir "$::DIR_PATH/hdl"
+loadSource -lib rce_gen3_fw_lib      -dir "$::DIR_PATH/hdl"
 loadConstraints -dir "$::DIR_PATH/xdc"
 
-loadSource -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Clocks.vhd"
-loadSource -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Cpu.vhd"
-loadSource -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Pkg.vhd"
-loadSource -dir  "$::DIR_PATH/../RceG3/hdl"
+loadSource -lib rce_gen3_fw_lib -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Clocks.vhd"
+loadSource -lib rce_gen3_fw_lib -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Cpu.vhd"
+loadSource -lib rce_gen3_fw_lib -path "$::DIR_PATH/../RceG3/hdl/zynquplus/RceG3Pkg.vhd"
+loadSource -lib rce_gen3_fw_lib -dir  "$::DIR_PATH/../RceG3/hdl"
 
 # Load the dependent source code
 loadRuckusTcl "$::DIR_PATH/../PpiCommon"

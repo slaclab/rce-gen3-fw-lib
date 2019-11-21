@@ -21,13 +21,17 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
-use work.RceG3Pkg.all;
-use work.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity RceG3DmaPpi is
    generic (
@@ -118,7 +122,7 @@ begin
 
    -- Sockets
    U_PpiGen : for i in 0 to 3 generate
-      U_PpiSocket : entity work.PpiSocket
+      U_PpiSocket : entity rce_gen3_fw_lib.PpiSocket
          generic map (
             TPD_G     => TPD_G,
             CHAN_ID_G => i
@@ -158,7 +162,7 @@ begin
 
    -- Completion Routers
    U_CompGen: for i in 0 to PPI_COMP_CNT_C-1 generate
-      U_PpiCompCtrl : entity work.PpiCompCtrl
+      U_PpiCompCtrl : entity rce_gen3_fw_lib.PpiCompCtrl
          generic map (
             TPD_G      => TPD_G,
             CHAN_ID_G  => i
@@ -190,22 +194,20 @@ begin
 
 
    -- Completion FIFOs & Utility FIFOs
-   U_AxiLiteFifoPop : entity work.AxiLiteFifoPop 
+   U_AxiLiteFifoPop : entity surf.AxiLiteFifoPop 
       generic map (
          TPD_G              => TPD_G,
          POP_FIFO_COUNT_G   => PPI_COMP_CNT_C,
          POP_SYNC_FIFO_G    => true,
-         POP_BRAM_EN_G      => true,
+         POP_MEMORY_TYPE_G  => "block",
          POP_ADDR_WIDTH_G   => 9,
          LOOP_FIFO_EN_G     => true,
          LOOP_FIFO_COUNT_G  => 4,
-         LOOP_BRAM_EN_G     => true,
+         LOOP_MEMORY_TYPE_G => "block",
          LOOP_ADDR_WIDTH_G  => 9,
          RANGE_LSB_G        => 8,
          VALID_POSITION_G   => 0,
-         VALID_POLARITY_G   => '0',
-         USE_BUILT_IN_G     => false,
-         XIL_DEVICE_G       => "7SERIES"
+         VALID_POLARITY_G   => '0'
       ) port map (
 
          -- AXI Interface
@@ -232,7 +234,7 @@ begin
 
 
    -- ACP Write Mux
-   U_AxiWritePathMux : entity work.AxiWritePathMux
+   U_AxiWritePathMux : entity surf.AxiWritePathMux
       generic map (
          TPD_G        => TPD_G,
          NUM_SLAVES_G => 4
@@ -247,14 +249,10 @@ begin
 
 
    -- ACP Write FIFO
-   U_AxiWritePathFifo : entity work.AxiWritePathFifo
+   U_AxiWritePathFifo : entity surf.AxiWritePathFifo
       generic map (
          TPD_G                    => TPD_G,
-         XIL_DEVICE_G             => "7SERIES",
-         USE_BUILT_IN_G           => false,
          GEN_SYNC_FIFO_G          => true,
-         ALTERA_SYN_G             => false,
-         ALTERA_RAM_G             => "M9K",
          ADDR_LSB_G               => 3,
          ID_FIXED_EN_G            => false,
          SIZE_FIXED_EN_G          => true,
@@ -263,14 +261,14 @@ begin
          LOCK_FIXED_EN_G          => true,
          PROT_FIXED_EN_G          => true,
          CACHE_FIXED_EN_G         => true,
-         ADDR_BRAM_EN_G           => true, 
+         ADDR_MEMORY_TYPE_G       => "block", 
          ADDR_CASCADE_SIZE_G      => 1,
          ADDR_FIFO_ADDR_WIDTH_G   => 9,
-         DATA_BRAM_EN_G           => true,
+         DATA_MEMORY_TYPE_G       => "block",
          DATA_CASCADE_SIZE_G      => 1,
          DATA_FIFO_ADDR_WIDTH_G   => 9,
          DATA_FIFO_PAUSE_THRESH_G => 456,
-         RESP_BRAM_EN_G           => false,
+         RESP_MEMORY_TYPE_G       => "distributed",
          RESP_CASCADE_SIZE_G      => 1,
          RESP_FIFO_ADDR_WIDTH_G   => 4,
          AXI_CONFIG_G             => AXI_ACP_INIT_C
@@ -288,7 +286,7 @@ begin
 
 
    -- ACP Read Mux
-   U_AxiReadPathMux : entity work.AxiReadPathMux
+   U_AxiReadPathMux : entity surf.AxiReadPathMux
       generic map (
          TPD_G        => TPD_G,
          NUM_SLAVES_G => 8
@@ -303,14 +301,10 @@ begin
 
 
    -- ACP Read FIFO
-   U_AxiReadPathFifo : entity work.AxiReadPathFifo 
+   U_AxiReadPathFifo : entity surf.AxiReadPathFifo 
       generic map (
          TPD_G                    => TPD_G,
-         XIL_DEVICE_G             => "7SERIES",
-         USE_BUILT_IN_G           => false,
          GEN_SYNC_FIFO_G          => true,
-         ALTERA_SYN_G             => false,
-         ALTERA_RAM_G             => "M9K",
          ADDR_LSB_G               => 3,
          ID_FIXED_EN_G            => false,
          SIZE_FIXED_EN_G          => true,
@@ -319,10 +313,10 @@ begin
          LOCK_FIXED_EN_G          => true,
          PROT_FIXED_EN_G          => true,
          CACHE_FIXED_EN_G         => true,
-         ADDR_BRAM_EN_G           => false, 
+         ADDR_MEMORY_TYPE_G       => "distributed", 
          ADDR_CASCADE_SIZE_G      => 1,
          ADDR_FIFO_ADDR_WIDTH_G   => 4,
-         DATA_BRAM_EN_G           => false,
+         DATA_MEMORY_TYPE_G       => "distributed",
          DATA_CASCADE_SIZE_G      => 1,
          DATA_FIFO_ADDR_WIDTH_G   => 4,
          AXI_CONFIG_G             => AXI_ACP_INIT_C

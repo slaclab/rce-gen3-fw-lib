@@ -22,13 +22,17 @@ use IEEE.STD_LOGIC_ARITH.ALL;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.PpiPkg.all;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.Pgp2bPkg.all;
-use work.SsiPkg.all;
-use work.RceG3Pkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+use surf.Pgp2bPkg.all;
+use surf.SsiPkg.all;
+use rce_gen3_fw_lib.RceG3Pkg.all;
 
 entity PpiPgpLane is
    generic (
@@ -93,7 +97,7 @@ architecture structure of PpiPgpLane is
 begin
 
    -- PGP Axil Controller
-   U_Pgp2bAxi : entity work.Pgp2bAxi 
+   U_Pgp2bAxi : entity surf.Pgp2bAxi 
       generic map (
          TPD_G              => TPD_G,
          COMMON_TX_CLK_G    => false,
@@ -122,7 +126,7 @@ begin
       );
 
    -- Inbound
-   U_PgpToPpi: entity work.PgpToPpi
+   U_PgpToPpi: entity rce_gen3_fw_lib.PgpToPpi
       generic map (
          TPD_G                => TPD_G,
          AXIS_ADDR_WIDTH_G    => RX_AXIS_ADDR_WIDTH_G,
@@ -148,7 +152,7 @@ begin
    pgpRxCtrl <= (others=>ipgpRxCtrl);
 
    -- Outbound 
-   U_PpiToPgp : entity work.PpiToPgp
+   U_PpiToPgp : entity rce_gen3_fw_lib.PpiToPgp
       generic map (
          TPD_G                => TPD_G,
          PPI_ADDR_WIDTH_G     => TX_PPI_ADDR_WIDTH_G,
@@ -168,7 +172,7 @@ begin
       );
 
    -- Outbound de-mux
-   U_AxisStreamDeMux: entity work.AxiStreamDeMux 
+   U_AxisStreamDeMux: entity surf.AxiStreamDeMux 
       generic map (
          TPD_G         => TPD_G,
          NUM_MASTERS_G => 4

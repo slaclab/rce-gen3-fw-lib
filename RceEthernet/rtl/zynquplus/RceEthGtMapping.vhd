@@ -21,7 +21,9 @@ use ieee.std_logic_unsigned.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
 
 entity RceEthGtMapping is
    generic (
@@ -64,7 +66,7 @@ begin
       gtRxP(3 downto 1) <= (others => '0');
       gtRxN(3 downto 1) <= (others => '1');
 
-      U_Gtxe2ChannelDummy : entity work.Gthe4ChannelDummy
+      U_Gtxe2ChannelDummy : entity surf.Gthe4ChannelDummy
          generic map (
             TPD_G   => TPD_G,
             WIDTH_G => 3)

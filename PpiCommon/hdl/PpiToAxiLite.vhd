@@ -61,10 +61,14 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.PpiPkg.all;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
 
 entity PpiToAxiLite is
    generic (
@@ -149,16 +153,14 @@ begin
    ------------------------------------
    -- FIFOs
    ------------------------------------
-   U_InFifo : entity work.AxiStreamFifoV2
+   U_InFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G                => TPD_G,
          INT_PIPE_STAGES_G    => 1,
          PIPE_STAGES_G        => 1,
          SLAVE_READY_EN_G     => true,
          VALID_THOLD_G        => 1,
-         BRAM_EN_G            => true,
-         XIL_DEVICE_G         => "7SERIES",
-         USE_BUILT_IN_G       => false,
+         MEMORY_TYPE_G        => "block",
          GEN_SYNC_FIFO_G      => false,
          CASCADE_SIZE_G       => 1,
          FIFO_ADDR_WIDTH_G    => 9,
@@ -178,16 +180,14 @@ begin
          mAxisSlave      => intObSlave
       );
 
-   U_OutFifo : entity work.AxiStreamFifoV2 
+   U_OutFifo : entity surf.AxiStreamFifoV2 
       generic map (
          TPD_G                => TPD_G,
          INT_PIPE_STAGES_G    => 1,
          PIPE_STAGES_G        => 1,
          SLAVE_READY_EN_G     => false,
          VALID_THOLD_G        => 1,
-         BRAM_EN_G            => true,
-         XIL_DEVICE_G         => "7SERIES",
-         USE_BUILT_IN_G       => false,
+         MEMORY_TYPE_G        => "block",
          GEN_SYNC_FIFO_G      => false,
          CASCADE_SIZE_G       => 1,
          FIFO_ADDR_WIDTH_G    => 9,

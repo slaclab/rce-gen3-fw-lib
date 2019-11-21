@@ -27,12 +27,16 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.PpiPkg.all;
-use work.SsiPkg.all;
-use work.Pgp2bPkg.all;
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+
+library surf;
+use surf.SsiPkg.all;
+use surf.Pgp2bPkg.all;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
 
 entity PpiToPgp is
    generic (
@@ -111,15 +115,13 @@ begin
    -------------------------
    -- Input FIFO, SYNC
    -------------------------
-   U_InputFifo : entity work.AxiStreamFifo 
+   U_InputFifo : entity surf.AxiStreamFifo 
       generic map (
          TPD_G               => TPD_G,
          PIPE_STAGES_G       => 1,
          SLAVE_READY_EN_G    => true,
          VALID_THOLD_G       => 1,
-         BRAM_EN_G           => true,
-         XIL_DEVICE_G        => "7SERIES",
-         USE_BUILT_IN_G      => false,
+         MEMORY_TYPE_G       => "block",
          GEN_SYNC_FIFO_G     => true,
          CASCADE_SIZE_G      => 1,
          FIFO_ADDR_WIDTH_G   => PPI_ADDR_WIDTH_G,
@@ -270,15 +272,13 @@ begin
    -------------------------
    -- Output FIFO, ASYNC
    -------------------------
-   U_OutputFifo : entity work.AxiStreamFifo 
+   U_OutputFifo : entity surf.AxiStreamFifo 
       generic map (
          TPD_G               => TPD_G,
          PIPE_STAGES_G       => 1,
          SLAVE_READY_EN_G    => false,
          VALID_THOLD_G       => 1,
-         BRAM_EN_G           => true,
-         XIL_DEVICE_G        => "7SERIES",
-         USE_BUILT_IN_G      => false,
+         MEMORY_TYPE_G       => "block",
          GEN_SYNC_FIFO_G     => false,
          CASCADE_SIZE_G      => AXIS_CASCADE_SIZE_G,
          FIFO_ADDR_WIDTH_G   => AXIS_ADDR_WIDTH_G,

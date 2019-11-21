@@ -15,7 +15,7 @@ loadRuckusTcl "$::DIR_PATH/../PpiCommon"
 loadRuckusTcl "$::DIR_PATH/../PpiPgp"
 
 # Load local Source Code and constraints
-loadSource      -dir "$::DIR_PATH/rtl"
+loadSource -lib rce_gen3_fw_lib -dir "$::DIR_PATH/rtl"
 loadIpCore      -dir "$::DIR_PATH/ip"
 loadConstraints -dir "$::DIR_PATH/xdc"
 

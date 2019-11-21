@@ -19,12 +19,16 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.RceG3Pkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
 
 entity RceG3DmaAxis is
    generic (
@@ -109,7 +113,7 @@ begin
    -- DMA Channels
    ------------------------------------------
    U_DmaChanGen : for i in 0 to 3 generate
-      U_RxG3DmaAxiChan: entity work.RceG3DmaAxisChan
+      U_RxG3DmaAxiChan: entity rce_gen3_fw_lib.RceG3DmaAxisChan
          generic map (
             TPD_G             => TPD_G,
             AXI_CACHE_G       => AXI_CACHE_C(i),

@@ -8,20 +8,23 @@
 -- the terms contained in the LICENSE.txt file.
 ------------------------------------------------------------------------------
 LIBRARY ieee;
-USE work.ALL;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
+
 Library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
-use work.Pgp2bPkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiLitePkg.all;
-use work.SsiPkg.all;
-use work.RceG3Pkg.all;
-use work.PpiPkg.all;
+library surf;
+use surf.StdRtlPkg.all;
+use surf.Pgp2bPkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiLitePkg.all;
+use surf.SsiPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity interleave_test is end interleave_test;
 
@@ -124,16 +127,11 @@ begin
             end if;
          end process;
 
-         U_SsiPrbsTx : entity work.SsiPrbsTx
+         U_SsiPrbsTx : entity surf.SsiPrbsTx
             generic map (
                TPD_G                      => 1 ns,
-               ALTERA_SYN_G               => false,
-               ALTERA_RAM_G               => "M9K",
-               XIL_DEVICE_G               => "7SERIES",  --Xilinx only generic parameter    
-               BRAM_EN_G                  => true,
-               USE_BUILT_IN_G             => false,  --if set to true, this module is only Xilinx compatible only!!!
+               MEMORY_TYPE_G              => "block",
                GEN_SYNC_FIFO_G            => false,
-               CASCADE_SIZE_G             => 1,
                PRBS_SEED_SIZE_G           => 32,
                PRBS_TAPS_G                => (0 => 16),
                FIFO_ADDR_WIDTH_G          => 9,
@@ -188,7 +186,7 @@ begin
 
    U_PpiAGen: for i in 0 to PPI_COUNT_G-1 generate
 
-      U_PgpToPpi: entity work.PgpToPpi
+      U_PgpToPpi: entity rce_gen3_fw_lib.PgpToPpi
          generic map (
             TPD_G                 => 1 ns,
             AXIS_ADDR_WIDTH_G     => 9,
@@ -213,7 +211,7 @@ begin
    end generate;
 
    -- Inbound Mux
-   U_IbMux : entity work.AxiStreamMux
+   U_IbMux : entity surf.AxiStreamMux
       generic map (
          TPD_G        => 1 ns,
          NUM_SLAVES_G => PPI_COUNT_G
@@ -228,7 +226,7 @@ begin
             );
 
    -- Outbound DeMux
-   U_ObDeMux : entity work.AxiStreamDeMux
+   U_ObDeMux : entity surf.AxiStreamDeMux
       generic map (
          TPD_G         => 1 ns,
          NUM_MASTERS_G => PPI_COUNT_G
@@ -243,7 +241,7 @@ begin
 
    U_PpiBGen: for i in 0 to PPI_COUNT_G-1 generate
 
-      U_PpiToPgp: entity work.PpiToPgp
+      U_PpiToPgp: entity rce_gen3_fw_lib.PpiToPgp
          generic map (
             TPD_G                 => 1 ns,
             PPI_ADDR_WIDTH_G      => 9,
@@ -284,16 +282,11 @@ begin
    U_RxPpiGen: for i in 0 to PPI_COUNT_G-1 generate
       U_RxVcGen: for j in 0 to VC_COUNT_G-1 generate
 
-         U_SsiPrbsRx: entity work.SsiPrbsRx 
+         U_SsiPrbsRx: entity surf.SsiPrbsRx 
             generic map (
                TPD_G                      => 1 ns,
                STATUS_CNT_WIDTH_G         => 32,
-               ALTERA_SYN_G               => false,
-               ALTERA_RAM_G               => "M9K",
-               CASCADE_SIZE_G             => 1,
-               XIL_DEVICE_G               => "7SERIES",  --Xilinx only generic parameter    
-               BRAM_EN_G                  => true,
-               USE_BUILT_IN_G             => false,  --if set to true, this module is only Xilinx compatible only!!!
+               MEMORY_TYPE_G        => "block",
                GEN_SYNC_FIFO_G            => false,
                PRBS_SEED_SIZE_G           => 32,
                PRBS_TAPS_G                => (0 => 16),

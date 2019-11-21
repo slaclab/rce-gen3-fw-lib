@@ -21,11 +21,15 @@ use ieee.std_logic_unsigned.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
-use work.AxiPkg.all;
-use work.i2cPkg.all;
-use work.RceG3Pkg.all;
-use work.AxiLitePkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiPkg.all;
+use surf.i2cPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.AxiLitePkg.all;
 
 entity RceG3Bsi is
    generic (
@@ -101,7 +105,7 @@ begin
    -------------------------
    -- I2c Slave
    -------------------------
-   U_i2cb : entity work.i2cRegSlave
+   U_i2cb : entity surf.i2cRegSlave
       generic map (
          TPD_G                => TPD_G,
          TENBIT_G             => 0,
@@ -323,17 +327,14 @@ begin
    end process;
 
 
-   U_BsiFifo : entity work.Fifo
+   U_BsiFifo : entity surf.Fifo
       generic map (
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
          RST_ASYNC_G     => false,
          GEN_SYNC_FIFO_G => true,
-         BRAM_EN_G       => true,
+         MEMORY_TYPE_G   => "block",
          FWFT_EN_G       => true,
-         USE_DSP48_G     => "no",
-         USE_BUILT_IN_G  => false,
-         XIL_DEVICE_G    => "7SERIES",
          SYNC_STAGES_G   => 3,
          DATA_WIDTH_G    => 48,
          ADDR_WIDTH_G    => 9,

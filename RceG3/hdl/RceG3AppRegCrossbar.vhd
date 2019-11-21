@@ -18,10 +18,14 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 use ieee.std_logic_arith.all;
 
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
 
 entity RceG3AppRegCrossbar is
    generic (
@@ -69,16 +73,12 @@ begin
    dmaClk <= appClk;
    dmaRst <= appRst;
 
-   U_AXIL_M : entity work.SrpV0AxiLite
+   U_AXIL_M : entity surf.SrpV0AxiLite
       generic map (
          TPD_G               => TPD_G,
          SLAVE_READY_EN_G    => true,
          EN_32BIT_ADDR_G     => true,
-         BRAM_EN_G           => true,
-         XIL_DEVICE_G        => "7SERIES",
-         USE_BUILT_IN_G      => false,
-         ALTERA_SYN_G        => false,
-         ALTERA_RAM_G        => "M9K",
+         MEMORY_TYPE_G       => "block",
          GEN_SYNC_FIFO_G     => true,
          FIFO_ADDR_WIDTH_G   => 9,
          FIFO_PAUSE_THRESH_G => 2**8,
@@ -102,7 +102,7 @@ begin
          mAxiLiteWriteMaster => writeMasters(0),
          mAxiLiteWriteSlave  => writeSlaves(0));
 
-   U_AxiLiteAsync : entity work.AxiLiteAsync
+   U_AxiLiteAsync : entity surf.AxiLiteAsync
       generic map (
          TPD_G        => TPD_G,
          COMMON_CLK_G => COMMON_CLK_G)
@@ -122,7 +122,7 @@ begin
          mAxiWriteMaster => writeMasters(1),
          mAxiWriteSlave  => writeSlaves(1));           
 
-   U_XBAR : entity work.AxiLiteCrossbar
+   U_XBAR : entity surf.AxiLiteCrossbar
       generic map (
          TPD_G              => TPD_G,
          DEC_ERROR_RESP_G   => AXI_RESP_OK_C,

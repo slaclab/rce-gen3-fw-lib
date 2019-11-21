@@ -32,12 +32,16 @@ use IEEE.numeric_std.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.PpiPkg.all;
-use work.Pgp2bPkg.all;
-use work.SsiPkg.all;
-use work.RceG3Pkg.all;
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+
+library surf;
+use surf.Pgp2bPkg.all;
+use surf.SsiPkg.all;
+use rce_gen3_fw_lib.RceG3Pkg.all;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
 
 entity PgpToPpi is
    generic (
@@ -193,15 +197,13 @@ begin
    -------------------------
    -- Input FIFO, ASYNC
    -------------------------
-   U_InputFifo : entity work.AxiStreamFifo 
+   U_InputFifo : entity surf.AxiStreamFifo 
       generic map (
          TPD_G               => TPD_G,
          PIPE_STAGES_G       => 0,
          SLAVE_READY_EN_G    => false,
          VALID_THOLD_G       => 1,
-         BRAM_EN_G           => true,
-         XIL_DEVICE_G        => "7SERIES",
-         USE_BUILT_IN_G      => false,
+         MEMORY_TYPE_G       => "block",
          GEN_SYNC_FIFO_G     => false,
          CASCADE_SIZE_G      => AXIS_CASCADE_SIZE_G,
          FIFO_ADDR_WIDTH_G   => AXIS_ADDR_WIDTH_G,
@@ -221,7 +223,7 @@ begin
       );
 
    -- Generate overflow pulse in ppi clock domain
-   U_SyncOverflow : entity work.SynchronizerOneShot 
+   U_SyncOverflow : entity surf.SynchronizerOneShot 
       generic map (
          RELEASE_DELAY_G => 3,
          BYPASS_SYNC_G   => false,
@@ -238,7 +240,7 @@ begin
       );
 
    -- Generate pause pulse in ppi clock domain
-   U_SyncPause : entity work.SynchronizerOneShot 
+   U_SyncPause : entity surf.SynchronizerOneShot 
       generic map (
          RELEASE_DELAY_G => 3,
          BYPASS_SYNC_G   => false,
@@ -358,17 +360,14 @@ begin
    ------------------------------------
 
    -- Header FIFO
-   U_HeadFifo : entity work.Fifo
+   U_HeadFifo : entity surf.Fifo
       generic map (
          TPD_G              => TPD_G,
          RST_POLARITY_G     => '1',
          RST_ASYNC_G        => true,
          GEN_SYNC_FIFO_G    => true,
-         BRAM_EN_G          => true,
+         MEMORY_TYPE_G      => "block",
          FWFT_EN_G          => true,
-         USE_DSP48_G        => "no",
-         USE_BUILT_IN_G     => false,
-         XIL_DEVICE_G       => "7SERIES",
          SYNC_STAGES_G      => 3,
          DATA_WIDTH_G       => HEADER_DATA_WIDTH_C,
          ADDR_WIDTH_G       => HEADER_ADDR_WIDTH_G,
@@ -417,17 +416,14 @@ begin
    end process;
 
    -- Data FIFO
-   U_DataFifo : entity work.Fifo
+   U_DataFifo : entity surf.Fifo
       generic map (
          TPD_G              => TPD_G,
          RST_POLARITY_G     => '1',
          RST_ASYNC_G        => true,
          GEN_SYNC_FIFO_G    => true,
-         BRAM_EN_G          => true,
+         MEMORY_TYPE_G      => "block",
          FWFT_EN_G          => true,
-         USE_DSP48_G        => "no",
-         USE_BUILT_IN_G     => false,
-         XIL_DEVICE_G       => "7SERIES",
          SYNC_STAGES_G      => 3,
          DATA_WIDTH_G       => 64,
          ADDR_WIDTH_G       => DATA_ADDR_WIDTH_G,
@@ -565,7 +561,7 @@ begin
    ---------------------------------
    -- PPI Output Pipeline
    ---------------------------------
-   U_Pipe : entity work.AxiStreamPipeline
+   U_Pipe : entity surf.AxiStreamPipeline
       generic map (
          TPD_G          => TPD_G,
          PIPE_STAGES_G  => 2

@@ -21,12 +21,16 @@ use ieee.std_logic_unsigned.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
-use work.EthMacPkg.all;
-use work.AxiLitePkg.all;
-use work.AxiStreamPkg.all;
-use work.PpiPkg.all;
-use work.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.EthMacPkg.all;
+use surf.AxiLitePkg.all;
+use surf.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
+use rce_gen3_fw_lib.RceG3Pkg.all;
 
 entity RceEthernet is
    generic (
@@ -168,7 +172,7 @@ begin
    -----------------
    -- Register Space
    -----------------
-   U_Reg : entity work.RceEthernetReg
+   U_Reg : entity rce_gen3_fw_lib.RceEthernetReg
       generic map (
          TPD_G => TPD_G)
       port map (
@@ -210,7 +214,7 @@ begin
       -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce1GbE1lane.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce1GbE1lane.vhd
       --------------------------------------------------------------------------------        
-      U_Eth : entity work.Rce1GbE1lane
+      U_Eth : entity rce_gen3_fw_lib.Rce1GbE1lane
          generic map (
             TPD_G => TPD_G)
          port map (
@@ -252,7 +256,7 @@ begin
       -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce10GbE4lane.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce10GbE4lane.vhd
       --------------------------------------------------------------------------------      
-      U_Eth : entity work.Rce10GbE4lane
+      U_Eth : entity rce_gen3_fw_lib.Rce10GbE4lane
          generic map (
             TPD_G => TPD_G)
          port map (
@@ -293,7 +297,7 @@ begin
       -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce10GbE1lane.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce10GbE1lane.vhd
       --------------------------------------------------------------------------------      
-      U_Eth : entity work.Rce10GbE1lane
+      U_Eth : entity rce_gen3_fw_lib.Rce10GbE1lane
          generic map (
             TPD_G => TPD_G)
          port map (
@@ -335,7 +339,7 @@ begin
       -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce40GbE4lane.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce40GbE4lane.vhd
       --------------------------------------------------------------------------------    
-      U_Eth : entity work.Rce40GbE4lane
+      U_Eth : entity rce_gen3_fw_lib.Rce40GbE4lane
          generic map (
             TPD_G => TPD_G)
          port map (
@@ -362,7 +366,7 @@ begin
 
    end generate;
 
-   U_RceMac : entity work.RceEthernetMac
+   U_RceMac : entity rce_gen3_fw_lib.RceEthernetMac
       generic map (
          -- Generic Configurations
          TPD_G              => TPD_G,

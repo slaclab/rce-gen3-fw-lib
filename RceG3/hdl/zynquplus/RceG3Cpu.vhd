@@ -19,9 +19,13 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-use work.StdRtlPkg.all;
-use work.AxiPkg.all;
-use work.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
 
 entity RceG3Cpu is
    generic (
@@ -926,7 +930,7 @@ begin
    -----------------
    -- Power Up Reset
    -----------------
-   U_PwrUpRst : entity work.PwrUpRst
+   U_PwrUpRst : entity surf.PwrUpRst
       generic map (
          TPD_G      => TPD_G,
          DURATION_G => 10000000)        -- 100 ms
@@ -936,7 +940,7 @@ begin
 
    GEN_VEC :
    for i in 3 to 1 generate
-      U_RstSync : entity work.RstSync
+      U_RstSync : entity surf.RstSync
          generic map (
             TPD_G => TPD_G)
          port map (

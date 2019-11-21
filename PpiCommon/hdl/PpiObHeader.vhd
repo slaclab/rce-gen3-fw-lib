@@ -21,11 +21,15 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-use work.StdRtlPkg.all;
-use work.AxiStreamPkg.all;
-use work.AxiPkg.all;
-use work.AxiDmaPkg.all;
-use work.PpiPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiStreamPkg.all;
+use surf.AxiPkg.all;
+use surf.AxiDmaPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.PpiPkg.all;
 
 entity PpiObHeader is
    generic (
@@ -209,7 +213,7 @@ begin
 
 
    -- DMA Engine
-   U_ObDma : entity work.AxiStreamDmaRead 
+   U_ObDma : entity surf.AxiStreamDmaRead 
       generic map (
          TPD_G            => TPD_G,
          AXIS_READY_EN_G  => false,
@@ -232,14 +236,10 @@ begin
 
 
    -- Read Path AXI FIFO
-   U_AxiReadPathFifo : entity work.AxiReadPathFifo 
+   U_AxiReadPathFifo : entity surf.AxiReadPathFifo 
       generic map (
          TPD_G                    => TPD_G,
-         XIL_DEVICE_G             => "7SERIES",
-         USE_BUILT_IN_G           => false,
          GEN_SYNC_FIFO_G          => true,
-         ALTERA_SYN_G             => false,
-         ALTERA_RAM_G             => "M9K",
          ADDR_LSB_G               => 3,
          ID_FIXED_EN_G            => true,
          SIZE_FIXED_EN_G          => true,
@@ -248,10 +248,10 @@ begin
          LOCK_FIXED_EN_G          => true,
          PROT_FIXED_EN_G          => true,
          CACHE_FIXED_EN_G         => true,
-         ADDR_BRAM_EN_G           => false, 
+         ADDR_MEMORY_TYPE_G       => "distributed", 
          ADDR_CASCADE_SIZE_G      => 1,
          ADDR_FIFO_ADDR_WIDTH_G   => 4,
-         DATA_BRAM_EN_G           => false,
+         DATA_MEMORY_TYPE_G       => "distributed",
          DATA_CASCADE_SIZE_G      => 1,
          DATA_FIFO_ADDR_WIDTH_G   => 4,
          AXI_CONFIG_G             => AXI_CONFIG_G
@@ -268,19 +268,15 @@ begin
 
 
    -- Outbound Pend FIFO
-   U_PendFifo : entity work.AxiStreamFifoV2
+   U_PendFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G               => TPD_G,
          INT_PIPE_STAGES_G   => 1,
          PIPE_STAGES_G       => 1,
          SLAVE_READY_EN_G    => false,
          VALID_THOLD_G       => 1,
-         BRAM_EN_G           => true,
-         XIL_DEVICE_G        => "7SERIES",
-         USE_BUILT_IN_G      => false,
+         MEMORY_TYPE_G       => "block",
          GEN_SYNC_FIFO_G     => true,
-         ALTERA_SYN_G        => false,
-         ALTERA_RAM_G        => "M9K",
          CASCADE_SIZE_G      => 1,
          FIFO_ADDR_WIDTH_G   => 9,
          FIFO_FIXED_THRESH_G => true,

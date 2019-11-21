@@ -17,7 +17,9 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-use work.StdRtlPkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
 
 library unisim;
 use unisim.vcomponents.all;
@@ -80,7 +82,7 @@ begin
       end generate;
 
       GEN_SIM : if (SIMULATION_G = true) generate
-         U_SimClkRst : entity work.ClkRst
+         U_SimClkRst : entity surf.ClkRst
             generic map (
                CLK_PERIOD_G      => 10 ns,
                RST_START_DELAY_G => 0 ns,
@@ -113,7 +115,7 @@ begin
       -----------------
       -- Power Up Reset
       -----------------
-      PwrUpRst_Inst : entity work.PwrUpRst
+      PwrUpRst_Inst : entity surf.PwrUpRst
          generic map (
             TPD_G         => TPD_G,
             SIM_SPEEDUP_G => SIMULATION_G)
@@ -126,7 +128,7 @@ begin
    -----------------
    -- Clock Managers
    -----------------   
-   U_MMCM : entity work.ClockManager7
+   U_MMCM : entity surf.ClockManager7
       generic map(
          TPD_G              => TPD_G,
          SIMULATION_G       => SIMULATION_G,

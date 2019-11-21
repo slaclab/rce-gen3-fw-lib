@@ -20,8 +20,12 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
-use work.StdRtlPkg.all;
-use work.AxiLitePkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.AxiLitePkg.all;
+
+library rce_gen3_fw_lib; 
 
 entity DtmTimingSource is
    generic (
@@ -144,7 +148,7 @@ begin
    -- Clock outputs
    U_ClkOut : for i in 0 to 1 generate
 
-      ClkOutBufDiff_1: entity work.ClkOutBufDiff
+      ClkOutBufDiff_1: entity surf.ClkOutBufDiff
          port map (
             clkIn   => distClk,
             clkOutP => dpmClkP(i),
@@ -180,7 +184,7 @@ begin
    end process;
 
    -- Module
-   U_OpCodeSource : entity work.CobOpCodeSource8Bit 
+   U_OpCodeSource : entity rce_gen3_fw_lib.CobOpCodeSource8Bit 
       generic map (
          TPD_G => TPD_G
       ) port map (
@@ -201,17 +205,14 @@ begin
 
 
    -- OpCode FIFO
-   U_OcFifo : entity work.Fifo
+   U_OcFifo : entity surf.Fifo
       generic map (
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
          RST_ASYNC_G     => false,
          GEN_SYNC_FIFO_G => false, -- Async
-         BRAM_EN_G       => false, -- Use dist ram
+         MEMORY_TYPE_G   => "distributed",
          FWFT_EN_G       => true,
-         USE_DSP48_G     => "no",
-         USE_BUILT_IN_G  => false,
-         XIL_DEVICE_G    => "7SERIES",
          SYNC_STAGES_G   => 3,
          DATA_WIDTH_G    => 8,
          ADDR_WIDTH_G    => 6,
@@ -245,7 +246,7 @@ begin
    ocFifoWr <= r.ocFifoWrEn and intCodeEn;
 
    -- Sync write enable
-   U_WrEnSync : entity work.Synchronizer
+   U_WrEnSync : entity surf.Synchronizer
       generic map (
          TPD_G          => 1 ns,
          RST_POLARITY_G => '1',
@@ -276,7 +277,7 @@ begin
          );
 
       -- Input processor
-      U_OpCodeSink : entity work.CobOpCodeSink8Bit
+      U_OpCodeSink : entity rce_gen3_fw_lib.CobOpCodeSink8Bit
          generic map (
             TPD_G           => TPD_G,
             IODELAY_GROUP_G => IODELAY_GROUP_G
@@ -295,17 +296,14 @@ begin
          );
 
       -- Input FIFO
-      U_FbFifo : entity work.Fifo
+      U_FbFifo : entity surf.Fifo
          generic map (
             TPD_G           => TPD_G,
             RST_POLARITY_G  => '1',
             RST_ASYNC_G     => false,
             GEN_SYNC_FIFO_G => false, -- Async
-            BRAM_EN_G       => false, -- Use Dist Ram
+            MEMORY_TYPE_G   => "distributed",
             FWFT_EN_G       => true,
-            USE_DSP48_G     => "no",
-            USE_BUILT_IN_G  => false,
-            XIL_DEVICE_G    => "7SERIES",
             SYNC_STAGES_G   => 3,
             DATA_WIDTH_G    => 8,
             ADDR_WIDTH_G    => 6,
@@ -341,7 +339,7 @@ begin
    end generate;
 
    -- FB Fifo Write Enable Sync
-   U_FbFifoWrEnSync : entity work.SynchronizerVector 
+   U_FbFifoWrEnSync : entity surf.SynchronizerVector 
       generic map (
          TPD_G          => TPD_G,
          RST_POLARITY_G => '1',
@@ -474,7 +472,7 @@ begin
    end process;
 
    -- Command code synchronizer
-   U_CmdDataSync : entity work.SynchronizerVector 
+   U_CmdDataSync : entity surf.SynchronizerVector 
       generic map (
          TPD_G          => TPD_G,
          RST_POLARITY_G => '1',
@@ -489,7 +487,7 @@ begin
          dataOut => regCode
       );
 
-   U_CmdSync : entity work.SynchronizerEdge 
+   U_CmdSync : entity surf.SynchronizerEdge 
       generic map (
          TPD_G          => TPD_G,
          RST_POLARITY_G => '1',
@@ -528,17 +526,10 @@ begin
    led(1) <= ledCountB(15);
 
    -- Sync Led Count
-   U_LedCntSync : entity work.SynchronizerFifo
+   U_LedCntSync : entity surf.SynchronizerFifo
       generic map (
-         TPD_G         => 1 ns,
-         COMMON_CLK_G  => false,
-         BRAM_EN_G     => false,
-         ALTERA_SYN_G  => false,
-         ALTERA_RAM_G  => "M9K",
-         SYNC_STAGES_G => 3,
-         DATA_WIDTH_G  => 32,
-         ADDR_WIDTH_G  => 4,
-         INIT_G        => "0"
+         TPD_G         => TPD_G,
+         DATA_WIDTH_G  => 32
       ) port map (
          rst                => axiClkRst,
          wr_clk             => distClk,

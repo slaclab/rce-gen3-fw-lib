@@ -21,10 +21,14 @@ use ieee.std_logic_unsigned.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.StdRtlPkg.all;
-use work.EthMacPkg.all;
-use work.AxiStreamPkg.all;
-use work.RceG3Pkg.all;
+
+library surf;
+use surf.StdRtlPkg.all;
+use surf.EthMacPkg.all;
+use surf.AxiStreamPkg.all;
+
+library rce_gen3_fw_lib;
+use rce_gen3_fw_lib.RceG3Pkg.all;
 
 entity RceUserEthRouter is
    generic (
@@ -94,21 +98,18 @@ architecture rtl of RceUserEthRouter is
 
 begin
 
-   U_RxFifo : entity work.AxiStreamFifoV2
+   U_RxFifo : entity surf.AxiStreamFifoV2
       generic map (
          -- General Configurations
-         TPD_G             => TPD_G,
-         INT_PIPE_STAGES_G => 0,
-         PIPE_STAGES_G     => 1,
-         SLAVE_READY_EN_G  => true,
-         VALID_THOLD_G     => 1,
+         TPD_G               => TPD_G,
+         INT_PIPE_STAGES_G   => 0,
+         PIPE_STAGES_G       => 1,
+         SLAVE_READY_EN_G    => true,
+         VALID_THOLD_G       => 1,
          -- FIFO configurations
-
-         -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
-         -- MEMORY_TYPE_G       => "distributed", <--- generic for future XPM FIFO release
-         BRAM_EN_G       => false,
-         GEN_SYNC_FIFO_G => false,
-
+         SYNTH_MODE_G        => SYNTH_MODE_G,
+         MEMORY_TYPE_G       => "distributed",
+         GEN_SYNC_FIFO_G     => false,
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => RCEG3_AXIS_DMA_CONFIG_C,
@@ -123,21 +124,18 @@ begin
          mAxisMaster => rxMaster,
          mAxisSlave  => rxSlave);
 
-   U_TxFifo : entity work.AxiStreamFifoV2
+   U_TxFifo : entity surf.AxiStreamFifoV2
       generic map (
          -- General Configurations
-         TPD_G             => TPD_G,
-         INT_PIPE_STAGES_G => 0,
-         PIPE_STAGES_G     => 1,
-         SLAVE_READY_EN_G  => true,
-         VALID_THOLD_G     => 1,
+         TPD_G               => TPD_G,
+         INT_PIPE_STAGES_G   => 0,
+         PIPE_STAGES_G       => 1,
+         SLAVE_READY_EN_G    => true,
+         VALID_THOLD_G       => 1,
          -- FIFO configurations
-
-         -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
-         -- MEMORY_TYPE_G       => "distributed", <--- generic for future XPM FIFO release
-         BRAM_EN_G       => false,
-         GEN_SYNC_FIFO_G => false,
-
+         SYNTH_MODE_G        => SYNTH_MODE_G,
+         MEMORY_TYPE_G       => "distributed",
+         GEN_SYNC_FIFO_G     => false,
          FIFO_ADDR_WIDTH_G   => 4,
          -- AXI Stream Port Configurations
          SLAVE_AXI_CONFIG_G  => EMAC_AXIS_CONFIG_C,
@@ -163,7 +161,7 @@ begin
 
    GEN_USER_MUX : if (UDP_SERVER_EN_G = true) generate
 
-      U_AxiStreamMux : entity work.AxiStreamMux
+      U_AxiStreamMux : entity surf.AxiStreamMux
          generic map (
             TPD_G        => TPD_G,
             NUM_SLAVES_G => 2)
