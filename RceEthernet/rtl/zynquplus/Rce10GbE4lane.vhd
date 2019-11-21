@@ -220,14 +220,10 @@ begin
          gt3_drprdy                   => open,
          gt3_drpwe                    => '0',
          -- TX Reset and Initialization
-         gt_reset_tx_datapath         => '0',
-         gt_reset_tx_pll_and_datapath => '0',
          gt_txpmareset                => B"0000",
          gt_txpcsreset                => B"0000",
          gt_txresetdone               => open,
          -- RX Reset and Initialization
-         gt_reset_rx_datapath         => '0',
-         gt_reset_rx_pll_and_datapath => '0',
          gt_rxpmareset                => B"0000",
          gt_rxpcsreset                => B"0000",
          gt_rxpmaresetdone            => open,

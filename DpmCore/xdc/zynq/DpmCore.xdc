@@ -158,6 +158,8 @@ set_clock_groups -asynchronous \
     -group [get_clocks -include_generated_clocks {ethRefClkP}] \
     -group [get_clocks -hier -filter {name =~ */U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/RXOUTCLK}]                               
 
+set_clock_groups -asynchronous -group [get_clocks -of_objects [get_pins U_DpmCore/U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT2]] -group [get_clocks U_DpmCore/U_Eth10gGen.U_RceEthernet/GEN_10GBase.U_Eth/U_IpCore/U0/gt0_gtwizard_10gbaser_multi_gt_i/gt0_gtwizard_10gbaser_i/gtxe2_i/TXOUTCLK]
+
 # 10GBase-KX4 timing constraints
 create_clock -name xauiClk  -period  6.400 [get_pins -hier -filter {name =~ */U_Eth10gGen.U_RceEthernet/GEN_XAUI.U_Eth/U_IpCore/U0/gt_wrapper_i/gt0_XauiGtx7Core_gt_wrapper_i/gtxe2_i/TXOUTCLK}]
 set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethRefClkP}] -group [get_clocks {xauiClk}]
