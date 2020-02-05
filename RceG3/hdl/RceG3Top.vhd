@@ -40,6 +40,7 @@ entity RceG3Top is
       USE_DMA_ETH_G      : boolean                     := true;  -- true if using DMA[3] for ETH else DMA[3] free for user application
       BYP_BSI_G          : boolean                     := false; -- true for non-COB applications (like DEV boards)
       SEL_REFCLK_G       : boolean                     := true;  -- false = ZYNQ ref, true = ETH ref
+      SLOW_PLL_G         : boolean                     := false; -- Limit PLL to 1.2Ghz
       SIMULATION_G       : boolean                     := false;
       SIM_MEM_PORT_NUM_G : natural range 1024 to 49151 := 9000;
       SIM_DMA_PORT_NUM_G : natural range 1024 to 49151 := 9100;
@@ -181,6 +182,7 @@ begin
    U_RceG3Clocks : entity rce_gen3_fw_lib.RceG3Clocks
       generic map (
          TPD_G        => TPD_G,
+         SLOW_PLL_G   => SLOW_PLL_G,
          SEL_REFCLK_G => SEL_REFCLK_G,
          SIMULATION_G => SIMULATION_G)
       port map (
