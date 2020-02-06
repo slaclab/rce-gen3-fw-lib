@@ -62,13 +62,13 @@ end RceG3Clocks;
 
 architecture mapping of RceG3Clocks is
 
-   constant CLKIN_PERIOD_C    : real := ite(SEL_REFCLK_G, 12.8, 10.0);  -- true = 156.25MHz/2, false = 100MHz
-   constant CLKFBOUT_MULT_F_C : real := ite(SEL_REFCLK_G, 16.0, ite(SLOW_PLL_G, 6.25, 12.5)); -- VCO = 1.25 GHz (625Mhz for SLOW PLL)
-   constant CLK0_DIV_G        : real := ite(SLOW_PLL_G, 3.125, 6.25);   -- 200Mhz
-   constant CLK1_DIV_G        : integer := ite(SLOW_PLL_G, 2,     4);      -- 312.5Mhz
-   constant CLK2_DIV_G        : integer := ite(SLOW_PLL_G, 4,     8);      -- 156.25Mhz
-   constant CLK3_DIV_G        : integer := ite(SLOW_PLL_G, 5,     10);     -- 125Mhz
-   constant CLK4_DIV_G        : integer := ite(SLOW_PLL_G, 10,    20);     -- 62.5Mhz
+   constant CLKIN_PERIOD_C    : real    := ite(SEL_REFCLK_G, 12.8, 10.0);  -- true = 156.25MHz/2, false = 100MHz
+   constant CLKFBOUT_MULT_F_C : real    := ite(SEL_REFCLK_G, 16.0, ite(SLOW_PLL_G, 6.25, 12.5)); -- VCO = 1.25 GHz (625Mhz for SLOW PLL)
+   constant CLK0_DIV_G        : real    := ite(SLOW_PLL_G, 4.0, 6.25);      -- 156.25 / 200Mhz
+   constant CLK1_DIV_G        : integer := ite(SLOW_PLL_G, 2,      4);      -- 312.5Mhz
+   constant CLK2_DIV_G        : integer := ite(SLOW_PLL_G, 4,      8);      -- 156.25Mhz
+   constant CLK3_DIV_G        : integer := ite(SLOW_PLL_G, 5,      10);     -- 125Mhz
+   constant CLK4_DIV_G        : integer := ite(SLOW_PLL_G, 10,     20);     -- 62.5Mhz
 
    signal ethRefClkDiv2 : sl;
    signal stableClock   : sl;
