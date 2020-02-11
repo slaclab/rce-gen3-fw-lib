@@ -18,7 +18,6 @@ env:
     - DOXYFILE: $TRAVIS_BUILD_DIR/Doxyfile
     - GH_REPO_REF: github.com/slaclab/rce-gen3-fw-lib.git
     - MINICONDA_DIR: $PACKAGE_DIR/miniconda
-    - secure: "GH9H9KeVLfvT1EF0Tm0oMUKnSbGhvsGVShI8ijNWzmEujnCx5CuAqH2cGMYTloL6XzgC3Zf99shFygwu6ilItlxkehGzAXl4g9+VD6Oi88OXBdulOJuRKDaDEDWRVhTaD+3vJxi9U6F0V2ugbPf0NvXNctQ1v5u1EWwFIs2sW1GXq0D5J8coREmLrPur5sOUmMHMp5m+A+77duSJbP0/g1qCQYRwD/tD6oEEjNj9Rz+p9jVhQamBq4/S4tIpZgKp/VnImPPRqkSPNpPmjgmjWCS84qXeV4MSQWRDx0iBUQre5L+w2lfmYeIq/g6BduIkmrMYnmcoW4Y0HvJXag8zzUUlKcMPb6rrYQZqVJfnq42BNmaI++1BudEWn9sbMjziufd3C2ThgKn6Oyo68TqgZIze7P25C0s0NlNjZg1ewU1nSC9UNLXLzPmxWVApuA0VWlyPKO/K6K5nlJhMf4EUJDlwANDNyf/aunl3On0nujvqQzCN2r0J4nLuhPPpq60lQJ+kMmSQXdcAy3MgivmS2QU1gyrr2Ol+sEncSyENLi66cUTtDu1wNhxoaAq/o73xcrSgLjsbl8mqQVVxCAQOLHbTdQ4kHymo73hJ+M1Lt31c7ok5Z7Lw/v3cOjuuBQp1586vK5D7CsLfQnrvjn+8/Bn9m+opL6szZicPJUq5haU="
 
 # Install dependencies
 addons:
