@@ -40,6 +40,9 @@ jobs:
       name: "Deploy Conda"
       env: CONDA_TOKEN=$CONDA_UPLOAD_TOKEN_DEV
       before_install:
+        - echo $CONDA_UPLOAD_TOKEN_DEV
+        - echo $CONDA_UPLOAD_TOKEN_TAG
+        - echo $CONDA_TOKEN
         # Prepare folders
         - mkdir -p $MINICONDA_DIR
         # Bring all the tags
