@@ -8,7 +8,7 @@ repo = Repo()
 ver = repo.git.describe('--tags')
 
 # append version constant to package init
-with open('python/surf/__init__.py','a') as vf:
+with open('python/RceG3/__init__.py','a') as vf:
     vf.write(f'\n__version__="{ver}"\n')
 
 setup (
