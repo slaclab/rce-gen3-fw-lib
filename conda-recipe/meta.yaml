@@ -1,5 +1,5 @@
 package: 
-  name: rceg3
+  name: rce_gen3_fw_lib
   version: {{ GIT_DESCRIBE_TAG }}
 
 source:
