@@ -1,5 +1,5 @@
 package: 
-  name: RceG3
+  name: rceg3
   version: {{ GIT_DESCRIBE_TAG }}
 
 source:

@@ -12,7 +12,7 @@ with open('python/surf/__init__.py','a') as vf:
     vf.write(f'\n__version__="{ver}"\n')
 
 setup (
-   name='RceG3',
+   name='rceg3',
    version=ver,
    packages=['RceG3', ],
    package_dir={'':'python'},
