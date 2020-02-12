@@ -27,6 +27,7 @@ use unisim.vcomponents.all;
 entity RceG3Clocks is
    generic (
       TPD_G        : time    := 1 ns;
+      SLOW_PLL_G   : boolean := false;
       SEL_REFCLK_G : boolean := true;   -- false = ZYNQ ref, true = ETH ref
       SIMULATION_G : boolean := false);
    port (
@@ -61,8 +62,13 @@ end RceG3Clocks;
 
 architecture mapping of RceG3Clocks is
 
-   constant CLKIN_PERIOD_C    : real := ite(SEL_REFCLK_G, 12.8, 10.0);  -- true = 156.25MHz/2, false = 100MHz
-   constant CLKFBOUT_MULT_F_C : real := ite(SEL_REFCLK_G, 16.0, 12.5);  -- VCO = 1.25 GHz
+   constant CLKIN_PERIOD_C    : real    := ite(SEL_REFCLK_G, 12.8, 10.0);  -- true = 156.25MHz/2, false = 100MHz
+   constant CLKFBOUT_MULT_F_C : real    := ite(SEL_REFCLK_G, 16.0, ite(SLOW_PLL_G, 6.25, 12.5)); -- VCO = 1.25 GHz (625Mhz for SLOW PLL)
+   constant CLK0_DIV_G        : real    := ite(SLOW_PLL_G, 4.0, 6.25);      -- 156.25 / 200Mhz
+   constant CLK1_DIV_G        : integer := ite(SLOW_PLL_G, 2,      4);      -- 312.5Mhz
+   constant CLK2_DIV_G        : integer := ite(SLOW_PLL_G, 4,      8);      -- 156.25Mhz
+   constant CLK3_DIV_G        : integer := ite(SLOW_PLL_G, 5,      10);     -- 125Mhz
+   constant CLK4_DIV_G        : integer := ite(SLOW_PLL_G, 10,     20);     -- 62.5Mhz
 
    signal ethRefClkDiv2 : sl;
    signal stableClock   : sl;
@@ -149,11 +155,11 @@ begin
          -- MMCM attributes
          CLKIN_PERIOD_G     => CLKIN_PERIOD_C,
          CLKFBOUT_MULT_F_G  => CLKFBOUT_MULT_F_C,
-         CLKOUT0_DIVIDE_F_G => 6.25,    -- 200 MHz = (1.25 GHz/6.25)   
-         CLKOUT1_DIVIDE_G   => 4,       -- 312.5 MHz = (1.25 GHz/4)    
-         CLKOUT2_DIVIDE_G   => 8,       -- 156.25 MHz=(1.25GHz/8)             
-         CLKOUT3_DIVIDE_G   => 10,      -- 125 MHz = (1.25 GHz/10)    
-         CLKOUT4_DIVIDE_G   => 20)      -- 62.5 MHz = (1.25 GHz/20)    
+         CLKOUT0_DIVIDE_F_G => CLK0_DIV_G, -- 200 MHz = (1.25 GHz/6.25)   
+         CLKOUT1_DIVIDE_G   => CLK1_DIV_G, -- 312.5 MHz = (1.25 GHz/4)    
+         CLKOUT2_DIVIDE_G   => CLK2_DIV_G, -- 156.25 MHz=(1.25GHz/8)             
+         CLKOUT3_DIVIDE_G   => CLK3_DIV_G, -- 125 MHz = (1.25 GHz/10)    
+         CLKOUT4_DIVIDE_G   => CLK4_DIV_G) -- 62.5 MHz = (1.25 GHz/20)    
       port map(
          clkIn  => stableClock,
          rstIn  => stableReset,
