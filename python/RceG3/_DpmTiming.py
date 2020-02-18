@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-#-----------------------------------------------------------------------------
-# Title      : RCE Gen3 Version Register space
-#-----------------------------------------------------------------------------
-# File       : _RceVersion.py
-# Created    : 2017-02-25
 #-----------------------------------------------------------------------------
 # This file is part of the RCE GEN3 firmware platform. It is subject to 
 # the license terms in the LICENSE.txt file found in the top-level directory 
@@ -13,8 +7,8 @@
 # copied, modified, propagated, or distributed except according to the terms 
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
-import pyrogue as pr
 
+import pyrogue as pr
 
 class DpmTiming(pr.Device):
     def __init__(self, **kwargs):
