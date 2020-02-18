@@ -1,9 +1,5 @@
-#!/usr/bin/env python
 #-----------------------------------------------------------------------------
 # Title      : RCE Gen3 Version Register space
-#-----------------------------------------------------------------------------
-# File       : _RceVersion.py
-# Created    : 2017-02-25
 #-----------------------------------------------------------------------------
 # This file is part of the RCE GEN3 firmware platform. It is subject to 
 # the license terms in the LICENSE.txt file found in the top-level directory 
@@ -22,7 +18,9 @@ class RceVersion(pr.Device):
     def __init__(
             self,
             description = 'Container for RceVersion Module',
-            offset      = 0x00000000,
+            offset      = 0x00000000, # Unused
+            intOffset   = 0x80000000, # Internal registers offset (zynq=0x80000000, zynquplus=0xB0000000)
+            bsiOffset   = 0x84000000, # BSI I2C Slave Registers   (zynq=0x84000000, zynquplus=0xB0010000)
             **kwargs):
     
         super().__init__(
@@ -33,28 +31,28 @@ class RceVersion(pr.Device):
         self.add(pr.RemoteVariable(
             name        = 'FpgaVersion', 
             description = 'Fpga firmware version number',
-            offset      = 0x80000000, 
+            offset      = intOffset+0x0, 
             mode        = 'RO',
         ))
 
         self.add(pr.RemoteVariable(
             name        = 'ScratchPad', 
             description = 'Scratchpad Register',
-            offset      = 0x80000004, 
+            offset      = intOffset+0x4, 
             mode        = 'RW',
         ))
 
         self.add(pr.RemoteVariable(
             name        = 'RceVersion', 
             description = 'RCE registers version number',
-            offset      = 0x80000008, 
+            offset      = intOffset+0x8, 
             mode        = 'RO',
         ))
 
         self.add(pr.RemoteVariable(
             name        = 'DeviceDna', 
             description = 'Xilinx Device DNA Value',
-            offset      = 0x80000020, 
+            offset      = intOffset+0x20, 
             bitSize     = 64, 
             mode        = 'RO',
         ))
@@ -62,21 +60,21 @@ class RceVersion(pr.Device):
         self.add(pr.RemoteVariable(
             name        = 'EFuseValue', 
             description = 'Xilinx E-Fuse Value',
-            offset      = 0x80000030, 
+            offset      = intOffset+0x30, 
             mode        = 'RO',
         ))
 
         self.add(pr.RemoteVariable(
             name        = 'EthMode', 
             description = 'Ethernet Mode',
-            offset      = 0x80000034, 
+            offset      = intOffset+0x34, 
             mode        = 'RO',
         ))
 
         self.add(pr.RemoteVariable(
             name        = 'HeartBeat', 
             description = 'A constantly incrementing value',
-            offset      = 0x80000038, 
+            offset      = intOffset+0x38, 
             mode        = 'RO',
             pollInterval= 1, 
         ))
@@ -84,7 +82,7 @@ class RceVersion(pr.Device):
         self.add(pr.RemoteVariable(   
             name         = 'GitHash',
             description  = 'GIT SHA-1 Hash',
-            offset       = 0x80000040,
+            offset       = intOffset+0x40,
             bitSize      = 160,
             bitOffset    = 0,
             base         = pr.UInt,
@@ -102,7 +100,7 @@ class RceVersion(pr.Device):
         self.add(pr.RemoteVariable(   
             name         = 'BuildStamp',
             description  = 'Firmware Build String',
-            offset       = 0x80001000,
+            offset       = intOffset+0x1000,
             bitSize      = 8*256,
             base         = pr.String,
             mode         = 'RO',
@@ -112,7 +110,7 @@ class RceVersion(pr.Device):
         self.add(pr.RemoteVariable(
             name        = 'SerialNumber', 
             description = 'Serial Number',
-            offset      = 0x84000140, 
+            offset      = bsiOffset+0x140, 
             bitSize     = 64, 
             mode        = 'RO',
         ))
@@ -120,7 +118,7 @@ class RceVersion(pr.Device):
         self.add(pr.RemoteVariable(
             name        = 'AtcaSlot', 
             description = 'ATCA Slot',
-            offset      = 0x84000148, 
+            offset      = bsiOffset+0x148, 
             bitSize     = 8, 
             bitOffset   = 16, 
             mode        = 'RO',
@@ -129,7 +127,7 @@ class RceVersion(pr.Device):
         self.add(pr.RemoteVariable(
             name        = 'CobBay', 
             description = 'COB Bay',
-            offset      = 0x84000148, 
+            offset      = bsiOffset+0x148, 
             bitSize     = 8, 
             bitOffset   = 8, 
             mode        = 'RO',
@@ -138,7 +136,7 @@ class RceVersion(pr.Device):
         self.add(pr.RemoteVariable(
             name        = 'CobElement', 
             description = 'COB Element',
-            offset      = 0x84000148, 
+            offset      = bsiOffset+0x148, 
             bitSize     = 8, 
             mode        = 'RO',
         ))
