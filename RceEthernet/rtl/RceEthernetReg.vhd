@@ -5,11 +5,11 @@
 -- Description: Zynq Ethernet 10G Registers
 -------------------------------------------------------------------------------
 -- This file is part of 'SLAC RCE 10G Ethernet Core'.
--- It is subject to the license terms in the LICENSE.txt file found in the 
--- top-level directory of this distribution and at: 
---    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
--- No part of 'SLAC RCE 10G Ethernet Core', including this file, 
--- may be copied, modified, propagated, or distributed except according to 
+-- It is subject to the license terms in the LICENSE.txt file found in the
+-- top-level directory of this distribution and at:
+--    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+-- No part of 'SLAC RCE 10G Ethernet Core', including this file,
+-- may be copied, modified, propagated, or distributed except according to
 -- the terms contained in the LICENSE.txt file.
 -------------------------------------------------------------------------------
 
@@ -115,7 +115,6 @@ begin
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
          COMMON_CLK_G    => false,
-         RELEASE_DELAY_G => 3,
          IN_POLARITY_G   => "1",
          OUT_POLARITY_G  => '1',
          SYNTH_CNT_G     => "1",
@@ -152,9 +151,9 @@ begin
       -- Latch the current value
       v := r;
 
-      ------------------------      
+      ------------------------
       -- AXI-Lite Transactions
-      ------------------------      
+      ------------------------
 
       -- Determine the transaction type
       axiSlaveWaitTxn(axilEp, axilWriteMaster, axilReadMaster, v.axilWriteSlave, v.axilReadSlave);
@@ -202,7 +201,7 @@ begin
       axiSlaveRegisterR(axilEp, x"140", 0, muxSlVectorArray(statusCnt, 16));  -- rxFifoDropCnt
 
       -- Close out the transaction
-      axiSlaveDefault(axilEp, v.axilWriteSlave, v.axilReadSlave, AXI_RESP_OK_C);  -- Always return "OK" response for ZYNQ CPU 
+      axiSlaveDefault(axilEp, v.axilWriteSlave, v.axilReadSlave, AXI_RESP_OK_C);  -- Always return "OK" response for ZYNQ CPU
 
       -- Reset
       if (axilRst = '1') then
