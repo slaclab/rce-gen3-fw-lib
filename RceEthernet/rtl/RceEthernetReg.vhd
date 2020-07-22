@@ -158,11 +158,6 @@ begin
       -- Determine the transaction type
       axiSlaveWaitTxn(axilEp, axilWriteMaster, axilReadMaster, v.axilWriteSlave, v.axilReadSlave);
 
-      -- Reset data bus on AXI-Lite ACK (Makes easier to read from CPU memDump)
-      if (axilReadMaster.rready = '1') then
-         v.axilReadSlave.rdata := (others => '0');
-      end if;
-
       axiSlaveRegister(axilEp, x"000", 0, v.countReset);
       axiSlaveRegister(axilEp, x"004", 0, v.phyReset);
       axiSlaveRegister(axilEp, x"008", 0, v.config);
