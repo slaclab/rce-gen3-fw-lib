@@ -8,7 +8,6 @@
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
 
-import RceG3
 import pyrogue as pr
 
 class RceEthernet(pr.Device):

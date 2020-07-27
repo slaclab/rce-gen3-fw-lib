@@ -10,7 +10,6 @@
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
 
-import datetime
 import parse
 import pyrogue as pr
 
