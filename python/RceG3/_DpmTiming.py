@@ -1,10 +1,10 @@
 #-----------------------------------------------------------------------------
-# This file is part of the RCE GEN3 firmware platform. It is subject to 
-# the license terms in the LICENSE.txt file found in the top-level directory 
-# of this distribution and at: 
-#    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
-# No part of the rogue RCE GEN3 firmware platform, including this file, may be 
-# copied, modified, propagated, or distributed except according to the terms 
+# This file is part of the RCE GEN3 firmware platform. It is subject to
+# the license terms in the LICENSE.txt file found in the top-level directory
+# of this distribution and at:
+#    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+# No part of the rogue RCE GEN3 firmware platform, including this file, may be
+# copied, modified, propagated, or distributed except according to the terms
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
 
@@ -21,40 +21,40 @@ class DpmTiming(pr.Device):
             function=pr.RemoteCommand.touchOne
         ))
         self.add(pr.RemoteVariable(
-            name='RxDelay0', 
+            name='RxDelay0',
             description='Delay Value For Rx Data 0 input',
-            offset=0x08, 
-            bitSize=5, 
-            bitOffset=0, 
+            offset=0x08,
+            bitSize=5,
+            bitOffset=0,
             disp='{:d}',
             minimum=0,
             maximum=31))
 
         self.add(pr.RemoteVariable(
-            name='RxErrors0', 
+            name='RxErrors0',
             description='RxErrors Value For Input 0',
-            offset=0x0C, 
-            bitSize=16, 
+            offset=0x0C,
+            bitSize=16,
             bitOffset=16,
             mode='RO',
             pollInterval=1
         ))
 
         self.add(pr.RemoteVariable(
-            name='RxIdle0', 
+            name='RxIdle0',
             description='RxIdle Value For Input 0',
-            offset=0x0C, 
-            bitSize=16, 
+            offset=0x0C,
+            bitSize=16,
             bitOffset=0,
             mode='RO',
             pollInterval=1,
         ))
 
         self.add(pr.RemoteVariable(
-            name='RxDelay1', 
+            name='RxDelay1',
             description='Delay Value For Rx Data 1 input',
-            offset=0x18, 
-            bitSize=5, 
+            offset=0x18,
+            bitSize=5,
             bitOffset=0,
             disp='{:d}',
             minimum=0,
@@ -63,19 +63,19 @@ class DpmTiming(pr.Device):
 
 
         self.add(pr.RemoteVariable(
-            name='RxErrors1', 
+            name='RxErrors1',
             description='RxErrors Value For Input 1',
-            offset=0x1C, 
-            bitSize=16, 
+            offset=0x1C,
+            bitSize=16,
             bitOffset=16,
-            mode='RO', 
+            mode='RO',
             pollInterval=1))
 
         self.add(pr.RemoteVariable(
-            name='RxIdle1', 
+            name='RxIdle1',
             description='RxIdle Value For Input 1',
-            offset=0x1C, 
-            bitSize=16, 
+            offset=0x1C,
+            bitSize=16,
             bitOffset=0,
             mode='RO',
             pollInterval=1,
@@ -90,19 +90,19 @@ class DpmTiming(pr.Device):
         ))
 
         self.add(pr.RemoteVariable(
-            name='RxCount0', 
+            name='RxCount0',
             description='RxCount Value For Input 0',
-            offset=0x24, 
-            bitSize=32, 
+            offset=0x24,
+            bitSize=32,
             bitOffset=0,
             mode='RO',
             pollInterval=1))
 
         self.add(pr.RemoteVariable(
-            name='RxCount1', 
+            name='RxCount1',
             description='RxCount Value For Input 1',
-            offset=0x28, 
-            bitSize=32, 
+            offset=0x28,
+            bitSize=32,
             bitOffset=0,
             mode='RO',
             pollInterval=1))
@@ -120,7 +120,6 @@ class DpmTiming(pr.Device):
 
     def softReset(self):
         self.SoftReset()
-        
+
     def hardReset(self):
         self.ClkReset()
-

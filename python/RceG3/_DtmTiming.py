@@ -1,10 +1,10 @@
 #-----------------------------------------------------------------------------
-# This file is part of the RCE GEN3 firmware platform. It is subject to 
-# the license terms in the LICENSE.txt file found in the top-level directory 
-# of this distribution and at: 
-#    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
-# No part of the rogue RCE GEN3 firmware platform, including this file, may be 
-# copied, modified, propagated, or distributed except according to the terms 
+# This file is part of the RCE GEN3 firmware platform. It is subject to
+# the license terms in the LICENSE.txt file found in the top-level directory
+# of this distribution and at:
+#    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+# No part of the rogue RCE GEN3 firmware platform, including this file, may be
+# copied, modified, propagated, or distributed except according to the terms
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
 
@@ -63,17 +63,17 @@ class DtmTiming(pr.Device):
             mode='RO')
 
         self.add(pr.RemoteVariable(
-            name='TxCount0', 
+            name='TxCount0',
             description='TX Data 0 Counter',
-            offset=0x414, 
-            bitSize=32, 
+            offset=0x414,
+            bitSize=32,
             bitOffset=0))
 
         self.add(pr.RemoteVariable(
-            name='TxCount1', 
+            name='TxCount1',
             description='TX Data 1 Counter',
-            offset=0x418, 
-            bitSize=32, 
+            offset=0x418,
+            bitSize=32,
             bitOffset=0))
 
         self.add(pr.RemoteCommand(
@@ -98,7 +98,3 @@ class DtmTiming(pr.Device):
 
     def countReset(self):
         self.CountReset()
-
-            
-
-        
