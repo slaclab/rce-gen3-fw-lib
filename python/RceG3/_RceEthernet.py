@@ -1,12 +1,21 @@
-import RceG3
+#-----------------------------------------------------------------------------
+# This file is part of the RCE GEN3 firmware platform. It is subject to
+# the license terms in the LICENSE.txt file found in the top-level directory
+# of this distribution and at:
+#    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+# No part of the rogue RCE GEN3 firmware platform, including this file, may be
+# copied, modified, propagated, or distributed except according to the terms
+# contained in the LICENSE.txt file.
+#-----------------------------------------------------------------------------
+
 import pyrogue as pr
 
 class RceEthernet(pr.Device):
     def __init__(self, **kwargs):
-        
+
         # Offset of this module is always the same
         # Override any offset passed in
-        kwargs['offset'] = 0xB0000000 
+        kwargs['offset'] = 0xB0000000
         super().__init__(**kwargs)
 
         self.add(pr.RemoteCommand(
@@ -43,7 +52,7 @@ class RceEthernet(pr.Device):
             mode = 'RO',
             dependencies = [self.MacAddressRaw],
             linkedGet = lambda: ':'.join(f'{b:02x}' for b in self.MacAddressRaw.value().to_bytes(6, 'little'))))
-        
+
         self.add(pr.RemoteVariable(
             name = 'IpAddressRaw',
             offset = 0x01C,
@@ -58,7 +67,7 @@ class RceEthernet(pr.Device):
             dependencies = [self.IpAddressRaw],
             linkedGet = lambda: '.'.join(f'{b:d}' for b in self.IpAddressRaw.value().to_bytes(4, 'little')),
             linkedSet = lambda value: self.IpAddressRaw.set(int.from_bytes((int(x) for x in value.split('.')), 'little'))))
-        
+
         self.add(pr.RemoteVariable(
             name = 'PhyStatus',
             offset = 0x020,
@@ -66,7 +75,7 @@ class RceEthernet(pr.Device):
             bitSize = 8,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'PhyDebug',
             offset = 0x024,
@@ -74,7 +83,7 @@ class RceEthernet(pr.Device):
             bitSize = 6,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'TxShift',
             offset = 0x038,
@@ -82,7 +91,7 @@ class RceEthernet(pr.Device):
             bitSize = 4,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'RxShift',
             offset = 0x038,
@@ -90,7 +99,7 @@ class RceEthernet(pr.Device):
             bitSize = 4,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'FiltEnable',
             offset = 0x038,
@@ -98,7 +107,7 @@ class RceEthernet(pr.Device):
             bitSize = 1,
             base = pr.Bool,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'IpChecksumEnable',
             offset = 0x038,
@@ -106,7 +115,7 @@ class RceEthernet(pr.Device):
             bitSize = 1,
             base = pr.Bool,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'TcpChecksumEnable',
             offset = 0x038,
@@ -114,7 +123,7 @@ class RceEthernet(pr.Device):
             bitSize = 1,
             base = pr.Bool,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'UdpChecksumEnable',
             offset = 0x038,
@@ -122,7 +131,7 @@ class RceEthernet(pr.Device):
             bitSize = 1,
             base = pr.Bool,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'DropOnPause',
             offset = 0x038,
@@ -130,7 +139,7 @@ class RceEthernet(pr.Device):
             bitSize = 1,
             base = pr.Bool,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'EthHeaderSize',
             offset = 0x03C,
@@ -138,7 +147,7 @@ class RceEthernet(pr.Device):
             bitSize = 16,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'RxEnCount',
             offset = 0x100,
@@ -146,7 +155,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'TxEnCount',
             offset = 0x104,
@@ -162,7 +171,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'TxPauseCount',
             offset = 0x10C,
@@ -170,7 +179,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'RxOverflowCount',
             offset = 0x110,
@@ -178,7 +187,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'RxCrcErrorCount',
             offset = 0x114,
@@ -186,7 +195,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'TxUnderRunCount',
             offset = 0x118,
@@ -194,7 +203,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'TxNotReadyCount',
             offset = 0x11C,
@@ -202,7 +211,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'TxLocalFaultCount',
             offset = 0x120,
@@ -210,7 +219,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'RxLocalFaultCount',
             offset = 0x124,
@@ -218,7 +227,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'SyncStatus0Count',
             offset = 0x128,
@@ -226,7 +235,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'SyncStatus1Count',
             offset = 0x12C,
@@ -234,7 +243,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'SyncStatus2Count',
             offset = 0x130,
@@ -242,7 +251,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'SyncStatus3Count',
             offset = 0x134,
@@ -250,7 +259,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'AlignmentCount',
             offset = 0x138,
@@ -258,7 +267,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'RxLinkStatusCount',
             offset = 0x13C,
@@ -266,7 +275,7 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        
+
         self.add(pr.RemoteVariable(
             name = 'RxFifoDropCount',
             offset = 0x140,
@@ -274,4 +283,3 @@ class RceEthernet(pr.Device):
             bitSize = 32,
             base = pr.UInt,
             mode = 'RO'))
-        

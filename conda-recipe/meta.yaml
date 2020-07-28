@@ -1,4 +1,4 @@
-package: 
+package:
   name: rce_gen3_fw_lib
   version: {{ GIT_DESCRIBE_TAG }}
 

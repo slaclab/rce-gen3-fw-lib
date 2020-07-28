@@ -31,11 +31,11 @@
 --
 -------------------------------------------------------------------------------
 -- This file is part of 'SLAC RCE PPI Core'.
--- It is subject to the license terms in the LICENSE.txt file found in the 
--- top-level directory of this distribution and at: 
---    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
--- No part of 'SLAC RCE PPI Core', including this file, 
--- may be copied, modified, propagated, or distributed except according to 
+-- It is subject to the license terms in the LICENSE.txt file found in the
+-- top-level directory of this distribution and at:
+--    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+-- No part of 'SLAC RCE PPI Core', including this file,
+-- may be copied, modified, propagated, or distributed except according to
 -- the terms contained in the LICENSE.txt file.
 -------------------------------------------------------------------------------
 
@@ -230,7 +230,7 @@ begin
 
          if axilReadMaster(0).araddr(7) = '1' then
             v.axilReadSlave.rdata := debug(conv_integer(axilReadMaster(0).araddr(5 downto 2)));
-         else 
+         else
             case axilReadMaster(0).araddr(7 downto 0) is
                when x"00" =>
                   v.axilReadSlave.rdata(0) := r.dmaState.online;
@@ -267,7 +267,7 @@ begin
       axilReadSlave(0)  <= r.axilReadSlave;
       axilWriteSlave(0) <= r.axilWriteSlave;
       dmaState          <= r.dmaState;
-      
+
    end process;
 
 
@@ -280,7 +280,6 @@ begin
          RST_POLARITY_G  => '1',
          RST_ASYNC_G     => false,
          COMMON_CLK_G    => true,
-         RELEASE_DELAY_G => 3,
          IN_POLARITY_G   => "1",
          OUT_POLARITY_G  => "1",
          SYNTH_CNT_G     => "1",
@@ -301,7 +300,7 @@ begin
          wrRst      => axiRst,
          rdClk      => axiClk,
          rdRst      => axiRst
-      );           
+      );
 
 
    ---------------------------------------
@@ -363,7 +362,7 @@ begin
    -- Outbound
    ---------------------------------------
 
-   U_ObHeader : entity rce_gen3_fw_lib.PpiObHeader 
+   U_ObHeader : entity rce_gen3_fw_lib.PpiObHeader
       generic map (
          TPD_G        => TPD_G,
          AXI_CONFIG_G => AXI_ACP_INIT_C
@@ -382,7 +381,7 @@ begin
          obPendMaster    => obPendMaster,
          obPendSlave     => obPendSlave,
          obHeaderDebug(1 downto 0)  => debug(1 downto 0),
-         obHeaderDebug(3 downto 2)  => debug(12 downto 11));         
+         obHeaderDebug(3 downto 2)  => debug(12 downto 11));
 
    U_ObPayload : entity rce_gen3_fw_lib.PpiObPayload
       generic map (
@@ -397,7 +396,7 @@ begin
          axiReadMaster   => hpReadMaster,
          axiReadSlave    => hpReadSlave,
          obCompValid     => compValid(0),
-         obCompSel       => CompSel(0), 
+         obCompSel       => CompSel(0),
          obCompDin       => compDin(0),
          obCompRead      => compRead(0),
          obPendMaster    => obPendMaster,
@@ -406,14 +405,14 @@ begin
          dmaClkRst       => dmaClkRst,
          dmaObMaster     => dmaObMaster,
          dmaObSlave      => dmaObSlave,
-         obPayloadDebug(1 downto 0)  => debug(3 downto 2), 
+         obPayloadDebug(1 downto 0)  => debug(3 downto 2),
          obPayloadDebug(3 downto 2)  => debug(10 downto 9));
 
    ---------------------------------------
    -- Inbound
    ---------------------------------------
 
-   U_IbRoute : entity rce_gen3_fw_lib.PpiIbRoute 
+   U_IbRoute : entity rce_gen3_fw_lib.PpiIbRoute
       generic map (
          TPD_G => TPD_G
       ) port map (
