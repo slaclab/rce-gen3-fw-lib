@@ -27,11 +27,11 @@ addons:
       - flake8
 
 stages:
-    - name: gen_release
-      if: tag IS present
     - name: software_check
       if: (type == pull_request) or (tag IS present) or (branch == master)
     - name: deploy_dev
+    - name: gen_release
+      if: tag IS present
       if: branch = pre-release AND tag IS blank AND NOT (type = pull_request)
     - name: deploy_tag
       if: tag IS present
