@@ -30,9 +30,9 @@ stages:
     - name: software_check
       if: (type == pull_request) or (tag IS present) or (branch == master)
     - name: deploy_dev
+      if: branch = pre-release AND tag IS blank AND NOT (type = pull_request)      
     - name: gen_release
       if: tag IS present
-      if: branch = pre-release AND tag IS blank AND NOT (type = pull_request)
     - name: deploy_tag
       if: tag IS present
 
