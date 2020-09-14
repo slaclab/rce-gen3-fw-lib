@@ -6,8 +6,8 @@ if { $::env(PRJ_PART) != "XCZU9EG-FFVB1156-2-E" } {
    puts "\n\nERROR: PRJ_PART must be either XCZU9EG-FFVB1156-2-E in the Makefile\n\n"; exit -1
 }
 
-# Check for version 2018.3 of Vivado (or later)
-if { [VersionCheck 2018.3] < 0 } {exit -1}
+# Check for Vivado 2019.1
+if { [VersionCheck 2019.1 "mustBeExact" ] < 0 } {exit -1}
 
 # Check for submodule tagging
 if { [info exists ::env(OVERRIDE_SUBMODULE_LOCKS)] != 1 || $::env(OVERRIDE_SUBMODULE_LOCKS) == 0 } {
