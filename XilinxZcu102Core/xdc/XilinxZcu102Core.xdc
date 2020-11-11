@@ -23,6 +23,9 @@ set_property -dict { PACKAGE_PIN AH13 IOSTANDARD LVCMOS33 } [get_ports { led[5] 
 set_property -dict { PACKAGE_PIN AH14 IOSTANDARD LVCMOS33 } [get_ports { led[6] }]
 set_property -dict { PACKAGE_PIN AL12 IOSTANDARD LVCMOS33 } [get_ports { led[7] }]
 
+set_property -dict { PACKAGE_PIN AL8 IOSTANDARD DIFF_SSTL12_DCI ODT RTT_48 } [get_ports { sysClk300P }]
+set_property -dict { PACKAGE_PIN AL7 IOSTANDARD DIFF_SSTL12_DCI ODT RTT_48 } [get_ports { sysClk300N }]
+
 ##############################################################################
 
 set_property PACKAGE_PIN M29 [get_ports { smaTxP }]
