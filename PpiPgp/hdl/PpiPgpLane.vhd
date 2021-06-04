@@ -63,6 +63,7 @@ entity PpiPgpLane is
       pgpTxClk          : in  sl;
       pgpTxClkRst       : in  sl;
       pgpTxIn           : out Pgp2bTxInType;
+      locTxIn           : in  Pgp2bTxInType := PGP2B_TX_IN_INIT_C;
       pgpTxOut          : in  Pgp2bTxOutType;
       pgpTxMasters      : out AxiStreamMasterArray(3 downto 0);
       pgpTxSlaves       : in  AxiStreamSlaveArray(3 downto 0);
@@ -110,6 +111,7 @@ begin
          pgpTxClk          => pgpTxClk,
          pgpTxClkRst       => pgpTxClkRst,
          pgpTxIn           => pgpTxIn,
+         locTxIn           => locTxIn,
          pgpTxOut          => pgpTxOut,
          pgpRxClk          => pgpRxClk,
          pgpRxClkRst       => pgpRxClkRst,
