@@ -62,8 +62,9 @@ end RceEthernetReg;
 
 architecture structure of RceEthernetReg is
 
-   constant STATUS_SIZE_C : positive                      := 17;
-   constant ROLL_OVER_C   : slv(STATUS_SIZE_C-1 downto 0) := toSlv(3, STATUS_SIZE_C);
+   constant STATUS_SIZE_C  : positive                      := 17;
+   constant ROLL_OVER_C    : slv(STATUS_SIZE_C-1 downto 0) := toSlv(3, STATUS_SIZE_C);
+   constant PAUSE_THRESH_C : slv(15 downto 0) := toSlv(9000/16, 16); -- 9000B jumbo frame in cache
 
    type RegType is record
       countReset     : sl;
@@ -220,6 +221,7 @@ begin
    end process;
 
    macConfig.pauseEnable <= '1';
+   macConfig.pauseThresh <= PAUSE_THRESH_C;
 
    U_SyncMAC : entity surf.SynchronizerVector
       generic map (

@@ -64,6 +64,7 @@ entity PpiPgpArray is
       pgpTxClk     : in  slv(NUM_LANES_G-1 downto 0);
       pgpTxClkRst  : in  slv(NUM_LANES_G-1 downto 0);
       pgpTxIn      : out Pgp2bTxInArray(NUM_LANES_G-1 downto 0);
+      locTxIn      : in  Pgp2bTxInArray(NUM_LANES_G-1 downto 0) := (others => PGP2B_TX_IN_INIT_C);
       pgpTxOut     : in  Pgp2bTxOutArray(NUM_LANES_G-1 downto 0);
       pgpTxMasters : out AxiStreamQuadMasterArray(NUM_LANES_G-1 downto 0);
       pgpTxSlaves  : in  AxiStreamQuadSlaveArray(NUM_LANES_G-1 downto 0);
@@ -200,6 +201,7 @@ begin
                pgpTxClk         => pgpTxClk(i),
                pgpTxClkRst      => pgpTxClkRst(i),
                pgpTxIn          => pgpTxIn(i),
+               locTxIn          => locTxIn(i),
                pgpTxOut         => pgpTxOut(i),
                pgpTxMasters     => pgpTxMasters(i),
                pgpTxSlaves      => pgpTxSlaves(i),

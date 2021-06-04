@@ -225,7 +225,7 @@ begin
    -- Generate overflow pulse in ppi clock domain
    U_SyncOverflow : entity surf.SynchronizerOneShot 
       generic map (
-         RELEASE_DELAY_G => 3,
+         OUT_DELAY_G     => 3,
          BYPASS_SYNC_G   => false,
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
@@ -242,7 +242,7 @@ begin
    -- Generate pause pulse in ppi clock domain
    U_SyncPause : entity surf.SynchronizerOneShot 
       generic map (
-         RELEASE_DELAY_G => 3,
+         OUT_DELAY_G     => 3,
          BYPASS_SYNC_G   => false,
          TPD_G           => TPD_G,
          RST_POLARITY_G  => '1',
