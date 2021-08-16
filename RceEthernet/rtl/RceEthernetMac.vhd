@@ -378,6 +378,10 @@ begin
             end if;
          end if;
 
+         -- Combinatorial output
+         rxSlave <= v.rxSlave;
+         txSlave <= v.txSlave;
+
          -- Reset
          if (dmaRst = '1') then
             v := REG_INIT_C;
@@ -387,8 +391,6 @@ begin
          rin <= v;
 
          -- Outputs        
-         rxSlave      <= v.rxSlave;
-         txSlave      <= v.txSlave;
          dmaIbMaster  <= r.dmaIbMaster;
          ibPrimMaster <= r.ibPrimMaster;
 

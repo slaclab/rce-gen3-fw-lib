@@ -346,6 +346,9 @@ begin
 
       end case;
 
+      -- Combinatorial output
+      obPendSlave <= v.hAxisSlave;
+
       -- Reset
       if axiRst = '1' then
          v := REG_INIT_C;
@@ -357,7 +360,6 @@ begin
       -- Outputs
       dmaReq         <= r.dmaReq;
       obAxiError     <= r.rdError;
-      obPendSlave    <= v.hAxisSlave;
       intAxisMaster  <= r.fAxisMaster;
       compWrite      <= r.compWrite;
       obPayloadDebug <= r.obPayloadDebug;

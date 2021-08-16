@@ -478,6 +478,9 @@ begin
 
       end case;
 
+      -- Combinatorial output
+      intObSlave <= v.intObSlave;
+
       -- Reset
       if axilClkRst = '1' then
          v := REG_INIT_C;
@@ -490,7 +493,6 @@ begin
       axilReadMaster  <= r.axilReadMaster;
       axilWriteMaster <= r.axilWriteMaster;
       intIbMaster     <= r.intIbMaster;
-      intObSlave      <= v.intObSlave;
 
    end process;
 
