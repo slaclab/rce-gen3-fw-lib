@@ -253,6 +253,9 @@ begin
             end if;
       end case;
 
+      -- Combinatorial output
+      ippiObSlave <= v.ippiObSlave;
+
       -- Reset
       if ppiClkRst = '1' then
          v := REG_INIT_C;
@@ -263,7 +266,6 @@ begin
 
       -- Outputs
       iaxisObMaster <= r.iaxisObMaster;
-      ippiObSlave   <= v.ippiObSlave;
       txFrameCntEn  <= r.txFrameCntEn;
 
    end process;
