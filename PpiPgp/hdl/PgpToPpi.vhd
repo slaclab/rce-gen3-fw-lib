@@ -338,6 +338,9 @@ begin
          end if;
       end if;
 
+      -- Combinatorial output
+      intIbSlave <= v.intIbSlave;
+
       -- Reset
       if ppiClkRst = '1' or ppiState.online = '0' then
          v := REG_INIT_C;
@@ -350,7 +353,6 @@ begin
       dataIn        <= r.dataIn;
       headerIn      <= r.headerIn;
       rxFrameCntEn  <= r.headerIn.valid;
-      intIbSlave    <= v.intIbSlave;
 
    end process;
 
@@ -542,6 +544,9 @@ begin
 
       end case;
 
+      -- Combinatorial output
+      dataRead <= v.dataRead;
+
       -- Reset
       if ppiClkRst = '1' then
          v := REG_MOVE_INIT_C;
@@ -553,7 +558,6 @@ begin
       -- Outputs
       regIbMaster <= rm.regIbMaster;
       headerRead  <= rm.headerRead;
-      dataRead    <= v.dataRead;
 
    end process;
 

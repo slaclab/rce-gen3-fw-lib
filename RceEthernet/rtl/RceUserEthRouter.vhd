@@ -355,6 +355,9 @@ begin
             v.cnt      := 0;
          end if;
 
+         -- Combinatorial output
+         obMacPrimSlave <= v.obMacPrimSlave;
+
          -- Reset
          if (ethRst = '1') then
             v := REG_INIT_C;
@@ -364,7 +367,6 @@ begin
          rin <= v;
 
          -- Outputs       
-         obMacPrimSlave <= v.obMacPrimSlave;
          txMaster       <= r.txMaster;
          ethUdpObMaster <= r.ethUdpObMaster;
 
