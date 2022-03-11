@@ -187,6 +187,9 @@ architecture mapping of DtmCore is
    signal armEthRx   : ArmEthRxArray(1 downto 0) := (others => ARM_ETH_RX_INIT_C);
    signal armEthMode : slv(31 downto 0)          := (others => '0');
 
+   signal ethDummyTxP : slv(2 downto 0);
+   signal ethDummyTxN : slv(2 downto 0);
+
    signal gtRxP : slv(3 downto 0);
    signal gtRxN : slv(3 downto 0);
    signal gtTxP : slv(3 downto 0);
@@ -522,9 +525,9 @@ begin
             ethRxN(0)            => ethRxM,
             ethRxN(3 downto 1)   => "111",
             ethTxP(0)            => ethTxP,
-            ethTxP(3 downto 1)   => open,
+            ethTxP(3 downto 1)   => ethDummyTxP,
             ethTxN(0)            => ethTxM,
-            ethTxN(3 downto 1)   => open);
+            ethTxN(3 downto 1)   => ethDummyTxN);
 
       armEthMode <= X"00000001" when ETH_TYPE_G = "ZYNQ-GEM" else
                     X"00000002" when ETH_TYPE_G = "1000BASE-KX" else
