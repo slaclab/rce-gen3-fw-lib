@@ -141,7 +141,7 @@ class RceVersion(pr.Device):
         ))
 
         def parseBuildStamp(var, read):
-            p = parse.parse("{ImageName}: {BuildEnv}, {BuildServer}, Built {BuildDate} by {Builder}", var.dependencies[0].get(read))
+            p = parse.parse("{ImageName}: {BuildEnv}, {BuildServer}, Built {BuildDate} by {Builder}", var.dependencies[0].get(read=read))
             if p is None:
                 return ''
             else:
