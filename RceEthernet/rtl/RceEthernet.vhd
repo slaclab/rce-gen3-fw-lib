@@ -5,11 +5,11 @@
 -- Description: Wrapper file for Zynq Ethernet 10G core
 -------------------------------------------------------------------------------
 -- This file is part of 'SLAC RCE 10G Ethernet Core'.
--- It is subject to the license terms in the LICENSE.txt file found in the 
--- top-level directory of this distribution and at: 
---    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
--- No part of 'SLAC RCE 10G Ethernet Core', including this file, 
--- may be copied, modified, propagated, or distributed except according to 
+-- It is subject to the license terms in the LICENSE.txt file found in the
+-- top-level directory of this distribution and at:
+--    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+-- No part of 'SLAC RCE 10G Ethernet Core', including this file,
+-- may be copied, modified, propagated, or distributed except according to
 -- the terms contained in the LICENSE.txt file.
 -------------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ entity RceEthernet is
       -- Generic Configurations
       TPD_G              : time                  := 1 ns;
       RCE_DMA_MODE_G     : RceDmaModeType        := RCE_DMA_AXISV2_C;
-      ETH_TYPE_G         : string                := "1000BASE-KX";  -- [1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4] 
+      ETH_TYPE_G         : string                := "1000BASE-KX";  -- [1000BASE-KX, 10GBASE-KX4, 10GBASE-KR, 40GBASE-KR4]
       SYNTH_MODE_G       : string                := "xpm";
       MEMORY_TYPE_G      : string                := "block";
       EN_JUMBO_G         : boolean               := true;
@@ -160,11 +160,9 @@ begin
 
    ----------
    -- Outputs
-   ----------   
+   ----------
    dmaClk         <= dmaClock;
    dmaRst         <= dmaReset;
-   dmaClock       <= clk200;
-   dmaReset       <= rst200;
    userEthClk     <= ethClk;
    userEthRst     <= ethRst;
    userEthMacAddr <= macConfig.macAddress;
@@ -206,14 +204,16 @@ begin
 
       ethClk <= clk125;
       ethRst <= rst125;
+      dmaClock <= clk125;
+      dmaReset <= rst125;
 
-      --------------------------------------------------------------------------------      
+      --------------------------------------------------------------------------------
       --                         1000BASE-KX                                        --
-      --------------------------------------------------------------------------------    
+      --------------------------------------------------------------------------------
       -- This VHDL wrapper is determined by the ZYNQ family type
       -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce1GbE1lane.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce1GbE1lane.vhd
-      --------------------------------------------------------------------------------        
+      --------------------------------------------------------------------------------
       U_Eth : entity rce_gen3_fw_lib.Rce1GbE1lane
          generic map (
             TPD_G => TPD_G)
@@ -248,14 +248,16 @@ begin
    -- 10GBASE-KX4
    --------------
    GEN_XAUI : if (ETH_TYPE_G = "10GBASE-KX4") generate
+      dmaClock <= clk200;
+      dmaReset <= rst200;
 
-      --------------------------------------------------------------------------------      
+      --------------------------------------------------------------------------------
       --                    10GBASE-KX4 (A.K.A. XAUI)                               --
-      --------------------------------------------------------------------------------    
+      --------------------------------------------------------------------------------
       -- This VHDL wrapper is determined by the ZYNQ family type
       -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce10GbE4lane.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce10GbE4lane.vhd
-      --------------------------------------------------------------------------------      
+      --------------------------------------------------------------------------------
       U_Eth : entity rce_gen3_fw_lib.Rce10GbE4lane
          generic map (
             TPD_G => TPD_G)
@@ -289,14 +291,16 @@ begin
    -- 10GBASE-KR
    -------------
    GEN_10GBase : if (ETH_TYPE_G = "10GBASE-KR") generate
+      dmaClock <= clk200;
+      dmaReset <= rst200;
 
-      --------------------------------------------------------------------------------      
+      --------------------------------------------------------------------------------
       --                         10GBASE-KR                                         --
-      --------------------------------------------------------------------------------    
+      --------------------------------------------------------------------------------
       -- This VHDL wrapper is determined by the ZYNQ family type
       -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce10GbE1lane.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce10GbE1lane.vhd
-      --------------------------------------------------------------------------------      
+      --------------------------------------------------------------------------------
       U_Eth : entity rce_gen3_fw_lib.Rce10GbE1lane
          generic map (
             TPD_G => TPD_G)
@@ -331,14 +335,16 @@ begin
    -- 40GBASE-KR4
    --------------
    GEN_40GBase : if (ETH_TYPE_G = "40GBASE-KR4") generate
+      dmaClock <= clk200;
+      dmaReset <= rst200;
 
-      --------------------------------------------------------------------------------      
+      --------------------------------------------------------------------------------
       --                         40GBASE-KR4                                        --
-      --------------------------------------------------------------------------------    
+      --------------------------------------------------------------------------------
       -- This VHDL wrapper is determined by the ZYNQ family type
       -- Zynq-7000:        rce-gen3-fw-lib/RceEthernet/rtl/zynq/Rce40GbE4lane.vhd
       -- Zynq Ultrascale+: rce-gen3-fw-lib/RceEthernet/rtl/zynquplus/Rce40GbE4lane.vhd
-      --------------------------------------------------------------------------------    
+      --------------------------------------------------------------------------------
       U_Eth : entity rce_gen3_fw_lib.Rce40GbE4lane
          generic map (
             TPD_G => TPD_G)
