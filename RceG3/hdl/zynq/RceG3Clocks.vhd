@@ -6,11 +6,11 @@
 -- Clock generation block for generation 3 RCE core.
 -------------------------------------------------------------------------------
 -- This file is part of 'SLAC RCE Core'.
--- It is subject to the license terms in the LICENSE.txt file found in the 
--- top-level directory of this distribution and at: 
---    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
--- No part of 'SLAC RCE Core', including this file, 
--- may be copied, modified, propagated, or distributed except according to 
+-- It is subject to the license terms in the LICENSE.txt file found in the
+-- top-level directory of this distribution and at:
+--    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+-- No part of 'SLAC RCE Core', including this file,
+-- may be copied, modified, propagated, or distributed except according to
 -- the terms contained in the LICENSE.txt file.
 -------------------------------------------------------------------------------
 
@@ -133,7 +133,7 @@ begin
 
    -----------------
    -- Clock Managers
-   -----------------   
+   -----------------
    U_MMCM : entity surf.ClockManager7
       generic map(
          TPD_G              => TPD_G,
@@ -146,11 +146,11 @@ begin
          -- MMCM attributes
          CLKIN_PERIOD_G     => CLKIN_PERIOD_C,
          CLKFBOUT_MULT_F_G  => CLKFBOUT_MULT_F_C,
-         CLKOUT0_DIVIDE_F_G => CLK0_DIV_G, -- 200 MHz = (1.25 GHz/6.25)   
-         CLKOUT1_DIVIDE_G   => CLK1_DIV_G, -- 312.5 MHz = (1.25 GHz/4)    
-         CLKOUT2_DIVIDE_G   => CLK2_DIV_G, -- 156.25 MHz=(1.25GHz/8)             
-         CLKOUT3_DIVIDE_G   => CLK3_DIV_G, -- 125 MHz = (1.25 GHz/10)    
-         CLKOUT4_DIVIDE_G   => CLK4_DIV_G) -- 62.5 MHz = (1.25 GHz/20)    
+         CLKOUT0_DIVIDE_F_G => CLK0_DIV_G, -- 200 MHz = (1.25 GHz/6.25)
+         CLKOUT1_DIVIDE_G   => CLK1_DIV_G, -- 312.5 MHz = (1.25 GHz/4)
+         CLKOUT2_DIVIDE_G   => CLK2_DIV_G, -- 156.25 MHz=(1.25GHz/8)
+         CLKOUT3_DIVIDE_G   => CLK3_DIV_G, -- 125 MHz = (1.25 GHz/10)
+         CLKOUT4_DIVIDE_G   => CLK4_DIV_G) -- 62.5 MHz = (1.25 GHz/20)
       port map(
          clkIn  => stableClock,
          rstIn  => stableReset,
@@ -161,8 +161,16 @@ begin
          -- Status
          locked => locked);
 
-   axiDmaClk <= clkOut(0);
-   axiDmaRst <= rstOut(0);
+
+   GEN_AXI_200 : if (SLOW_PLL_G = false) generate
+      axiDmaClk <= clkOut(0);
+      axiDmaRst <= rstOut(0);
+   end generate;
+
+   GEN_AXI_125 : if (SLOW_PLL_G = true) generate
+      axiDmaClk <= clkOut(2);
+      axiDmaRst <= rstOut(2);
+   end generate;
 
    axilClk <= clkOut(3);
    axilRst <= rstOut(3);

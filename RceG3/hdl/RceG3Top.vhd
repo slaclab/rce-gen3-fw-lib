@@ -6,11 +6,11 @@
 -- Top level file for ARM based rce generation 3 processor core.
 -------------------------------------------------------------------------------
 -- This file is part of 'SLAC RCE Core'.
--- It is subject to the license terms in the LICENSE.txt file found in the 
--- top-level directory of this distribution and at: 
---    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
--- No part of 'SLAC RCE Core', including this file, 
--- may be copied, modified, propagated, or distributed except according to 
+-- It is subject to the license terms in the LICENSE.txt file found in the
+-- top-level directory of this distribution and at:
+--    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+-- No part of 'SLAC RCE Core', including this file,
+-- may be copied, modified, propagated, or distributed except according to
 -- the terms contained in the LICENSE.txt file.
 -------------------------------------------------------------------------------
 
@@ -172,13 +172,13 @@ architecture structure of RceG3Top is
 
 begin
 
-   ------------------------------------------------------------------------   
+   ------------------------------------------------------------------------
    --                         Clock Generation                           --
-   ------------------------------------------------------------------------   
+   ------------------------------------------------------------------------
    -- This VHDL wrapper is determined by the ZYNQ family type
    -- Zynq-7000:        rce-gen3-fw-lib/RceG3/hdl/zynq/RceG3Clocks.vhd
    -- Zynq Ultrascale+: rce-gen3-fw-lib/RceG3/hdl/zynquplus/RceG3Clocks.vhd
-   ------------------------------------------------------------------------   
+   ------------------------------------------------------------------------
    U_RceG3Clocks : entity rce_gen3_fw_lib.RceG3Clocks
       generic map (
          TPD_G        => TPD_G,
