@@ -168,8 +168,8 @@ begin
    end generate;
 
    GEN_AXI_125 : if (SLOW_PLL_G = true) generate
-      axiDmaClk <= clkOut(2);
-      axiDmaRst <= rstOut(2);
+      axiDmaClk <= clkOut(3);
+      axiDmaRst <= rstOut(3);
    end generate;
 
    axilClk <= clkOut(3);
