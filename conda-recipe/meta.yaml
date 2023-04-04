@@ -10,14 +10,14 @@ build:
 
 requirements:
    build:
-     - python<3.8
+     - python
      - rogue
      - git
      - gitpython
      - numpy
 
    run:
-     - python<3.8
+     - python
      - rogue
      - numpy
 
