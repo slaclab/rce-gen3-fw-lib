@@ -5,11 +5,11 @@
 -- Description: Wrapper file for Zynq Ethernet 10G core
 -------------------------------------------------------------------------------
 -- This file is part of 'SLAC RCE 10G Ethernet Core'.
--- It is subject to the license terms in the LICENSE.txt file found in the 
--- top-level directory of this distribution and at: 
---    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
--- No part of 'SLAC RCE 10G Ethernet Core', including this file, 
--- may be copied, modified, propagated, or distributed except according to 
+-- It is subject to the license terms in the LICENSE.txt file found in the
+-- top-level directory of this distribution and at:
+--    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+-- No part of 'SLAC RCE 10G Ethernet Core', including this file,
+-- may be copied, modified, propagated, or distributed except according to
 -- the terms contained in the LICENSE.txt file.
 -------------------------------------------------------------------------------
 
@@ -168,7 +168,7 @@ begin
          BYP_COMMON_CLK_G  => true,
          BYP_CONFIG_G      => EMAC_AXIS_CONFIG_C,
          -- VLAN Configurations
-         VLAN_EN_G         => VLAN_EN_G,
+         --VLAN_EN_G         => VLAN_EN_G,
          VLAN_SIZE_G       => VLAN_SIZE_G,
          VLAN_VID_G        => VLAN_VID_G,
          VLAN_COMMON_CLK_G => true,
@@ -283,9 +283,9 @@ begin
 
       ----------------------------------------------
       -- Shift outbound data n bytes to the right.
-      -- This removes bytes of data at start 
+      -- This removes bytes of data at start
       -- of the packet. These were added by software
-      -- to create a software friendly alignment of 
+      -- to create a software friendly alignment of
       -- outbound data.
       ----------------------------------------------
       U_TxShift : entity surf.AxiStreamShift
@@ -390,7 +390,7 @@ begin
          -- Register the variable for next clock cycle
          rin <= v;
 
-         -- Outputs        
+         -- Outputs
          dmaIbMaster  <= r.dmaIbMaster;
          ibPrimMaster <= r.ibPrimMaster;
 
