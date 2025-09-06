@@ -166,13 +166,13 @@ begin
          BYP_EN_G          => BYP_EN_G,
          BYP_ETH_TYPE_G    => BYP_ETH_TYPE_G,
          BYP_COMMON_CLK_G  => true,
-         BYP_CONFIG_G      => EMAC_AXIS_CONFIG_C,
+         BYP_CONFIG_G      => EMAC_AXIS_CONFIG_C)
          -- VLAN Configurations
          --VLAN_EN_G         => VLAN_EN_G,
-         VLAN_SIZE_G       => VLAN_SIZE_G,
-         VLAN_VID_G        => VLAN_VID_G,
-         VLAN_COMMON_CLK_G => true,
-         VLAN_CONFIG_G     => EMAC_AXIS_CONFIG_C)
+         -- VLAN_SIZE_G       => VLAN_SIZE_G,
+         -- VLAN_VID_G        => VLAN_VID_G,
+         -- VLAN_COMMON_CLK_G => true,
+         -- VLAN_CONFIG_G     => EMAC_AXIS_CONFIG_C)
       port map (
          -- Core Clock and Reset
          ethClk           => ethClk,
