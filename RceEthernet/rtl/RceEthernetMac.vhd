@@ -60,6 +60,7 @@ entity RceEthernetMac is
       dmaObMaster          : in  AxiStreamMasterType;
       dmaObSlave           : out AxiStreamSlaveType;
       -- Configuration/Status Interface
+      phyReady             : in  sl;
       rxShift              : in  slv(3 downto 0);
       txShift              : in  slv(3 downto 0);
       ethHeaderSize        : in  slv(15 downto 0);
@@ -77,10 +78,6 @@ entity RceEthernetMac is
       userEthBypIbSlave    : out AxiStreamSlaveType;
       userEthBypObMaster   : out AxiStreamMasterType;
       userEthBypObSlave    : in  AxiStreamSlaveType;
-      userEthVlanIbMasters : in  AxiStreamMasterArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanIbSlaves  : out AxiStreamSlaveArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanObMasters : out AxiStreamMasterArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanObSlaves  : in  AxiStreamSlaveArray(VLAN_SIZE_G-1 downto 0);
       -- XLGMII PHY Interface
       xlgmiiRxd            : in  slv(127 downto 0) := (others => '0');
       xlgmiiRxc            : in  slv(15 downto 0)  := (others => '0');
@@ -183,13 +180,6 @@ begin
          ibMacBypSlave    => userEthBypIbSlave,
          obMacBypMaster   => userEthBypObMaster,
          obMacBypSlave    => userEthBypObSlave,
-         -- VLAN Interfaces
-         --vlanClk          => ethClk,
-         --vlanRst          => ethRst,
-         ibMacVlanMasters => userEthVlanIbMasters,
-         ibMacVlanSlaves  => userEthVlanIbSlaves,
-         obMacVlanMasters => userEthVlanObMasters,
-         obMacVlanSlaves  => userEthVlanObSlaves,
          -- XLGMII PHY Interface
          xlgmiiRxd        => xlgmiiRxd,
          xlgmiiRxc        => xlgmiiRxc,
@@ -208,6 +198,7 @@ begin
          gmiiTxEr         => gmiiTxEr,
          gmiiTxd          => gmiiTxd,
          -- Configuration and status
+         phyReady         => phyReady,
          ethConfig        => macConfig,
          ethStatus        => macStatus);
 
