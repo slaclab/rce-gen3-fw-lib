@@ -408,10 +408,6 @@ begin
          userEthBypIbSlave    => userEthBypIbSlave,
          userEthBypObMaster   => userEthBypObMaster,
          userEthBypObSlave    => userEthBypObSlave,
-         userEthVlanIbMasters => userEthVlanIbMasters,
-         userEthVlanIbSlaves  => userEthVlanIbSlaves,
-         userEthVlanObMasters => userEthVlanObMasters,
-         userEthVlanObSlaves  => userEthVlanObSlaves,
          -- XLGMII PHY Interface
          xlgmiiRxd            => xlgmiiRxd,
          xlgmiiRxc            => xlgmiiRxc,
