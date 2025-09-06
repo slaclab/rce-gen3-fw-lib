@@ -46,10 +46,7 @@ entity RceEthernetMac is
       UDP_SERVER_SIZE_G  : positive              := 1;
       UDP_SERVER_PORTS_G : PositiveArray         := (0 => 8192);
       BYP_EN_G           : boolean               := false;
-      BYP_ETH_TYPE_G     : slv(15 downto 0)      := x"AAAA";
-      VLAN_EN_G          : boolean               := false;
-      VLAN_SIZE_G        : positive range 1 to 8 := 1;
-      VLAN_VID_G         : Slv12Array            := (0 => x"001"));
+      BYP_ETH_TYPE_G     : slv(15 downto 0)      := x"AAAA");
    port (
       -- DMA Interface
       dmaClk               : in  sl;

@@ -46,10 +46,7 @@ entity RceEthernet is
       UDP_SERVER_SIZE_G  : positive              := 1;
       UDP_SERVER_PORTS_G : PositiveArray         := (0 => 8192);
       BYP_EN_G           : boolean               := false;
-      BYP_ETH_TYPE_G     : slv(15 downto 0)      := x"AAAA";
-      VLAN_EN_G          : boolean               := false;
-      VLAN_SIZE_G        : positive range 1 to 8 := 1;
-      VLAN_VID_G         : Slv12Array            := (0 => x"001"));
+      BYP_ETH_TYPE_G     : slv(15 downto 0)      := x"AAAA");
    port (
       -- Clocks
       clk312               : in  sl;
@@ -85,10 +82,6 @@ entity RceEthernet is
       userEthBypIbSlave    : out AxiStreamSlaveType;
       userEthBypObMaster   : out AxiStreamMasterType;
       userEthBypObSlave    : in  AxiStreamSlaveType;
-      userEthVlanIbMasters : in  AxiStreamMasterArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanIbSlaves  : out AxiStreamSlaveArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanObMasters : out AxiStreamMasterArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanObSlaves  : in  AxiStreamSlaveArray(VLAN_SIZE_G-1 downto 0);
       -- AXI-Lite Buses
       axilClk              : in  sl;
       axilRst              : in  sl;
@@ -386,10 +379,7 @@ begin
          UDP_SERVER_SIZE_G  => UDP_SERVER_SIZE_G,
          UDP_SERVER_PORTS_G => UDP_SERVER_PORTS_G,
          BYP_EN_G           => BYP_EN_G,
-         BYP_ETH_TYPE_G     => BYP_ETH_TYPE_G,
-         VLAN_EN_G          => VLAN_EN_G,
-         VLAN_SIZE_G        => VLAN_SIZE_G,
-         VLAN_VID_G         => VLAN_VID_G)
+         BYP_ETH_TYPE_G     => BYP_ETH_TYPE_G)
       port map (
          -- DMA Interface
          dmaClk               => dmaClock,
