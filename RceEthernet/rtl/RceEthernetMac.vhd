@@ -60,7 +60,6 @@ entity RceEthernetMac is
       dmaObMaster          : in  AxiStreamMasterType;
       dmaObSlave           : out AxiStreamSlaveType;
       -- Configuration/Status Interface
-      phyReady             : in  sl;
       rxShift              : in  slv(3 downto 0);
       txShift              : in  slv(3 downto 0);
       ethHeaderSize        : in  slv(15 downto 0);
@@ -159,7 +158,6 @@ begin
          JUMBO_G           => EN_JUMBO_G,
          -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
          -- MEMORY_TYPE_G       => MEMORY_TYPE_G, <--- generic for future XPM FIFO release
-         -- Non-VLAN Configurations
          FILT_EN_G         => true,
          PRIM_COMMON_CLK_G => true,
          PRIM_CONFIG_G     => EMAC_AXIS_CONFIG_C,
@@ -167,12 +165,6 @@ begin
          BYP_ETH_TYPE_G    => BYP_ETH_TYPE_G,
          BYP_COMMON_CLK_G  => true,
          BYP_CONFIG_G      => EMAC_AXIS_CONFIG_C)
-         -- VLAN Configurations
-         --VLAN_EN_G         => VLAN_EN_G,
-         -- VLAN_SIZE_G       => VLAN_SIZE_G,
-         -- VLAN_VID_G        => VLAN_VID_G,
-         -- VLAN_COMMON_CLK_G => true,
-         -- VLAN_CONFIG_G     => EMAC_AXIS_CONFIG_C)
       port map (
          -- Core Clock and Reset
          ethClk           => ethClk,
@@ -192,8 +184,8 @@ begin
          obMacBypMaster   => userEthBypObMaster,
          obMacBypSlave    => userEthBypObSlave,
          -- VLAN Interfaces
-         vlanClk          => ethClk,
-         vlanRst          => ethRst,
+         --vlanClk          => ethClk,
+         --vlanRst          => ethRst,
          ibMacVlanMasters => userEthVlanIbMasters,
          ibMacVlanSlaves  => userEthVlanIbSlaves,
          obMacVlanMasters => userEthVlanObMasters,
@@ -216,7 +208,6 @@ begin
          gmiiTxEr         => gmiiTxEr,
          gmiiTxd          => gmiiTxd,
          -- Configuration and status
-         phyReady         => phyReady,
          ethConfig        => macConfig,
          ethStatus        => macStatus);
 
