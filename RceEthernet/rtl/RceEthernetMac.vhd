@@ -5,11 +5,11 @@
 -- Description: Wrapper file for Zynq Ethernet 10G core
 -------------------------------------------------------------------------------
 -- This file is part of 'SLAC RCE 10G Ethernet Core'.
--- It is subject to the license terms in the LICENSE.txt file found in the 
--- top-level directory of this distribution and at: 
---    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
--- No part of 'SLAC RCE 10G Ethernet Core', including this file, 
--- may be copied, modified, propagated, or distributed except according to 
+-- It is subject to the license terms in the LICENSE.txt file found in the
+-- top-level directory of this distribution and at:
+--    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html.
+-- No part of 'SLAC RCE 10G Ethernet Core', including this file,
+-- may be copied, modified, propagated, or distributed except according to
 -- the terms contained in the LICENSE.txt file.
 -------------------------------------------------------------------------------
 
@@ -46,10 +46,7 @@ entity RceEthernetMac is
       UDP_SERVER_SIZE_G  : positive              := 1;
       UDP_SERVER_PORTS_G : PositiveArray         := (0 => 8192);
       BYP_EN_G           : boolean               := false;
-      BYP_ETH_TYPE_G     : slv(15 downto 0)      := x"AAAA";
-      VLAN_EN_G          : boolean               := false;
-      VLAN_SIZE_G        : positive range 1 to 8 := 1;
-      VLAN_VID_G         : Slv12Array            := (0 => x"001"));
+      BYP_ETH_TYPE_G     : slv(15 downto 0)      := x"AAAA");
    port (
       -- DMA Interface
       dmaClk               : in  sl;
@@ -78,10 +75,6 @@ entity RceEthernetMac is
       userEthBypIbSlave    : out AxiStreamSlaveType;
       userEthBypObMaster   : out AxiStreamMasterType;
       userEthBypObSlave    : in  AxiStreamSlaveType;
-      userEthVlanIbMasters : in  AxiStreamMasterArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanIbSlaves  : out AxiStreamSlaveArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanObMasters : out AxiStreamMasterArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanObSlaves  : in  AxiStreamSlaveArray(VLAN_SIZE_G-1 downto 0);
       -- XLGMII PHY Interface
       xlgmiiRxd            : in  slv(127 downto 0) := (others => '0');
       xlgmiiRxc            : in  slv(15 downto 0)  := (others => '0');
@@ -159,20 +152,13 @@ begin
          JUMBO_G           => EN_JUMBO_G,
          -- SYNTH_MODE_G        => SYNTH_MODE_G,  <--- generic for future XPM FIFO release
          -- MEMORY_TYPE_G       => MEMORY_TYPE_G, <--- generic for future XPM FIFO release
-         -- Non-VLAN Configurations
          FILT_EN_G         => true,
          PRIM_COMMON_CLK_G => true,
          PRIM_CONFIG_G     => EMAC_AXIS_CONFIG_C,
          BYP_EN_G          => BYP_EN_G,
          BYP_ETH_TYPE_G    => BYP_ETH_TYPE_G,
          BYP_COMMON_CLK_G  => true,
-         BYP_CONFIG_G      => EMAC_AXIS_CONFIG_C,
-         -- VLAN Configurations
-         VLAN_EN_G         => VLAN_EN_G,
-         VLAN_SIZE_G       => VLAN_SIZE_G,
-         VLAN_VID_G        => VLAN_VID_G,
-         VLAN_COMMON_CLK_G => true,
-         VLAN_CONFIG_G     => EMAC_AXIS_CONFIG_C)
+         BYP_CONFIG_G      => EMAC_AXIS_CONFIG_C)
       port map (
          -- Core Clock and Reset
          ethClk           => ethClk,
@@ -191,13 +177,6 @@ begin
          ibMacBypSlave    => userEthBypIbSlave,
          obMacBypMaster   => userEthBypObMaster,
          obMacBypSlave    => userEthBypObSlave,
-         -- VLAN Interfaces
-         vlanClk          => ethClk,
-         vlanRst          => ethRst,
-         ibMacVlanMasters => userEthVlanIbMasters,
-         ibMacVlanSlaves  => userEthVlanIbSlaves,
-         obMacVlanMasters => userEthVlanObMasters,
-         obMacVlanSlaves  => userEthVlanObSlaves,
          -- XLGMII PHY Interface
          xlgmiiRxd        => xlgmiiRxd,
          xlgmiiRxc        => xlgmiiRxc,
@@ -283,9 +262,9 @@ begin
 
       ----------------------------------------------
       -- Shift outbound data n bytes to the right.
-      -- This removes bytes of data at start 
+      -- This removes bytes of data at start
       -- of the packet. These were added by software
-      -- to create a software friendly alignment of 
+      -- to create a software friendly alignment of
       -- outbound data.
       ----------------------------------------------
       U_TxShift : entity surf.AxiStreamShift
@@ -390,7 +369,7 @@ begin
          -- Register the variable for next clock cycle
          rin <= v;
 
-         -- Outputs        
+         -- Outputs
          dmaIbMaster  <= r.dmaIbMaster;
          ibPrimMaster <= r.ibPrimMaster;
 
