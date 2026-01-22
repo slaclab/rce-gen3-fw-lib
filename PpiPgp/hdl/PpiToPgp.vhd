@@ -115,7 +115,7 @@ begin
    -------------------------
    -- Input FIFO, SYNC
    -------------------------
-   U_InputFifo : entity surf.AxiStreamFifo 
+   U_InputFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G               => TPD_G,
          PIPE_STAGES_G       => 1,
@@ -274,7 +274,7 @@ begin
    -------------------------
    -- Output FIFO, ASYNC
    -------------------------
-   U_OutputFifo : entity surf.AxiStreamFifo 
+   U_OutputFifo : entity surf.AxiStreamFifoV2
       generic map (
          TPD_G               => TPD_G,
          PIPE_STAGES_G       => 1,

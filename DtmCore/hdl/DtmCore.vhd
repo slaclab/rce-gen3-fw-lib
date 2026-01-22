@@ -45,10 +45,7 @@ entity DtmCore is
       UDP_SERVER_SIZE_G  : positive                    := 1;
       UDP_SERVER_PORTS_G : PositiveArray               := (0 => 8192);
       BYP_EN_G           : boolean                     := false;
-      BYP_ETH_TYPE_G     : slv(15 downto 0)            := x"AAAA";
-      VLAN_EN_G          : boolean                     := false;
-      VLAN_SIZE_G        : positive range 1 to 8       := 1;
-      VLAN_VID_G         : Slv12Array                  := (0 => x"001"));
+      BYP_ETH_TYPE_G     : slv(15 downto 0)            := x"AAAA");
    port (
       -- I2C
       i2cSda               : inout sl;
@@ -130,10 +127,6 @@ entity DtmCore is
       userEthBypIbSlave    : out   AxiStreamSlaveType;
       userEthBypObMaster   : out   AxiStreamMasterType;
       userEthBypObSlave    : in    AxiStreamSlaveType                           := AXI_STREAM_SLAVE_FORCE_C;
-      userEthVlanIbMasters : in    AxiStreamMasterArray(VLAN_SIZE_G-1 downto 0) := (others => AXI_STREAM_MASTER_INIT_C);
-      userEthVlanIbSlaves  : out   AxiStreamSlaveArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanObMasters : out   AxiStreamMasterArray(VLAN_SIZE_G-1 downto 0);
-      userEthVlanObSlaves  : in    AxiStreamSlaveArray(VLAN_SIZE_G-1 downto 0)  := (others => AXI_STREAM_SLAVE_FORCE_C);
       -- User Interrupts
       userInterrupt        : in    slv(USER_INT_COUNT_C-1 downto 0)             := (others => '0'));
 
@@ -437,8 +430,6 @@ begin
       userEthUdpObMaster   <= AXI_STREAM_MASTER_INIT_C;
       userEthBypIbSlave    <= AXI_STREAM_SLAVE_FORCE_C;
       userEthBypObMaster   <= AXI_STREAM_MASTER_INIT_C;
-      userEthVlanIbSlaves  <= (others => AXI_STREAM_SLAVE_FORCE_C);
-      userEthVlanObMasters <= (others => AXI_STREAM_MASTER_INIT_C);
 
       idmaClk(3)      <= clk125;
       idmaRst(3)      <= rst125;
@@ -464,10 +455,7 @@ begin
             UDP_SERVER_SIZE_G  => UDP_SERVER_SIZE_G,
             UDP_SERVER_PORTS_G => UDP_SERVER_PORTS_G,
             BYP_EN_G           => BYP_EN_G,
-            BYP_ETH_TYPE_G     => BYP_ETH_TYPE_G,
-            VLAN_EN_G          => VLAN_EN_G,
-            VLAN_SIZE_G        => VLAN_SIZE_G,
-            VLAN_VID_G         => VLAN_VID_G)
+            BYP_ETH_TYPE_G     => BYP_ETH_TYPE_G)
          port map (
             -- Clocks and resets
             clk312               => clk312,
@@ -503,10 +491,6 @@ begin
             userEthBypIbSlave    => userEthBypIbSlave,
             userEthBypObMaster   => userEthBypObMaster,
             userEthBypObSlave    => userEthBypObSlave,
-            userEthVlanIbMasters => userEthVlanIbMasters,
-            userEthVlanIbSlaves  => userEthVlanIbSlaves,
-            userEthVlanObMasters => userEthVlanObMasters,
-            userEthVlanObSlaves  => userEthVlanObSlaves,
             -- AXI-Lite Buses
             axilClk              => iAxilClk,
             axilRst              => iAxilRst,
