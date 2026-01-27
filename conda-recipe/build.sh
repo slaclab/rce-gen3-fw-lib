@@ -1,4 +1,3 @@
 #!/usr/bin/bash
 
-$PYTHON -m pip install .
-
+python setup.py install
