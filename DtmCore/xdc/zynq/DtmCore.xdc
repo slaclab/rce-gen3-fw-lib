@@ -146,7 +146,7 @@ set_property -dict { PACKAGE_PIN N5 IOSTANDARD LVCMOS18 SLEW FAST } [get_ports e
 ####################
 
 # CPU Clock
-create_clock -name fclk0 -period 10.0 [get_pins {U_DtmCore/U_RceG3Top/GEN_SYNTH.U_RceG3Cpu/U_PS7/inst/PS7_i/FCLKCLK[0]}]
+create_clock -period 10.000 -name fclk0 [get_pins -hier -filter {name =~ */U_DtmCore/U_RceG3Top/GEN_SYNTH.U_RceG3Cpu/U_PS7/inst/PS7_i/FCLKCLK[0]}]
 
 create_generated_clock -name clk200 [get_pins -hier -filter {name =~ */U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT0}]
 create_generated_clock -name clk312 [get_pins -hier -filter {name =~ */U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT1}]
@@ -154,8 +154,8 @@ create_generated_clock -name clk156 [get_pins -hier -filter {name =~ */U_RceG3To
 create_generated_clock -name clk125 [get_pins -hier -filter {name =~ */U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT3}]
 create_generated_clock -name clk62  [get_pins -hier -filter {name =~ */U_RceG3Top/U_RceG3Clocks/U_MMCM/MmcmGen.U_Mmcm/CLKOUT4}]
 
-create_generated_clock -name dnaClk  [get_pins {U_DtmCore/U_RceG3Top/GEN_SYNTH.U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/BUFR_Inst/O}] 
-create_generated_clock -name dnaClkL [get_pins {U_DtmCore/U_RceG3Top/GEN_SYNTH.U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/DNA_CLK_INV_BUFR/O}] 
+create_generated_clock -name dnaClk [get_pins -hier -filter {name =~ */U_DtmCore/U_RceG3Top/GEN_SYNTH.U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/BUFR_Inst/O}]
+create_generated_clock -name dnaClkL [get_pins -hier -filter {name =~ */U_DtmCore/U_RceG3Top/GEN_SYNTH.U_RceG3AxiCntl/U_DeviceDna/GEN_7SERIES.DeviceDna7Series_Inst/DNA_CLK_INV_BUFR/O}]
 set_clock_groups -asynchronous -group [get_clocks {dnaClk}] -group [get_clocks {dnaClkL}] -group [get_clocks {clk125}] 
 
 # Treat all clocks asynchronous to each-other except for clk62/clk125 (required by GEM/1000BASE-KX)    
@@ -165,25 +165,24 @@ set_clock_groups -asynchronous -group [get_clocks {clk125}] -group [get_clocks {
 # PCI Express Clocks
 create_clock -name pciRefClk -period 10 [get_ports pciRefClkP]
 
-set pci_txoutclk_pin [get_pins {U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK}]
-#set pci_txoutclk_pin [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_Pcie/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK]
+set pci_txoutclk_pin [get_pins -hier -filter {name =~ */U_DtmCore/*/U_Pcie*/gt_top_i/pipe_wrapper_i/pipe_lane[0].gt_wrapper_i/gtx_channel.gtxe2_channel_i/TXOUTCLK}]
 create_clock -name pci_txoutclk -period 10 ${pci_txoutclk_pin}
 
 create_generated_clock -name pcieClk125 -source ${pci_txoutclk_pin} \
     -multiply_by 5 -divide_by 4 \
-    [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT0]
+    [get_pins -hier -filter {name =~ */U_DtmCore/*/U_Pcie*/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT0}]
 
 create_generated_clock -name pcieClk250 -source ${pci_txoutclk_pin} \
     -multiply_by 5 -divide_by 2 \
-    [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT1]
+    [get_pins -hier -filter {name =~ */U_DtmCore/*/U_Pcie*/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT1}]
 
 create_generated_clock -name pcieUserClk1 -source ${pci_txoutclk_pin} \ 
     -multiply_by 5 -divide_by 8 \
-    [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT2]
+    [get_pins -hier -filter {name =~ */U_DtmCore/*/U_Pcie*/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT2}]
 
 create_generated_clock -name pcieUserClk2 -source ${pci_txoutclk_pin} \
     -multiply_by 5 -divide_by 8 \
-    [get_pins U_DtmCore/U_C10_DIS_G.U_ZynqPcieMaster/U_PciCoreEnGen.U_Pcie/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT3]
+    [get_pins -hier -filter {name =~ */U_DtmCore/*/U_Pcie*/gt_top_i/pipe_wrapper_i/pipe_clock_int.pipe_clock_i/mmcm_i/CLKOUT3}]
 
 set_clock_groups -asynchronous \
     -group [get_clocks -include_generated_clocks fclk0] \
